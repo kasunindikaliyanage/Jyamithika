@@ -27,7 +27,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -142,7 +142,17 @@
     <ClInclude Include="BinarySearchTree.h" />
     <ClInclude Include="BinarySpacePartition.h" />
     <ClInclude Include="Convexhull.h" />
+    <ClInclude Include="Core\AreaVolumn.h" />
+    <ClInclude Include="Core\Distance.h" />
     <ClInclude Include="Core\GeoUtils.h" />
+    <ClInclude Include="Core\Intersection.h" />
+    <ClInclude Include="Core\Primitives\Core.h" />
+    <ClInclude Include="Core\Primitives\Line.h" />
+    <ClInclude Include="Core\Primitives\Plane.h" />
+    <ClInclude Include="Core\Primitives\Point.h" />
+    <ClInclude Include="Core\Primitives\Polygon.h" />
+    <ClInclude Include="Core\Primitives\Segment.h" />
+    <ClInclude Include="Core\Primitives\Vector.h" />
     <ClInclude Include="PartitionTree.h" />
     <ClInclude Include="RedBlackTree.h" />
     <ClInclude Include="IntervelTree.h" />
@@ -152,7 +162,11 @@
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="RangeTree.h" />
     <ClInclude Include="SegmentTree.h" />
+    <ClInclude Include="Trapezoidation.h" />
     <ClInclude Include="Triangulation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Primitives\Vector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
