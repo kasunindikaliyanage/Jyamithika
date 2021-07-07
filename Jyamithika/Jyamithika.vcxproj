@@ -166,6 +166,9 @@
     <ClInclude Include="Triangulation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Convexhull.cpp" />
+    <ClCompile Include="Core\GeoUtils.cpp" />
+    <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Primitives\Vector.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <iostream>
 
 #include "Core.h"
 
@@ -21,6 +22,9 @@ namespace jmk {
 
 		Vector(std::array<coordinate_type, dimensions> _coords) : coords(_coords) {}
 
+		// TODO this looks bad in 2D case. Need to change based on template parameter dimension
+		Vector(coordinate_type _x, coordinate_type _y, coordinate_type _z = 0.0) : coords({_x,_y,_z}) {}
+
 		// Eqality check
 		bool operator==(const Vector<coordinate_type, dimensions>&);
 
@@ -38,6 +42,8 @@ namespace jmk {
 
 		// Greater than operator for comparison
 		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&);
+
+		coordinate_type operator[](int);
 
 		// Dot product
 		float dot(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
@@ -98,6 +104,17 @@ namespace jmk {
 	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator+(const Vector<coordinate_type, dimensions>&)
 	{
 		return Vector<coordinate_type, dimensions>();
+	}
+
+	template<typename coordinate_type, size_t dimensions>
+	inline coordinate_type Vector<coordinate_type, dimensions>::operator[](int _index)
+	{
+		if (_index >= coords.size()) {
+			std::cout << "Index out of bounds";
+			return coordinate_type();
+		}
+
+		return coords[_index];
 	}
 
 

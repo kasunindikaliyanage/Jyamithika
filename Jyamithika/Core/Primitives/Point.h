@@ -3,19 +3,11 @@
 #include "Vector.h"
 
 namespace jmk {
-	class Point3D 
-	{
-		Vector3f point;
 
-	public:
-		Vector3f getV()
-		{
-			return point;
-		}
-	};
+#define X 0
+#define Y 1
+#define Z 2
 
-	class Point2D 
-	{
-		Vector2f point;
-	};
+	typedef Vector2f Point2d;
+	typedef Vector3f Point3d;
 }
