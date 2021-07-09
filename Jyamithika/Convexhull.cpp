@@ -73,20 +73,67 @@ void jmk::convexhull2DGiftwrapping(std::vector<Point3d>& _points, std::vector<Po
 	}
 }
 
-void jmk::convexhull2DGrahams(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
+void jmk::convexhull2DModifiedGrahams(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
 {
 	if (_points.size() <= 3)
 		return;
 
-	// Get the bottom point
-	Point3d bottom_point = _points[0];
-
-	for (Point3d& point : _points)
-	{
-		if ((point[Y] < bottom_point[Y])
-			|| (point[Y] == bottom_point[Y]) && (point[X] < bottom_point[X]))
+	//Sort the points left to right order
+	std::sort(_points.begin(), _points.end(), [](const Point3d& a, const Point3d& b) {
+		if ((a[X] < b[X])
+			|| (a[X] == b[X]) && (b[X] < a[Y]))
 		{
-			bottom_point = point;
+			return true;
 		}
+		return false;
+	});
+
+	std::vector<Point3d> l_upper;
+	std::vector<Point3d> l_lower;
+
+	// Append left most point and next one l_upper.
+	l_upper.push_back(*_points.begin());
+	l_upper.push_back(*(std::next(_points.begin())));
+
+	int lu_size = 0;
+	for (int i = 2; i < _points.size(); i++)
+	{
+		lu_size = l_upper.size();
+		auto next_point = std::next(_points.begin(), i);
+		while (l_upper.size() >= 2 && left(l_upper[lu_size - 2], l_upper[lu_size - 1], *next_point))
+		{
+			l_upper.pop_back();
+			lu_size = l_upper.size();
+		}
+
+		l_upper.push_back(*next_point);
 	}
+
+	//Reverse the points right to left order to construct l_lower
+	std::reverse(_points.begin(), _points.end());
+
+	// Append Right most point and next one l_lower.
+	l_lower.push_back(*_points.begin());
+	l_lower.push_back(*(std::next(_points.begin())));
+
+	for (int i = 2; i < _points.size(); i++)
+	{
+		lu_size = l_lower.size();
+		auto next_point = std::next(_points.begin(), i);
+
+		while (l_lower.size() >= 2 && left(l_lower[lu_size - 2], l_lower[lu_size - 1], *next_point))
+		{
+			l_lower.pop_back();
+			lu_size = l_lower.size();
+		}
+
+		l_lower.push_back(*next_point);
+	}
+
+	// Left-most and Right-most points are repeating. So removed those from one of half hulls
+	l_upper.pop_back();
+	l_lower.pop_back();
+
+	_convex.insert(_convex.end(), l_upper.begin(), l_upper.end());
+	_convex.insert(_convex.end(), l_lower.begin(), l_lower.end());
 }

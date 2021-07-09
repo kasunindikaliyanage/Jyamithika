@@ -18,7 +18,7 @@ namespace jmk {
 		bool is_normalized = false;
 
 		template<typename coordinate_type, size_t dimensions>
-		friend float dotProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
+		friend float dotProduct(const Vector<coordinate_type, dimensions>& v1, const Vector<coordinate_type, dimensions>& v2);
 
 	public:
 		Vector() {}
@@ -29,10 +29,10 @@ namespace jmk {
 		Vector(coordinate_type _x, coordinate_type _y, coordinate_type _z = 0.0) : coords({_x,_y,_z}) {}
 
 		// Eqality check
-		bool operator==(const Vector<coordinate_type, dimensions>&);
+		bool operator==(const Vector<coordinate_type, dimensions>&) const;
 
 		// Not equal check operator
-		bool operator!=(const Vector<coordinate_type, dimensions>&);
+		bool operator!=(const Vector<coordinate_type, dimensions>&) const;
 
 		// Less than operator for comparison
 		bool operator<(Vector<coordinate_type, dimensions>&);
@@ -41,10 +41,10 @@ namespace jmk {
 		bool operator>(const Vector<coordinate_type, dimensions>&);
 
 		// Substraction operator. Substract x and y component separately.
-		Vector<coordinate_type, dimensions> operator-(const Vector<coordinate_type, dimensions>&);
+		Vector<coordinate_type, dimensions> operator-(const Vector<coordinate_type, dimensions>&) const;
 
 		// Greater than operator for comparison
-		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&);
+		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&) const;
 
 		coordinate_type operator[](int) const;
 
@@ -55,7 +55,7 @@ namespace jmk {
 		Vector<coordinate_type, dimensions> cross(const Vector<coordinate_type, dimensions>&);
 
 		// Return the magnitude of the the vector (mod(A) / |A|)
-		float magnitude();
+		float magnitude() const;
 
 		// Normalize the vector
 		void normalize();
@@ -69,7 +69,7 @@ namespace jmk {
 
 
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator==(const Vector<coordinate_type, dimensions>& _other)
+	inline bool Vector<coordinate_type, dimensions>::operator==(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		bool is_equal = false;
 
@@ -83,7 +83,7 @@ namespace jmk {
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator!=(const Vector<coordinate_type, dimensions>& _other)
+	inline bool Vector<coordinate_type, dimensions>::operator!=(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		return !(*this == _other);
 	}
@@ -104,7 +104,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-(const Vector<coordinate_type, dimensions>& _other)
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		std::array<coordinate_type, dimensions> temp_array;
 
@@ -116,7 +116,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator+(const Vector<coordinate_type, dimensions>& _other)
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator+(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		std::array<coordinate_type, dimensions> temp_array;
 
@@ -140,7 +140,7 @@ namespace jmk {
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline float Vector<coordinate_type, dimensions>::magnitude()
+	inline float Vector<coordinate_type, dimensions>::magnitude() const
 	{
 		float value = 0.0f;
 		for (int i = 0; i < dimensions; i++)
@@ -164,7 +164,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	float dotProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
+	float dotProduct(const Vector<coordinate_type, dimensions>& v1, const Vector<coordinate_type, dimensions>& v2)
 	{
 		if (v1.coords.size() != v2.coords.size())
 			return FLT_MIN;
