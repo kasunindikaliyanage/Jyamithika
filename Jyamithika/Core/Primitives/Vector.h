@@ -17,6 +17,9 @@ namespace jmk {
 		std::array<coordinate_type, dimensions> coords;
 		bool is_normalized = false;
 
+		template<typename coordinate_type, size_t dimensions>
+		friend float dotProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
+
 	public:
 		Vector() {}
 
@@ -43,7 +46,7 @@ namespace jmk {
 		// Greater than operator for comparison
 		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&);
 
-		coordinate_type operator[](int);
+		coordinate_type operator[](int) const;
 
 		// Dot product
 		float dot(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
@@ -66,16 +69,23 @@ namespace jmk {
 
 
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator==(const Vector<coordinate_type, dimensions>&)
+	inline bool Vector<coordinate_type, dimensions>::operator==(const Vector<coordinate_type, dimensions>& _other)
 	{
-		return false;
+		bool is_equal = false;
+
+		for (int i = 0; i < dimensions; i++)
+		{
+			if (!isEqualD(coords[i], _other.coords[i]))
+				return false;
+		}
+		return true;
 	}
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator!=(const Vector<coordinate_type, dimensions>&)
+	inline bool Vector<coordinate_type, dimensions>::operator!=(const Vector<coordinate_type, dimensions>& _other)
 	{
-		return false;
+		return !(*this == _other);
 	}
 	
 
@@ -94,20 +104,31 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-(const Vector<coordinate_type, dimensions>&)
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-(const Vector<coordinate_type, dimensions>& _other)
 	{
-		return Vector<coordinate_type, dimensions>();
+		std::array<coordinate_type, dimensions> temp_array;
+
+		for (int i = 0; i < dimensions; i++)
+			temp_array[i] = coords[i] - _other.coords[i];
+
+		return Vector<coordinate_type, dimensions>(temp_array);
 	}
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator+(const Vector<coordinate_type, dimensions>&)
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator+(const Vector<coordinate_type, dimensions>& _other)
 	{
-		return Vector<coordinate_type, dimensions>();
+		std::array<coordinate_type, dimensions> temp_array;
+
+		for (int i = 0; i < dimensions; i++)
+			temp_array[i] = coords[i] + _other.coords[i];
+
+		return Vector<coordinate_type, dimensions>(temp_array);
 	}
 
+	
 	template<typename coordinate_type, size_t dimensions>
-	inline coordinate_type Vector<coordinate_type, dimensions>::operator[](int _index)
+	inline coordinate_type Vector<coordinate_type, dimensions>::operator[](int _index) const
 	{
 		if (_index >= coords.size()) {
 			std::cout << "Index out of bounds";
@@ -116,26 +137,16 @@ namespace jmk {
 
 		return coords[_index];
 	}
-
-
-	template<typename coordinate_type, size_t dimensions>
-	inline float Vector<coordinate_type, dimensions>::dot(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
-	{
-		return 0.0f;
-	}
-
-
-	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::cross(const Vector<coordinate_type, dimensions>&)
-	{
-		return Vector<coordinate_type, dimensions>();
-	}
-
 	
+
 	template<typename coordinate_type, size_t dimensions>
 	inline float Vector<coordinate_type, dimensions>::magnitude()
 	{
-		return 0.0f;
+		float value = 0.0f;
+		for (int i = 0; i < dimensions; i++)
+			value += pow(coords[i], 2.0);
+
+		return sqrt(value);
 	}
 
 
@@ -153,7 +164,16 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	float dotProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
+	float dotProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
+	{
+		if (v1.coords.size() != v2.coords.size())
+			return FLT_MIN;
+
+		float product = 0;
+		for (int i = 0; i < v1.coords.size(); i++)
+			product = product + v1[i] * v2[i];
+		return product;
+	}
 
 
 	template<typename coordinate_type, size_t dimensions>

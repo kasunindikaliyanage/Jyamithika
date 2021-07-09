@@ -8,12 +8,13 @@ namespace jmk
 {
 	// Note : All the 2D algorithms assume the provided points are in single plane. If not the result could be wrong
 
-	void convexhull2dGiftwrapping(std::vector<Point3d>& _points, Polygon& _polygon);
+	// Compute the points in the convex hull. Assume the points are in XY 2D plane.
+	void convexhull2DGiftwrapping(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
 	
-	void convexhull2dGrahams(std::vector<Point2d>& _points, Polygon& _polygon);
+	void convexhull2DGrahams(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
 
-	void convexhull2dGrahams_modified(std::vector<Point2d>& _points, Polygon& _polygon);
+	void convexhull2DGrahams_modified(std::vector<Point2d>& _points, std::vector<Point3d>& _convex);
 
-	void convexhull3d(std::vector<Point3d>& _points, Polygon& _polygon);
+	void convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
 
 }
