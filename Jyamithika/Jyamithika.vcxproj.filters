@@ -87,7 +87,7 @@
     <ClInclude Include="Core\Primitives\Polygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Primitives\Core.h">
+    <ClInclude Include="Core\Utils\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

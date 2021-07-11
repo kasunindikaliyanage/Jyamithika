@@ -2,7 +2,7 @@
 #include <array>
 #include <iostream>
 
-#include "Core.h"
+#include "../Utils/Core.h"
 
 namespace jmk {
 
@@ -13,6 +13,7 @@ namespace jmk {
 	class Vector 
 	{
 		static_assert(std::is_arithmetic_v<coordinate_type>, "Vector class can only store integral or floating points values");
+		static_assert(dimensions >= DIM2, "Vector dimension atleast should be 2D");
 
 		std::array<coordinate_type, dimensions> coords;
 		bool is_normalized = false;

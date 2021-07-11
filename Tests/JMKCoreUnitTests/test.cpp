@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Core\Primitives\Core.h"
+#include "Core\Utils\Core.h"
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
 #include "Core\Primitives\Vector.h"

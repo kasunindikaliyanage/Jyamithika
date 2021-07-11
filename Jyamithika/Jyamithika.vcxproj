@@ -146,7 +146,7 @@
     <ClInclude Include="Core\Distance.h" />
     <ClInclude Include="Core\GeoUtils.h" />
     <ClInclude Include="Core\Intersection.h" />
-    <ClInclude Include="Core\Primitives\Core.h" />
+    <ClInclude Include="Core\Utils\Core.h" />
     <ClInclude Include="Core\Primitives\Line.h" />
     <ClInclude Include="Core\Primitives\Plane.h" />
     <ClInclude Include="Core\Primitives\Point.h" />

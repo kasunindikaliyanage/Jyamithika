@@ -42,7 +42,18 @@ int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
 
 bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	return false;
+	return pointRelativePos(a,b,c) == RELATIVE_POSITION::LEFT;
+}
+
+bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	return pointRelativePos(a, b, c) == RELATIVE_POSITION::RIGHT;
+}
+
+bool jmk::leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	int position = pointRelativePos(a, b, c);
+	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
 float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
@@ -86,4 +97,14 @@ float jmk::angle(const Vector3f& _v1, const Vector3f& _v2)
 	float v2_mag = _v2.magnitude();
 
 	return acos(dot / (v1_mag * v2_mag));
+}
+
+bool jmk::isInside(Point3d& _point, std::vector<Point3d>& _points)
+{
+	return false;
+}
+
+int jmk::getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points)
+{
+	return 0;
 }
