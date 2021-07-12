@@ -2,6 +2,7 @@
 #include "Core\GeoUtils.h"
 
 #include <algorithm>
+#include <Iterator>
 
 using namespace jmk;
 
@@ -212,7 +213,56 @@ void jmk::convexhull2DIncremental(std::vector<Point3d>& _points, std::vector<Poi
 	}
 }
 
+template<typename Iterator>
+void getHull(Iterator first, Iterator last, Polygon& _results)
+{
+	unsigned const length = std::distance(first, last);
+
+	if (size == 1)
+	{
+		_results.Insert(*first);
+	}
+	else
+	{
+		Iterator const mid_point = first + length / 2;
+		
+		Polygon left_poly;
+		Polygon right_poly;
+
+		getHull(first, mid_point, left_poly);
+		getHull(mid_point,last, right_poly);
+
+		merge(left_poly, right_poly, _results);
+	}
+}
+
+void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _results)
+{
+	//Sort the points left to right order
+	std::sort(_points.begin(), _points.end(), [](const Point3d& a, const Point3d& b) {
+		if ((a[X] < b[X])
+			|| (a[X] == b[X]) && (a[Y] < b[Y]))
+		{
+			return true;
+		}
+		return false;
+	});
+
+	getHull(_points.begin(), _points.end(), _results);
+}
+
 void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
 {
+	// Step 1 : Pick 4 points that do not lie in same plane. If we cannot find such points
+	//			- then all the points as in one plane and we can use 2d convexhull algo to find the hull.
+	//				1. Pick two points.(P1, P2)
+	//				2. Pick thired point that do not in P1, P2 line. P3
+	//				3. Pick fourth point that do not lie in P1, P2, P3 plane.
+
+	// Step 2 : Randomly order the rest of points P5 .....Pn
+
+	// Step 3 : Add next point Pr to the current convexhull
+	//				1. Pr can be inside the current hull. Then there's nothing to be done.
+	//				2. Pr lies outside the convexhull. In this case we need to compute new hull.
 
 }

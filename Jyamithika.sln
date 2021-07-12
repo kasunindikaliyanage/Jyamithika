@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A481
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics", "Graphics", "{471348E6-7EC2-48BB-BA39-F600E4B870CC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JyamithikaSrc", "JyamithikaSrc", "{056B7D6E-520D-4514-B1E1-1F133971B504}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jyamithika", "Jyamithika", "{056B7D6E-520D-4514-B1E1-1F133971B504}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RobotMotionPlaning", "Samples\RobotMotionPlaning\RobotMotionPlaning.vcxproj", "{342AD5A5-D9EF-44C3-84B6-4562C1751075}"
 EndProject

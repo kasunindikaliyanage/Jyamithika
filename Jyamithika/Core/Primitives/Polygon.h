@@ -24,10 +24,17 @@ namespace jmk {
 	{
 		std::vector<Vertex> vertex_list;
 	public:
+		Polygon();
+
 		// Construct the Polyhon with given point set
 		Polygon(std::vector<Point3d> _point_list );
+
+		void Insert(Point3d&);
 
 		// Return the points list of underline vertices
 		std::vector<Point3d> getPoints();
 	};
+
+
+	void merge(Polygon& poly1, Polygon& poly2, Polygon& final_poly);
 }

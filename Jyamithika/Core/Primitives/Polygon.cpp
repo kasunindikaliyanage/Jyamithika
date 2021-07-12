@@ -2,11 +2,17 @@
 
 using namespace jmk;
 
+// Vertex class function
 Point3d Vertex::getPoint() const
 {
 	return this->point;
 }
 
+jmk::Polygon::Polygon()
+{
+}
+
+// Polygon class function
 Polygon::Polygon(std::vector<Point3d> _point_list)
 {
 	for (Point3d& _point : _point_list)
@@ -27,6 +33,20 @@ Polygon::Polygon(std::vector<Point3d> _point_list)
 	}
 }
 
+void jmk::Polygon::Insert(Point3d& _point)
+{
+	vertex_list.push_back(Vertex(_point));
+	int size = vertex_list.size();
+	if (size>1)
+	{
+		vertex_list[size - 1].next = vertex_list[size - 2].next;
+		vertex_list[size - 2].next = &vertex_list[size - 1];
+		vertex_list[size - 1].prev = &vertex_list[size - 2];
+		vertex_list[size - 1].next->prev = &vertex_list[size - 1];
+	}
+}
+
+// Polygon class function
 std::vector<Point3d> Polygon::getPoints()
 {
 	std::vector<Point3d> point_list;
@@ -35,4 +55,9 @@ std::vector<Point3d> Polygon::getPoints()
 		point_list.push_back(vertex.point);
 	}
 	return point_list;
+}
+
+void jmk::merge(Polygon& poly1, Polygon& poly2, Polygon& final_poly)
+{
+
 }
