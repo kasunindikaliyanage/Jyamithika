@@ -218,7 +218,7 @@ void getHull(Iterator first, Iterator last, Polygon& _results)
 {
 	unsigned const length = std::distance(first, last);
 
-	if (size == 1)
+	if (length == 1)
 	{
 		_results.Insert(*first);
 	}

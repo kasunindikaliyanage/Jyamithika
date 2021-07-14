@@ -11,9 +11,3 @@
 //		product = product + v1[i] * v2[i];
 //	return product;
 //}
-
-template<typename coordinate_type, size_t dimensions>
-jmk::Vector<coordinate_type, dimensions> jmk::crossProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
-{
-	return Vector<coordinate_type, dimensions>();
-}

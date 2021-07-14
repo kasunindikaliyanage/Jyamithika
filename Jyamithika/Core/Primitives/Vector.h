@@ -9,6 +9,10 @@ namespace jmk {
 #define DIM2 2
 #define DIM3 3
 
+#define X 0
+#define Y 1
+#define Z 2
+
 	template <typename coordinate_type, size_t dimensions = DIM3 >
 	class Vector 
 	{
@@ -177,12 +181,21 @@ namespace jmk {
 	}
 
 
-	template<typename coordinate_type, size_t dimensions>
-	Vector<coordinate_type, dimensions> crossProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
+	Vector3f crossProduct(Vector3f a, Vector3f b)
 	{
-	
+		float x_, y_, z_;
+		x_ = a[Y] * b[Z] - b[Y] * a[Z];
+		y_ = a[Z] * b[X] - b[Z] * a[X];
+		z_ = a[X] * b[Y] - b[X] * a[Y];
+
+		return Vector3f(x_, y_, z_);
 	}
 
 
-
+	float scalerTripleProduct(Vector3f a, Vector3f b, Vector3f c)
+	{
+		Vector3f b_cross_c = crossProduct(b, c);
+		float value = dotProduct(a, b_cross_c);
+		return value;
+	}
 }

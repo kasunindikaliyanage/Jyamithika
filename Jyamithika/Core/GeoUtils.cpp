@@ -4,9 +4,12 @@
 
 using namespace jmk;
 
+// This can be only used in 2d XY plane. 
+// TODO  has to modify to consider the 3D plane as well
 int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	auto area = areaTriangle2d(a, b, c);
+	float area = areaTriangle2d(a, b, c);
+	
 	if (area > 0 && area < TOLERANCE)
 		area = 0;
 
@@ -85,7 +88,7 @@ float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
 
 }
 
-double jmk::areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c)
+double jmk::areaTriangle2d(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	return 0.5 * ((b[X] - a[X]) * (c[Y] - a[Y]) - (c[X] - a[X]) * (b[Y] - a[Y]));
 }
@@ -137,10 +140,14 @@ bool jmk::collinear(const Point3d& a, const Point3d& b, const Point3d& c)
 	y_ = AB[X] * AC[Z] - AB[Z] * AC[X];
 	z_ = AB[X] * AC[Y] - AB[Y] * AC[X];
 	
-	return isEqualD(x_, 0.0) && isEqualD(y_, 0.0) && isEqualD(z_, 0.0);
+	return isEqualD(x_, ZERO) && isEqualD(y_, ZERO) && isEqualD(z_, ZERO);
 }
 
 bool jmk::coplaner(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d)
 {
-	return false;
+	Vector3f AB = b - a;
+	Vector3f AC = c - a;
+
+	float value = scalerTripleProduct(AB, AC, d);
+	return isEqualD(value, ZERO);
 }

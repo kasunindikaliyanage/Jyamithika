@@ -22,7 +22,8 @@ namespace jmk
 	float polarAngle( const Point3d& _other, const Point3d& _ref) ;
 
 	// Return the area of the triangle defined by given 3 points
-	double areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c);
+	// TODO change the parameter types form 3d to 2d
+	double areaTriangle2d(const Point3d& a, const Point3d& b, const Point3d& c);
 
 	// Return the area of the triangle defined by given 3 points
 	double areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c);
@@ -32,9 +33,11 @@ namespace jmk
 
 	// Return whether the [point] is inside the polygon represented by [_points].
 	// Note that the check assume that [_points] are in counter clockwise order
+	// TODO : Better if we can check this on polygon
 	bool isInside(Point3d& _point, std::vector<Point3d>& _points);
 
 	// Return the index of the point closest to the [_point] from [_points] 
+	// TODO : Better if we can check this on polygon
 	int getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points);
 
 	// Check the collinearity of given three points in 3D.
