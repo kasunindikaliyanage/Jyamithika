@@ -6,6 +6,7 @@
 namespace jmk 
 {
 	// Return integer indicating relative position of [Point c] related to segment [a b]
+	// This is only for 2D in XY plane.
 	int pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c);
 
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
@@ -21,7 +22,10 @@ namespace jmk
 	float polarAngle( const Point3d& _other, const Point3d& _ref) ;
 
 	// Return the area of the triangle defined by given 3 points
-	double areaTriangle(const Point3d& a, const Point3d& b, const Point3d& c);
+	double areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c);
+
+	// Return the area of the triangle defined by given 3 points
+	double areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c);
 
 	// Return the angle between two vectors
 	float angle(const Vector3f& _v1, const Vector3f& _v2);
@@ -32,6 +36,19 @@ namespace jmk
 
 	// Return the index of the point closest to the [_point] from [_points] 
 	int getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points);
+
+	// Check the collinearity of given three points in 3D.
+	// Three points are colinear if the coeficient taken by determinant is zero.
+	// No need to calculate area.(Calculation of area could be much slower as we have pow and sqrt)
+	bool collinear(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	// Check the coplaness of given four points in 3D.
+	// The three vectors are coplanar if their scalar triple product is zero.
+	bool coplaner(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d);
+
+	Vector3f getFaceNormal(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	float volumTetrahedron(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d);
 }
 
 

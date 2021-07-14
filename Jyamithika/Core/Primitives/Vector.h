@@ -178,6 +178,11 @@ namespace jmk {
 
 
 	template<typename coordinate_type, size_t dimensions>
-	Vector<coordinate_type, dimensions> crossProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
+	Vector<coordinate_type, dimensions> crossProduct(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2)
+	{
+	
+	}
+
+
 
 }

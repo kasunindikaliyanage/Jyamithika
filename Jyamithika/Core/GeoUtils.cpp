@@ -6,7 +6,7 @@ using namespace jmk;
 
 int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	auto area = areaTriangle(a, b, c);
+	auto area = areaTriangle2d(a, b, c);
 	if (area > 0 && area < TOLERANCE)
 		area = 0;
 
@@ -85,9 +85,25 @@ float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
 
 }
 
-double jmk::areaTriangle(const Point3d& a, const Point3d& b, const Point3d& c)
+double jmk::areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c)
 {
 	return 0.5 * ((b[X] - a[X]) * (c[Y] - a[Y]) - (c[X] - a[X]) * (b[Y] - a[Y]));
+}
+
+double jmk::areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	float x_, y_, z_;
+
+	Vector3f AB = b - a;
+	Vector3f AC = c - a;
+
+	x_ = AB[Y] * AC[Z] - AB[Z] * AC[Y];
+	y_ = AB[X] * AC[Z] - AB[Z] * AC[X];
+	z_ = AB[X] * AC[Y] - AB[Y] * AC[X];
+
+	float sum_of_powers = pow(x_,2.0) + pow(y_, 2.0) + pow(z_, 2.0);
+	float root = sqrtf(sum_of_powers);
+	return root / 2;
 }
 
 float jmk::angle(const Vector3f& _v1, const Vector3f& _v2)
@@ -107,4 +123,24 @@ bool jmk::isInside(Point3d& _point, std::vector<Point3d>& _points)
 int jmk::getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points)
 {
 	return 0;
+}
+
+bool jmk::collinear(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	// No need to calculat the area. Just compare each coeficient vector to zero vec;
+	float x_, y_, z_;
+
+	Vector3f AB = b - a;
+	Vector3f AC = c - a;
+
+	x_ = AB[Y] * AC[Z] - AB[Z] * AC[Y];
+	y_ = AB[X] * AC[Z] - AB[Z] * AC[X];
+	z_ = AB[X] * AC[Y] - AB[Y] * AC[X];
+	
+	return isEqualD(x_, 0.0) && isEqualD(y_, 0.0) && isEqualD(z_, 0.0);
+}
+
+bool jmk::coplaner(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d)
+{
+	return false;
 }
