@@ -151,6 +151,7 @@
     <ClInclude Include="Core\Primitives\Plane.h" />
     <ClInclude Include="Core\Primitives\Point.h" />
     <ClInclude Include="Core\Primitives\Polygon.h" />
+    <ClInclude Include="Core\Primitives\Polyhedron.h" />
     <ClInclude Include="Core\Primitives\Segment.h" />
     <ClInclude Include="Core\Primitives\Vector.h" />
     <ClInclude Include="PartitionTree.h" />

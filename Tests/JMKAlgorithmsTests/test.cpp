@@ -21,24 +21,24 @@ TEST(Giftwrapping2d, Convexhull)
 	Point3d p10(-1, -9);
 	Point3d p11(-10, 8);
 
-	std::vector<Point3d> points;
+	std::vector<Point3d> vertices;
 
-	points.push_back(p1);
-	points.push_back(p2);
-	points.push_back(p3);
-	points.push_back(p4);
-	points.push_back(p5);
-	points.push_back(p6);
-	points.push_back(p7);
-	points.push_back(p8);
-	points.push_back(p9);
-	points.push_back(p10);
-	points.push_back(p11);
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+	vertices.push_back(p5);
+	vertices.push_back(p6);
+	vertices.push_back(p7);
+	vertices.push_back(p8);
+	vertices.push_back(p9);
+	vertices.push_back(p10);
+	vertices.push_back(p11);
 	
 	std::vector<Point3d> covexhull;
 	std::vector<Point3d> manualhull;
 
-	convexhull2DGiftwrapping(points, covexhull);
+	convexhull2DGiftwrapping(vertices, covexhull);
 
 	manualhull.push_back(p10);
 	manualhull.push_back(p9);
@@ -75,24 +75,24 @@ TEST(DModifiedGrahams2d, Convexhull)
 	Point3d p10(-1, -9);
 	Point3d p11(-10, 8);
 
-	std::vector<Point3d> points;
+	std::vector<Point3d> vertices;
 
-	points.push_back(p1);
-	points.push_back(p2);
-	points.push_back(p3);
-	points.push_back(p4);
-	points.push_back(p5);
-	points.push_back(p6);
-	points.push_back(p7);
-	points.push_back(p8);
-	points.push_back(p9);
-	points.push_back(p10);
-	points.push_back(p11);
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+	vertices.push_back(p5);
+	vertices.push_back(p6);
+	vertices.push_back(p7);
+	vertices.push_back(p8);
+	vertices.push_back(p9);
+	vertices.push_back(p10);
+	vertices.push_back(p11);
 
 	std::vector<Point3d> covexhull;
 	std::vector<Point3d> manualhull;
 
-	convexhull2DModifiedGrahams(points, covexhull);
+	convexhull2DModifiedGrahams(vertices, covexhull);
 	
 	manualhull.push_back(p11);
 	manualhull.push_back(p7);
@@ -129,24 +129,24 @@ TEST(Incremental2d, Convexhull)
 	Point3d p10(-1, -9);
 	Point3d p11(-10, 8);
 
-	std::vector<Point3d> points;
+	std::vector<Point3d> vertices;
 
-	points.push_back(p1);
-	points.push_back(p2);
-	points.push_back(p3);
-	points.push_back(p4);
-	points.push_back(p5);
-	points.push_back(p6);
-	points.push_back(p7);
-	points.push_back(p8);
-	points.push_back(p9);
-	points.push_back(p10);
-	points.push_back(p11);
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+	vertices.push_back(p5);
+	vertices.push_back(p6);
+	vertices.push_back(p7);
+	vertices.push_back(p8);
+	vertices.push_back(p9);
+	vertices.push_back(p10);
+	vertices.push_back(p11);
 
 	std::vector<Point3d> covexhull;
 	std::vector<Point3d> manualhull;
 
-	convexhull2DModifiedGrahams(points, covexhull);
+	convexhull2DModifiedGrahams(vertices, covexhull);
 
 	manualhull.push_back(p11);
 	manualhull.push_back(p7);
@@ -165,6 +165,36 @@ TEST(Incremental2d, Convexhull)
 			break;
 		}
 	}
+
+	EXPECT_TRUE(test_passed);
+}
+
+TEST(Incremental3d, Convexhull)
+{
+	Point3d p1(-1, -1,  1);
+	Point3d p2(-1, -1, -1);
+	Point3d p3(-1,  1, -1);
+	Point3d p4(-1,  1,  1);
+	Point3d p5( 1, -1,  1);
+	Point3d p6( 1, -1, -1);
+	Point3d p7( 1,  1, -1);
+	Point3d p8( 1,  1,  1);
+
+	std::vector<Point3d> vertices;
+
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+	vertices.push_back(p5);
+	vertices.push_back(p6);
+	vertices.push_back(p7);
+	vertices.push_back(p8);
+
+	std::vector<Point3d> covexhull;
+
+	convexhull3D(vertices, covexhull);
+	bool test_passed = true;
 
 	EXPECT_TRUE(test_passed);
 }

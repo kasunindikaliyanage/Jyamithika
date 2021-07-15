@@ -90,6 +90,9 @@
     <ClInclude Include="Core\Base\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Primitives\Polyhedron.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Primitives\Vector.cpp">

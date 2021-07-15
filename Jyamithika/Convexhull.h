@@ -1,8 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+
 #include "Core\Primitives\Point.h"
 #include "Core\Primitives\Polygon.h"
+#include "Core\Primitives\Polyhedron.h"
 
 namespace jmk 
 {
@@ -35,6 +38,7 @@ namespace jmk
 	void convexhull2DQuickhull(std::vector<Point3d>& _points, Polygon& _results);
 
 	// Compute the points in the convex hull in 3D space using incremental methodology.
+	// Assume there are no duplicate points.
 	void convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
 
 	// Compute the points in the convex hull.

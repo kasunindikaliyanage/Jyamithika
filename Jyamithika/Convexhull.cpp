@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <Iterator>
+#include <list>
 
 using namespace jmk;
 
@@ -251,6 +252,56 @@ void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _
 	getHull(_points.begin(), _points.end(), _results);
 }
 
+static void construct_initial_polyhedron(std::vector<Vertex3d>& _points, int i,std::vector<Face*> &faces, std::vector<Edge3d*> &edges)
+{
+	// Create the initial tetrahedron
+	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 2]));
+	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 3]));
+	faces.push_back(new Face(&_points[i + 1], &_points[i + 2], &_points[i + 3]));
+	faces.push_back(new Face(&_points[i + 2], &_points[i + 0], &_points[i + 3]));
+
+	edges.push_back(new Edge3d(&_points[i + 0], &_points[i + 1]));
+	edges.push_back(new Edge3d(&_points[i + 1], &_points[i + 2]));
+	edges.push_back(new Edge3d(&_points[i + 2], &_points[i + 0]));
+	edges.push_back(new Edge3d(&_points[i + 0], &_points[i + 3]));
+	edges.push_back(new Edge3d(&_points[i + 1], &_points[i + 3]));
+	edges.push_back(new Edge3d(&_points[i + 2], &_points[i + 3]));
+
+	faces[0]->addEdge(edges[0]);
+	faces[0]->addEdge(edges[1]);
+	faces[0]->addEdge(edges[2]);
+
+	faces[1]->addEdge(edges[0]);
+	faces[1]->addEdge(edges[3]);
+	faces[1]->addEdge(edges[4]);
+
+	faces[2]->addEdge(edges[1]);
+	faces[2]->addEdge(edges[4]);
+	faces[2]->addEdge(edges[5]);
+
+	faces[3]->addEdge(edges[2]);
+	faces[3]->addEdge(edges[5]);
+	faces[3]->addEdge(edges[3]);
+
+	edges[0]->faces[0] = faces[0];
+	edges[0]->faces[1] = faces[1];
+
+	edges[1]->faces[0] = faces[0];
+	edges[1]->faces[1] = faces[2];
+
+	edges[2]->faces[0] = faces[0];
+	edges[2]->faces[1] = faces[3];
+
+	edges[3]->faces[0] = faces[1];
+	edges[3]->faces[1] = faces[3];
+
+	edges[4]->faces[0] = faces[2];
+	edges[4]->faces[1] = faces[1];
+
+	edges[5]->faces[0] = faces[3];
+	edges[5]->faces[1] = faces[2];
+}
+
 void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
 {
 	// Step 1 : Pick 4 points that do not lie in same plane. If we cannot find such points
@@ -265,4 +316,177 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	//				1. Pr can be inside the current hull. Then there's nothing to be done.
 	//				2. Pr lies outside the convexhull. In this case we need to compute new hull.
 
+	std::vector<Vertex3d> vertices;
+	for (size_t i = 0; i < _points.size(); i++)
+	{
+		vertices.push_back(Vertex3d(&_points[i]));
+	}
+
+
+	std::vector<Face*> faces;
+	std::vector<Edge3d*> edges;
+
+	// find 3 non collinear points and 4 coplaner points
+	// TODO : For now implementation is looking for consecutive ones. But this is not needed
+	int i = 0 , j =0 ;
+	bool found_noncollinear = false,found_noncoplaner = false;
+	for ( i = 0; i < _points.size() -3 ; i++ )
+	{
+		found_noncollinear = false;
+
+		if (!collinear(_points[i], _points[i + 1], _points[i + 2]))
+		{
+			found_noncollinear = true;
+		}
+
+		if (found_noncollinear && !coplaner(_points[i], _points[i + 1], _points[i + 2], _points[i + 3]))
+		{
+			found_noncoplaner = true;
+			break;
+		}
+	}
+
+	if (!found_noncoplaner)
+	{
+		std::cout << "All the points are collinear" << std::endl;
+		return;
+	}
+	
+	if (!found_noncoplaner)
+	{
+		std::cout << "All the points are coplaner" << std::endl;
+		return;
+	}
+
+	construct_initial_polyhedron(vertices, i, faces, edges);
+	
+	//Points used to construct the p
+	vertices[i].processed = true;
+	vertices[i+1].processed = true;
+	vertices[i+2].processed = true;
+	vertices[i+3].processed = true;
+
+	std::vector<Face*> visible_faces;
+	std::vector<Edge3d*> border_edges;
+	std::vector<Edge3d*> tobe_deleted_edges;
+
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		if (vertices[i].processed)
+			continue;
+
+		// Point has not yet processed and it is outside the current hull.
+		for (size_t j = 0; j < faces.size(); j++)
+		{
+			int order = orientation(*faces[j], *vertices[j].point);
+			float volum = volumeSigned(*vertices[i].point, *faces[j]);
+
+			if (order == CCW && volum < 0 || order == CW && volum > 0)
+			{
+				faces[j]->visible = true;
+				visible_faces.push_back(faces[j]);
+			}
+		}
+
+		if (!visible_faces.size())
+			continue;	// Point is inside
+
+		for (size_t k = 0; k < visible_faces.size(); k++)
+		{
+			for (size_t j = 0; j < visible_faces[k]->edges.size(); j++)
+			{
+				if ((visible_faces[k]->edges[j]->faces[0]->visible && !visible_faces[k]->edges[j]->faces[1]->visible)
+					|| (!visible_faces[k]->edges[j]->faces[0]->visible && visible_faces[k]->edges[j]->faces[1]->visible))
+				{
+					border_edges.push_back(visible_faces[k]->edges[j]);
+				}
+				else
+				{
+					tobe_deleted_edges.push_back(visible_faces[k]->edges[j]);
+				}
+			}
+		}
+
+		std::vector<Face*> new_faces;
+		std::vector<Edge3d*> new_edges;
+
+		int new_size = border_edges.size();
+
+		//we need to find the unique points in border edges.
+		std::list<Vertex3d*> unque_vertices;
+
+		for (size_t j = 0; j < new_size; j++)
+		{	
+			unque_vertices.push_back(border_edges[j]->vertices[0]);
+			unque_vertices.push_back(border_edges[j]->vertices[1]);
+		}
+
+		unque_vertices.sort();
+
+		unque_vertices.unique(
+			[](Vertex3d* a, Vertex3d* b)
+		{
+			return *(a->point) == *(b->point);
+		});
+
+		std::list<Vertex3d*>::iterator it;
+
+		for (size_t j = 0; j < new_size; j++)
+		{
+			it = unque_vertices.begin();
+			std::advance(it, j);
+			//Add new faces and edges for new convex polyhedron
+			new_edges.push_back(new Edge3d(*it, &vertices[i]));
+			//new_edges.push_back(new Edge3d(&vertices[i + 1], border_edges[j]->vertices[1]));
+			new_faces.push_back(new Face(border_edges[j]->vertices[0], &vertices[i], border_edges[j]->vertices[1]));
+		
+			//Add new face referece to borader edges
+			if (border_edges[j]->faces[0]->visible)
+			{
+				border_edges[j]->faces[0] = new_faces[new_faces.size() - 1];
+			}
+			else
+			{
+				border_edges[j]->faces[1] = new_faces[new_faces.size() - 1];
+			}	
+		}
+
+		//Added faces for edges
+		for (size_t j = 0; j < new_size; j++)
+		{
+			int val = j - 1;
+			if(val < 0 )
+				new_edges[j]->faces[0] = new_faces[new_size -1];
+			else
+				new_edges[j]->faces[0] = new_faces[j-1];
+			new_edges[j]->faces[1] = new_faces[j];
+		}
+
+		//Added edges for faces
+		for (size_t j = 0; j < new_size; j++)
+		{
+			new_faces[j]->addEdge(border_edges[j]);
+			new_faces[j]->addEdge(new_edges[j]);
+			new_faces[j]->addEdge(new_edges[(j+1)% new_size]);
+		}
+
+		//Deleted the visible faces and edges which are not int the border
+		for (size_t k = 0; k< tobe_deleted_edges.size(); k++)
+		{
+			for (size_t j = 0; j < edges.size(); j++)
+			{
+				if (*tobe_deleted_edges[k] == *edges[j])
+					edges.erase(edges.begin() + j);
+			}
+		}
+
+		for (size_t k = 0; k < visible_faces.size(); k++)
+		{
+			for (size_t j = 0; j < faces.size(); j++)
+			{
+				if( visible_faces[k] == faces[j])
+					faces.erase(faces.begin()+j);
+			}
+		}
+	}
 }

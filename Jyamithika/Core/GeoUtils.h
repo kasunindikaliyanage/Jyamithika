@@ -2,6 +2,9 @@
 
 #include <vector>
 #include "Primitives\Point.h"
+#include "Primitives\Plane.h"
+#include "Primitives\Polygon.h"
+#include "Primitives\Polyhedron.h"
 
 namespace jmk 
 {
@@ -27,6 +30,15 @@ namespace jmk
 
 	// Return the area of the triangle defined by given 3 points
 	double areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c);
+	
+	float volume(const Point3d& a, const Face& f );
+
+	// Return the orientation of the points in the Face f. CW or CCW
+	int orientation(const Face& f, const Vector3f& p);
+
+	// Return the signed area of the tetrahedron.
+	// Assume the face vertices are in CCW order;
+	float volumeSigned(const Point3d& a, const Face& f);
 
 	// Return the angle between two vectors
 	float angle(const Vector3f& _v1, const Vector3f& _v2);
@@ -35,6 +47,9 @@ namespace jmk
 	// Note that the check assume that [_points] are in counter clockwise order
 	// TODO : Better if we can check this on polygon
 	bool isInside(Point3d& _point, std::vector<Point3d>& _points);
+
+	// Return whether the [point] is inside the polyhedron represented by [_faces] list
+	bool isInside(Point3d& _point, std::vector<Face>& _faces);
 
 	// Return the index of the point closest to the [_point] from [_points] 
 	// TODO : Better if we can check this on polygon
@@ -48,6 +63,10 @@ namespace jmk
 	// Check the coplaness of given four points in 3D.
 	// The three vectors are coplanar if their scalar triple product is zero.
 	bool coplaner(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d);
+
+	// Check whether the given 3 vectors are coplaner
+	// Vectors parallel to the same plane, or lie on the same plane are called coplanar
+	bool coplaner(const Vector3f& _v1, const Vector3f& _v2, const Vector3f& _v3);
 
 	Vector3f getFaceNormal(const Point3d& a, const Point3d& b, const Point3d& c);
 

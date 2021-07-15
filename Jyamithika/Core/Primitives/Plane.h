@@ -17,18 +17,14 @@ namespace jmk {
 
 		Plane(Vector3f& _normal, float _constant) : normal(_normal), d(_constant) {}
 
-		Plane(Point3D& _p1, Point3D& _p2, Point3D& _p3)
+		Plane(Point3d& _p1, Point3d& _p2, Point3d& _p3)
 		{
-			Vector3f v1 = _p1.getV();
-			Vector3f v2 = _p2.getV();
-			Vector3f v3 = _p3.getV();
-
-			Vector3f v21 = v2 - v1;
-			Vector3f v31 = v3 - v1;
+			Vector3f v21 = _p2 - _p1;
+			Vector3f v31 = _p3 - _p1;
 
 			normal = crossProduct(v21, v31);
 
-			d = dotProduct(normal, v1);
+			d = dotProduct(normal, _p1);
 		}
 
 		//Eqality check
@@ -57,4 +53,6 @@ namespace jmk {
 			return d;
 		}
 	};
+
+	typedef Plane<float> Planef;
 }

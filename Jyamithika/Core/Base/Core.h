@@ -9,6 +9,9 @@ namespace jmk {
 #define TOLERANCE 0.00001
 #define ZERO 0.0
 
+#define CW  1
+#define CCW 2
+
 
 	enum RELATIVE_POSITION {
 		LEFT, RIGHT, BEYOND, BEHIND, BETWEEN, ORIGIN, DESTINATION
