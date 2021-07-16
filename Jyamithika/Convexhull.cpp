@@ -252,6 +252,15 @@ void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _
 	getHull(_points.begin(), _points.end(), _results);
 }
 
+static bool incident_face(Face* _face, Edge3d* _edge)
+{
+	auto r1 = std::find(_face->vertices.begin(), _face->vertices.end(), _edge->vertices[0]);
+	auto r2 = std::find(_face->vertices.begin(), _face->vertices.end(), _edge->vertices[1]);
+	if (r1 != std::end(_face->vertices) && r1 != std::end(_face->vertices))
+		return true;
+	return false;
+}
+
 static void adjust_normal(Face* _face, Point3d& _ref_point)
 {
 	// ref point is inside one. If it sees the orientation as counter clockwise, we need to adjust the face normal direction.
@@ -339,7 +348,7 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	std::vector<Face*> faces;
 	std::vector<Edge3d*> edges;
 
-	// find 3 non collinear points and 4 coplaner points
+	// Find 3 non collinear points and 4 coplaner points
 	// TODO : For now implementation is looking for consecutive ones. But this is not needed
 	int i = 0 , j =0 ;
 	bool found_noncollinear = false,found_noncoplaner = false;
@@ -379,6 +388,8 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	float z_p = (z_mean + _points[i + 3][Z]) / 2;
 
 	//This point ref is used to decide the normal switch is needed or not.
+	
+	//TODO : Calculate the reference point manually
 	//Point3d point_ref(x_p, y_p, z_p);
 	Point3d point_ref(-0.8, 0.26, -0.57);
 
@@ -437,32 +448,27 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 
 		int new_size = border_edges.size();
 
-		//we need to find the unique points in border edges.
+		// We need to find the unique points in border edges.
 		std::list<Vertex3d*> unque_vertices;
-
 		for (size_t j = 0; j < new_size; j++)
 		{	
 			unque_vertices.push_back(border_edges[j]->vertices[0]);
 			unque_vertices.push_back(border_edges[j]->vertices[1]);
 		}
 
+		// Due to below sorting we cannot rely on the created order for adding faces to the edge. So we need to explicitly check
+		// for incident faces in that case.
 		unque_vertices.sort();
-
-		unque_vertices.unique(
-			[](Vertex3d* a, Vertex3d* b)
-		{
-			return *(a->point) == *(b->point);
-		});
-
+		unque_vertices.unique( [](Vertex3d* a, Vertex3d* b){ return *(a->point) == *(b->point); } );
 		std::list<Vertex3d*>::iterator it;
 
 		for (size_t j = 0; j < new_size; j++)
 		{
 			it = unque_vertices.begin();
 			std::advance(it, j);
-			//Add new faces and edges for new convex polyhedron
+			
+			// New faces and edges for new convex polyhedron
 			new_edges.push_back(new Edge3d(*it, &vertices[i]));
-			//new_edges.push_back(new Edge3d(&vertices[i + 1], border_edges[j]->vertices[1]));
 			new_faces.push_back(new Face(border_edges[j]->vertices[0], &vertices[i], border_edges[j]->vertices[1]));
 		
 			//Add new face referece to borader edges
@@ -482,27 +488,37 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 			adjust_normal(new_faces[j], point_ref);
 		}
 
-
-		//Added faces for edges
-		for (size_t j = 0; j < new_size; j++)
+		// Added faces for edges
+		// Based on our assumptions we must have exactly two faces incident wiht each edge
+		for (size_t j = 0; j < new_edges.size(); j++)
 		{
-			int val = j - 1;
-			if(val < 0 )
-				new_edges[j]->faces[0] = new_faces[new_size -1];
-			else
-				new_edges[j]->faces[0] = new_faces[j-1];
-			new_edges[j]->faces[1] = new_faces[j];
+			std::vector<Face*> incident_faces;
+
+			for (size_t k = 0; k < new_faces.size(); k++)
+			{
+				if(incident_face(new_faces[k],new_edges[j]))
+					incident_faces.push_back(new_faces[k]);
+			}
+
+			new_edges[j]->faces[0] = incident_faces[0];
+			new_edges[j]->faces[1] = incident_faces[1];
 		}
 
-		//Added edges for faces
+		// Added edges for faces
 		for (size_t j = 0; j < new_size; j++)
 		{
 			new_faces[j]->addEdge(border_edges[j]);
-			new_faces[j]->addEdge(new_edges[j]);
-			new_faces[j]->addEdge(new_edges[(j+1)% new_size]);
+			for (size_t k = 0; k < new_edges.size(); k++)
+			{
+				auto r1 = std::find(new_faces[j]->vertices.begin(), new_faces[j]->vertices.end(), new_edges[k]->vertices[0]);
+				auto r2 = std::find(new_faces[j]->vertices.begin(), new_faces[j]->vertices.end(), new_edges[k]->vertices[1]);
+
+				if (incident_face(new_faces[j], new_edges[k]))
+					new_faces[j]->addEdge(new_edges[k]);
+			}
 		}
 
-		//Deleted the visible faces and edges which are not int the border
+		// Deleted the visible faces and edges which are not int the border
 		for (size_t k = 0; k< tobe_deleted_edges.size(); k++)
 		{
 			for (size_t j = 0; j < edges.size(); j++)
