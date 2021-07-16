@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Polygon.h" // For vertex
+#include "Plane.h"
 
 namespace jmk {
 
@@ -41,8 +42,10 @@ namespace jmk {
 	struct Face {
 		std::vector<Edge3d*> edges;
 		std::vector<Vertex3d*> vertices;
+		Planef plane;
 		bool visible = false;
-		
+		bool normal_switch_needed = false;
+
 		Face() {}
 
 		Face(Vertex3d* p1, Vertex3d* p2, Vertex3d* p3)
@@ -50,6 +53,8 @@ namespace jmk {
 			vertices.push_back(p1);
 			vertices.push_back(p2);
 			vertices.push_back(p3);
+
+			plane = Planef(*p1->point, *p2->point, *p3->point);
 		}
 
 		bool operator==(const Face& _other)

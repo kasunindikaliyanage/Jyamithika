@@ -252,13 +252,27 @@ void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _
 	getHull(_points.begin(), _points.end(), _results);
 }
 
-static void construct_initial_polyhedron(std::vector<Vertex3d>& _points, int i,std::vector<Face*> &faces, std::vector<Edge3d*> &edges)
+static void adjust_normal(Face* _face, Point3d& _ref_point)
+{
+	// ref point is inside one. If it sees the orientation as counter clockwise, we need to adjust the face normal direction.
+	// If the this is opposite what we need. 
+	int order = orientation(*_face, _ref_point);
+	if (order ==  CCW )
+		_face->normal_switch_needed = true;
+}
+
+static void construct_initial_polyhedron(std::vector<Vertex3d>& _points, int i,std::vector<Face*> &faces, std::vector<Edge3d*> &edges, Point3d& ref_point)
 {
 	// Create the initial tetrahedron
 	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 2]));
 	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 3]));
 	faces.push_back(new Face(&_points[i + 1], &_points[i + 2], &_points[i + 3]));
 	faces.push_back(new Face(&_points[i + 2], &_points[i + 0], &_points[i + 3]));
+
+	for (size_t i = 0; i < faces.size(); i++)
+	{
+		adjust_normal(faces[i], ref_point);
+	}
 
 	edges.push_back(new Edge3d(&_points[i + 0], &_points[i + 1]));
 	edges.push_back(new Edge3d(&_points[i + 1], &_points[i + 2]));
@@ -322,7 +336,6 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 		vertices.push_back(Vertex3d(&_points[i]));
 	}
 
-
 	std::vector<Face*> faces;
 	std::vector<Edge3d*> edges;
 
@@ -351,14 +364,25 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 		std::cout << "All the points are collinear" << std::endl;
 		return;
 	}
-	
+
 	if (!found_noncoplaner)
 	{
 		std::cout << "All the points are coplaner" << std::endl;
 		return;
 	}
 
-	construct_initial_polyhedron(vertices, i, faces, edges);
+	float x_mean = (_points[i][X] + _points[i + 1][X] + _points[i + 2][X]) / 3;
+	float y_mean = (_points[i][Y] + _points[i + 1][Y] + _points[i + 2][Y] / 3);
+	float z_mean = (_points[i][Z] + _points[i + 1][Z] + _points[i + 2][Z] / 3);
+	float x_p = (x_mean + _points[i + 3][X]) / 2;
+	float y_p = (y_mean + _points[i + 3][Y]) / 2;
+	float z_p = (z_mean + _points[i + 3][Z]) / 2;
+
+	//This point ref is used to decide the normal switch is needed or not.
+	//Point3d point_ref(x_p, y_p, z_p);
+	Point3d point_ref(-0.8, 0.26, -0.57);
+
+	construct_initial_polyhedron(vertices, i, faces, edges, point_ref);
 	
 	//Points used to construct the p
 	vertices[i].processed = true;
@@ -366,22 +390,23 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	vertices[i+2].processed = true;
 	vertices[i+3].processed = true;
 
-	std::vector<Face*> visible_faces;
-	std::vector<Edge3d*> border_edges;
-	std::vector<Edge3d*> tobe_deleted_edges;
-
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		if (vertices[i].processed)
 			continue;
 
+		std::vector<Face*> visible_faces;
+		std::vector<Edge3d*> border_edges;
+		std::vector<Edge3d*> tobe_deleted_edges;
+
 		// Point has not yet processed and it is outside the current hull.
 		for (size_t j = 0; j < faces.size(); j++)
 		{
-			int order = orientation(*faces[j], *vertices[j].point);
-			float volum = volumeSigned(*vertices[i].point, *faces[j]);
+			float volum = volumeSigned(*faces[j], *vertices[i].point);
 
-			if (order == CCW && volum < 0 || order == CW && volum > 0)
+			//if (order == CCW && volum < 0 || order == CW && volum > 0)
+			if ((faces[j]->normal_switch_needed && volum > 0)
+				|| (!faces[j]->normal_switch_needed && volum < 0))
 			{
 				faces[j]->visible = true;
 				visible_faces.push_back(faces[j]);
@@ -395,14 +420,14 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 		{
 			for (size_t j = 0; j < visible_faces[k]->edges.size(); j++)
 			{
-				if ((visible_faces[k]->edges[j]->faces[0]->visible && !visible_faces[k]->edges[j]->faces[1]->visible)
-					|| (!visible_faces[k]->edges[j]->faces[0]->visible && visible_faces[k]->edges[j]->faces[1]->visible))
+				if ( visible_faces[k]->edges[j]->faces[0]->visible && visible_faces[k]->edges[j]->faces[1]->visible )
 				{
-					border_edges.push_back(visible_faces[k]->edges[j]);
+					tobe_deleted_edges.push_back(visible_faces[k]->edges[j]);
 				}
 				else
 				{
-					tobe_deleted_edges.push_back(visible_faces[k]->edges[j]);
+					//Atleast one edge in visible faces is visible
+					border_edges.push_back(visible_faces[k]->edges[j]);
 				}
 			}
 		}
@@ -451,6 +476,13 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 			}	
 		}
 
+		//Adjust the faces normals
+		for (size_t j = 0; j < new_size; j++)
+		{
+			adjust_normal(new_faces[j], point_ref);
+		}
+
+
 		//Added faces for edges
 		for (size_t j = 0; j < new_size; j++)
 		{
@@ -488,5 +520,8 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 					faces.erase(faces.begin()+j);
 			}
 		}
+
+		faces.insert(faces.end(), new_faces.begin(), new_faces.end());
+		edges.insert(edges.end(), new_edges.begin(), new_edges.end());
 	}
 }

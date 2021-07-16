@@ -38,7 +38,7 @@ namespace jmk
 
 	// Return the signed area of the tetrahedron.
 	// Assume the face vertices are in CCW order;
-	float volumeSigned(const Point3d& a, const Face& f);
+	float volumeSigned(const Face& _f, const Point3d& _p);
 
 	// Return the angle between two vectors
 	float angle(const Vector3f& _v1, const Vector3f& _v2);
