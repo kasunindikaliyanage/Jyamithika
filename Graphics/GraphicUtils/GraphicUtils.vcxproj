@@ -147,6 +147,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Geometry\GFace.h" />
+    <ClInclude Include="Geometry\GLine.h" />
+    <ClInclude Include="Geometry\GPoint.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -156,6 +159,9 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\basic_poly.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

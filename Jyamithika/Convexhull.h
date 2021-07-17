@@ -39,7 +39,7 @@ namespace jmk
 
 	// Compute the points in the convex hull in 3D space using incremental methodology.
 	// Assume there are no duplicate points.
-	void convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
+	void convexhull3D(std::vector<Point3d>& _points, std::vector<Face*>& faces);
 
 	// Compute the points in the convex hull.
 	void convexhull3DQuickhull(std::vector<Point3d>& _points, Polygon& _results);

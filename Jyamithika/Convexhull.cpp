@@ -270,25 +270,25 @@ static void adjust_normal(Face* _face, Point3d& _ref_point)
 		_face->normal_switch_needed = true;
 }
 
-static void construct_initial_polyhedron(std::vector<Vertex3d>& _points, int i,std::vector<Face*> &faces, std::vector<Edge3d*> &edges, Point3d& ref_point)
+static void construct_initial_polyhedron(std::vector<Vertex3d*>& _points, int i,std::vector<Face*> &faces, std::vector<Edge3d*> &edges, Point3d& ref_point)
 {
 	// Create the initial tetrahedron
-	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 2]));
-	faces.push_back(new Face(&_points[i + 0], &_points[i + 1], &_points[i + 3]));
-	faces.push_back(new Face(&_points[i + 1], &_points[i + 2], &_points[i + 3]));
-	faces.push_back(new Face(&_points[i + 2], &_points[i + 0], &_points[i + 3]));
+	faces.push_back(new Face(_points[i + 0], _points[i + 1], _points[i + 2]));
+	faces.push_back(new Face(_points[i + 0], _points[i + 1], _points[i + 3]));
+	faces.push_back(new Face(_points[i + 1], _points[i + 2], _points[i + 3]));
+	faces.push_back(new Face(_points[i + 2], _points[i + 0], _points[i + 3]));
 
 	for (size_t i = 0; i < faces.size(); i++)
 	{
 		adjust_normal(faces[i], ref_point);
 	}
 
-	edges.push_back(new Edge3d(&_points[i + 0], &_points[i + 1]));
-	edges.push_back(new Edge3d(&_points[i + 1], &_points[i + 2]));
-	edges.push_back(new Edge3d(&_points[i + 2], &_points[i + 0]));
-	edges.push_back(new Edge3d(&_points[i + 0], &_points[i + 3]));
-	edges.push_back(new Edge3d(&_points[i + 1], &_points[i + 3]));
-	edges.push_back(new Edge3d(&_points[i + 2], &_points[i + 3]));
+	edges.push_back(new Edge3d(_points[i + 0], _points[i + 1]));
+	edges.push_back(new Edge3d(_points[i + 1], _points[i + 2]));
+	edges.push_back(new Edge3d(_points[i + 2], _points[i + 0]));
+	edges.push_back(new Edge3d(_points[i + 0], _points[i + 3]));
+	edges.push_back(new Edge3d(_points[i + 1], _points[i + 3]));
+	edges.push_back(new Edge3d(_points[i + 2], _points[i + 3]));
 
 	faces[0]->addEdge(edges[0]);
 	faces[0]->addEdge(edges[1]);
@@ -325,7 +325,7 @@ static void construct_initial_polyhedron(std::vector<Vertex3d>& _points, int i,s
 	edges[5]->faces[1] = faces[2];
 }
 
-void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
+void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Face*>& faces)
 {
 	// Step 1 : Pick 4 points that do not lie in same plane. If we cannot find such points
 	//			- then all the points as in one plane and we can use 2d convexhull algo to find the hull.
@@ -333,19 +333,12 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	//				2. Pick thired point that do not in P1, P2 line. P3
 	//				3. Pick fourth point that do not lie in P1, P2, P3 plane.
 
-	// Step 2 : Randomly order the rest of points P5 .....Pn
-
-	// Step 3 : Add next point Pr to the current convexhull
-	//				1. Pr can be inside the current hull. Then there's nothing to be done.
-	//				2. Pr lies outside the convexhull. In this case we need to compute new hull.
-
-	std::vector<Vertex3d> vertices;
+	std::vector<Vertex3d*> vertices;
 	for (size_t i = 0; i < _points.size(); i++)
 	{
-		vertices.push_back(Vertex3d(&_points[i]));
+		vertices.push_back(new Vertex3d(&_points[i]));
 	}
 
-	std::vector<Face*> faces;
 	std::vector<Edge3d*> edges;
 
 	// Find 3 non collinear points and 4 coplaner points
@@ -396,14 +389,19 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 	construct_initial_polyhedron(vertices, i, faces, edges, point_ref);
 	
 	//Points used to construct the p
-	vertices[i].processed = true;
-	vertices[i+1].processed = true;
-	vertices[i+2].processed = true;
-	vertices[i+3].processed = true;
+	vertices[i]->processed = true;
+	vertices[i+1]->processed = true;
+	vertices[i+2]->processed = true;
+	vertices[i+3]->processed = true;
+
+
+	// Step 2 : Add next point Pr to the current convexhull
+	//				1. Pr can be inside the current hull. Then there's nothing to be done.
+	//				2. Pr lies outside the convexhull. In this case we need to compute new hull.
 
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		if (vertices[i].processed)
+		if (vertices[i]->processed)
 			continue;
 
 		std::vector<Face*> visible_faces;
@@ -413,7 +411,7 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 		// Point has not yet processed and it is outside the current hull.
 		for (size_t j = 0; j < faces.size(); j++)
 		{
-			float volum = volumeSigned(*faces[j], *vertices[i].point);
+			float volum = volumeSigned(*faces[j], *vertices[i]->point);
 
 			//if (order == CCW && volum < 0 || order == CW && volum > 0)
 			if ((faces[j]->normal_switch_needed && volum > 0)
@@ -468,8 +466,8 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Point3d>& _con
 			std::advance(it, j);
 			
 			// New faces and edges for new convex polyhedron
-			new_edges.push_back(new Edge3d(*it, &vertices[i]));
-			new_faces.push_back(new Face(border_edges[j]->vertices[0], &vertices[i], border_edges[j]->vertices[1]));
+			new_edges.push_back(new Edge3d(*it, vertices[i]));
+			new_faces.push_back(new Face(border_edges[j]->vertices[0], vertices[i], border_edges[j]->vertices[1]));
 		
 			//Add new face referece to borader edges
 			if (border_edges[j]->faces[0]->visible)

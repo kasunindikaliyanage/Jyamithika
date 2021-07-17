@@ -177,6 +177,8 @@ TEST(Incremental3d, Convexhull)
 	Point3d p4(-1,  1,  1);
 	Point3d p5( 1, -1,  1);
 	Point3d p6( 1, -1, -1);
+	//Point3d p9( 0.5, -0.5, -0.5);
+	//Point3d p10(0.5, 0.5, -0.5);
 	Point3d p7( 1,  1, -1);
 	Point3d p8( 1,  1,  1);
 
@@ -188,6 +190,8 @@ TEST(Incremental3d, Convexhull)
 	vertices.push_back(p4);
 	vertices.push_back(p5);
 	vertices.push_back(p6);
+	//vertices.push_back(p9);
+	//vertices.push_back(p10);
 	vertices.push_back(p7);
 	vertices.push_back(p8);
 

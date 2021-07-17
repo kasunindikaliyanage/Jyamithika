@@ -2,6 +2,8 @@
 #include <array>
 #include <iostream>
 
+// TODO : Vector should move to ../Core
+
 #include "../Base/Core.h"
 
 namespace jmk {
