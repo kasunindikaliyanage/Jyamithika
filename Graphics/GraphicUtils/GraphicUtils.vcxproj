@@ -151,12 +151,26 @@
     <ClInclude Include="Geometry\GFace.h" />
     <ClInclude Include="Geometry\GLine.h" />
     <ClInclude Include="Geometry\GPoint.h" />
+    <ClInclude Include="Imgui\imconfig.h" />
+    <ClInclude Include="Imgui\imgui.h" />
+    <ClInclude Include="Imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Imgui\imgui_internal.h" />
+    <ClInclude Include="Imgui\imstb_rectpack.h" />
+    <ClInclude Include="Imgui\imstb_textedit.h" />
+    <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Imgui\imgui.cpp" />
+    <ClCompile Include="Imgui\imgui_demo.cpp" />
+    <ClCompile Include="Imgui\imgui_draw.cpp" />
+    <ClCompile Include="Imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />

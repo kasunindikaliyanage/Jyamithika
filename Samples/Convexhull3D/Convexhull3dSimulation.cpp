@@ -2,6 +2,14 @@
 #include <GLFW\glfw3.h>
 #include <array>
 
+#include "GLM\glm.hpp"
+#include "GLM\gtc\matrix_transform.hpp"
+#include "GLM\gtc\type_ptr.hpp"
+
+#include "GraphicUtils\Imgui\imgui.h"
+#include "GraphicUtils\Imgui\imgui_impl_glfw.h"
+#include "GraphicUtils\Imgui\imgui_impl_opengl3.h"
+
 #include "GraphicUtils\ShaderProgram.h"
 #include "GraphicUtils\VertexArray.h"
 #include "GraphicUtils\VertexBuffer.h"
@@ -10,10 +18,6 @@
 #include "GraphicUtils\Geometry\GFace.h"
 #include "GraphicUtils\Geometry\GPoint.h"
 #include "GraphicUtils\Geometry\GLine.h"
-
-#include "GLM\glm.hpp"
-#include "GLM\gtc\matrix_transform.hpp"
-#include "GLM\gtc\type_ptr.hpp"
 
 #include "Jyamithika\Core\Primitives\Vector.h"
 #include "Jyamithika\Core\Primitives\Point.h"
@@ -58,7 +62,7 @@ void setup_pointcloud(std::vector<jmk::Point3d>& vertices)
 	jmk::Point3d p10(-3, -1, -4);
 	jmk::Point3d p11(-0.1, 1.2, -0.1);
 	jmk::Point3d p12(-0.7, 1.8, -0.8);
-	jmk::Point3d p13(2, -2, 5);
+	jmk::Point3d p13(2, -2, 4);
 	jmk::Point3d p14(-2, 4, -0.1);
 	jmk::Point3d p15(0.5, 0.5, 0.5);
 	jmk::Point3d p16(-1, -2, 4);
@@ -110,7 +114,8 @@ int main(void)
 		glfwSetCursorPosCallback(window, mouse_callback);
 		glfwSetScrollCallback(window, scroll_callback);
 
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
@@ -119,6 +124,21 @@ int main(void)
 		}
 
 		glEnable(GL_DEPTH_TEST);
+	}
+
+	//Set up ImGui
+	{
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer bindings
+		ImGui_ImplOpenGL3_Init("#version 130");
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 
 	std::vector<jmk::Face*> faces;
@@ -216,8 +236,8 @@ int main(void)
 	ShaderProgram cubeShader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/cube.shader");
 	cubeShader.activeAsCurrentShader();
 
-	glm::vec3 all_point_color_vec(1.0, 0.0, 0.0);
-	glm::vec3 convex_point_color_vec(0.4, 1.0, 0.2);
+	glm::vec3 all_point_color_vec(0.0, 0.0, 0.5);
+	glm::vec3 convex_point_color_vec(1.0, 0.0, 0.0);
 
 	unsigned int cube_model_loc = cubeShader.getUniformId("model");
 	unsigned int cube_view_loc = cubeShader.getUniformId("view");
@@ -230,6 +250,8 @@ int main(void)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	bool show_planes = false, show_all_pnt = true, show_vertices = false;
+
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -238,6 +260,11 @@ int main(void)
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		processInput(window);
 		/* Render here */
@@ -250,39 +277,54 @@ int main(void)
 
 		VAO_cube.bindVertexArray();
 		cubeShader.activeAsCurrentShader();
-
-		for (int i = 0; i < point_cloud.size(); i++)
+	
+		if (show_all_pnt)
 		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(point_cloud[i][X], point_cloud[i][Y], point_cloud[i][Z]));
-			model = glm::scale(model, glm::vec3(0.08, 0.08, 0.08));
-			glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
-			glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
-			glUniform3fv(cube_color, 1, glm::value_ptr(all_point_color_vec));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			for (int i = 0; i < point_cloud.size(); i++)
+			{
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(point_cloud[i][X], point_cloud[i][Y], point_cloud[i][Z]));
+				model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+				glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
+				glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
+				glUniform3fv(cube_color, 1, glm::value_ptr(all_point_color_vec));
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
 		}
 
-		for (int i = 0; i < unq_points.size(); i++)
+		if (show_vertices)
 		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(unq_points[i][X], unq_points[i][Y], unq_points[i][Z]));
-			model = glm::scale(model, glm::vec3(0.09, 0.09, 0.09));
-			glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
-			glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
-			glUniform3fv(cube_color, 1, glm::value_ptr(convex_point_color_vec));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			for (int i = 0; i < unq_points.size(); i++)
+			{
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(unq_points[i][X], unq_points[i][Y], unq_points[i][Z]));
+				model = glm::scale(model, glm::vec3(0.11, 0.11, 0.11));
+				glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
+				glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
+				glUniform3fv(cube_color, 1, glm::value_ptr(convex_point_color_vec));
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
 		}
 
-		VAO_poly.bindVertexArray();
-		testShader.activeAsCurrentShader();
-		glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-		glDrawArrays(GL_TRIANGLES, 0, data.size() / 6);
+		if (show_planes)
+		{
+			VAO_poly.bindVertexArray();
+			testShader.activeAsCurrentShader();
+			glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+			glDrawArrays(GL_TRIANGLES, 0, data.size() / 6);
 
-		//for (size_t i = 0; i < lines.size(); i++)
-		//{
-		//	lines[i]->setMVP(projection * view * model);
-		//	lines[i]->draw();
-		//}
+		}
+
+		ImGui::Begin(" Sample : Convexhull3d");		
+		ImGui::Checkbox("All Points", &show_all_pnt);
+		ImGui::Checkbox("Convexhull Vertices", &show_vertices);
+		ImGui::Checkbox("Convexhull Planes", &show_planes);
+		
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -331,6 +373,7 @@ void processInput(GLFWwindow* window)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	return;
 	if (firstMouse)
 	{
 		lastX = xpos;
