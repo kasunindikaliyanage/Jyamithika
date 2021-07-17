@@ -252,6 +252,10 @@ void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _
 	getHull(_points.begin(), _points.end(), _results);
 }
 
+void jmk::convexhull2DQuickhull(std::vector<Point3d>& _points, Polygon& _results)
+{
+}
+
 static bool incident_face(Face* _face, Edge3d* _edge)
 {
 	auto r1 = std::find(_face->vertices.begin(), _face->vertices.end(), _edge->vertices[0]);
@@ -538,4 +542,8 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Face*>& faces)
 		faces.insert(faces.end(), new_faces.begin(), new_faces.end());
 		edges.insert(edges.end(), new_edges.begin(), new_edges.end());
 	}
+}
+
+void jmk::convexhull3DQuickhull(std::vector<Point3d>& _points, Polygon& _results)
+{
 }

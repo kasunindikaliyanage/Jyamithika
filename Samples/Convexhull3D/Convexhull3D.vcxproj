@@ -155,6 +155,9 @@
       <Project>{1c356d6f-f35e-48b2-ba47-3b3d828ed93a}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\convexhull3d_sample.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
