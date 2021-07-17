@@ -28,4 +28,15 @@ namespace jmk {
 		}
 		return false;
 	}
+
+	template<typename coordinate_type, size_t dimensions>
+	float distance(Point3d& p1, Point3d& p2)
+	{
+		float dx = p1[X] - p2[X];
+		float dy = p1[Y] - p2[Y];
+		float dz = p1[Z] - p2[Z];
+
+		float distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
+		return distance;
+	}
 }

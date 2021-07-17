@@ -145,6 +145,7 @@
     <ClInclude Include="Core\AreaVolumn.h" />
     <ClInclude Include="Core\Distance.h" />
     <ClInclude Include="Core\GeoUtils.h" />
+    <ClInclude Include="Core\Inclusion.h" />
     <ClInclude Include="Core\Intersection.h" />
     <ClInclude Include="Core\Base\Core.h" />
     <ClInclude Include="Core\Primitives\Line.h" />
@@ -168,7 +169,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Convexhull.cpp" />
+    <ClCompile Include="Core\Distance.cpp" />
     <ClCompile Include="Core\GeoUtils.cpp" />
+    <ClCompile Include="Core\Inclusion.cpp" />
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Primitives\Vector.cpp" />
   </ItemGroup>

@@ -21,6 +21,9 @@ namespace jmk
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
 	bool leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c);
 
+	// Predicate to determine whether the [Point c] is left to or between the segment [a b]
+	bool leftOrBetween(const Point3d& a, const Point3d& b, const Point3d& c);
+
 	// Returns counter clockwise angle (0 - 360) measure from referece point to the give point 
 	float polarAngle( const Point3d& _other, const Point3d& _ref) ;
 

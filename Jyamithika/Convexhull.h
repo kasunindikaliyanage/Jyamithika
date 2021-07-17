@@ -35,7 +35,9 @@ namespace jmk
 
 	// Compute the points in the convex hull.
 	// Assume the points are in XY 2D plane.
-	void convexhull2DQuickhull(std::vector<Point3d>& _points, Polygon& _results);
+	// Keep in mind Points in _convex is in the convex hull but not in any perticular order.
+	// - So need to correct the order before using to construct a polygon
+	void convexhull2DQuickhull(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
 
 	// Compute the points in the convex hull in 3D space using incremental methodology.
 	// Assume there are no duplicate points.

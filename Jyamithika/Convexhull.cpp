@@ -1,5 +1,7 @@
 #include "Convexhull.h"
 #include "Core\GeoUtils.h"
+#include "Core\Distance.h"
+#include "Core\Inclusion.h"
 
 #include <algorithm>
 #include <Iterator>
@@ -252,8 +254,90 @@ void jmk::convexhull2DDivideAndConquer(std::vector<Point3d>& _points, Polygon& _
 	getHull(_points.begin(), _points.end(), _results);
 }
 
-void jmk::convexhull2DQuickhull(std::vector<Point3d>& _points, Polygon& _results)
+static void find_hull(std::vector<Point3d>& _points, std::vector<Point3d>& _convex, Point3d& _l, Point3d& _r)
 {
+	if (!_points.size())
+		return;
+
+	if (_points.size() == 1) 
+	{
+		_convex.push_back(_points[0]);
+		return;
+	}
+
+	Point3d maxd_point = _points[0];
+	float max_d = 0;
+
+	for (Point3d& pnt : _points)
+	{
+		float this_distance = distance(_l, _r, pnt);
+		if (this_distance > max_d)
+		{
+			max_d = this_distance;
+			maxd_point = pnt;
+		}
+	}
+
+	_convex.push_back(maxd_point);
+
+	std::vector<Point3d> s1;
+	std::vector<Point3d> s2;
+
+	for (Point3d& pnt : _points)
+	{
+		if (!isInside(_l, _r, maxd_point, pnt))
+		{
+			if (left(_l, _r, pnt))
+				s1.push_back(pnt);
+			else
+				s2.push_back(pnt);
+		}
+	}
+
+	find_hull(s1, _convex, _l, _r);
+	find_hull(s2, _convex, _r, _l);
+}
+
+void jmk::convexhull2DQuickhull(std::vector<Point3d>& _points, std::vector<Point3d>& _convex)
+{
+	if (_points.size() <= 3)
+		return;
+
+	// Step 1 : Get the two extreme points Left top and right bot
+	Point3d left_top = _points[0];
+	Point3d right_bot = _points[0];
+
+	for (Point3d& point : _points)
+	{
+		if ((point[X] < left_top[X])
+			|| (point[X] == left_top[X]) && (point[Y] > left_top[X]))
+		{
+			left_top = point;
+		}
+
+		if ((point[X] > left_top[X])
+			|| (point[X] == left_top[X]) && (point[Y] < left_top[X]))
+		{
+			right_bot = point;
+		}
+	}
+
+	_convex.push_back(left_top);
+	_convex.push_back(right_bot);
+
+	std::vector<Point3d> s1;
+	std::vector<Point3d> s2;
+
+	for (Point3d& point : _points)
+	{
+		if (left(left_top, right_bot, point))
+			s1.push_back(point);
+		else
+			s2.push_back(point);
+	}
+
+	find_hull(s1, _convex, left_top, right_bot);
+	find_hull(s2, _convex, right_bot,left_top);
 }
 
 static bool incident_face(Face* _face, Edge3d* _edge)

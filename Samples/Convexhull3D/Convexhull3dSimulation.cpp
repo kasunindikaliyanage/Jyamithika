@@ -101,7 +101,7 @@ int main(void)
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		/* Create a windowed mode window and its OpenGL context */
-		window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Polygon drawing test", NULL, NULL);
+		window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Convexhull 3D", NULL, NULL);
 		if (!window)
 		{
 			glfwTerminate();
