@@ -36,6 +36,9 @@
     <ClInclude Include="Geometry\GLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Geometry\GCube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -53,5 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic_poly.shader" />
+    <None Include="Shaders\cube.shader" />
   </ItemGroup>
 </Project>

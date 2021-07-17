@@ -37,7 +37,7 @@ float lastY = SCREEN_HEIGHT / 2.0f;
 
 int option = 0;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+Camera camera(glm::vec3(0.0f, 0.0f, 12.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -54,6 +54,15 @@ void setup_pointcloud(std::vector<jmk::Point3d>& vertices)
 	jmk::Point3d p7(1, 1, -1);
 	jmk::Point3d p8(1, 1, 1);
 
+	jmk::Point3d p9(-2, -2, 2);
+	jmk::Point3d p10(-3, -1, -4);
+	jmk::Point3d p11(-0.1, 1.2, -0.1);
+	jmk::Point3d p12(-0.7, 1.8, -0.8);
+	jmk::Point3d p13(2, -2, 5);
+	jmk::Point3d p14(-2, 4, -0.1);
+	jmk::Point3d p15(0.5, 0.5, 0.5);
+	jmk::Point3d p16(-1, -2, 4);
+
 	vertices.push_back(p1);
 	vertices.push_back(p2);
 	vertices.push_back(p3);
@@ -62,6 +71,15 @@ void setup_pointcloud(std::vector<jmk::Point3d>& vertices)
 	vertices.push_back(p6);
 	vertices.push_back(p7);
 	vertices.push_back(p8);
+
+	vertices.push_back(p9);
+	vertices.push_back(p10);
+	vertices.push_back(p11);
+	vertices.push_back(p12);
+	vertices.push_back(p13);
+	vertices.push_back(p14);
+	vertices.push_back(p15);
+	vertices.push_back(p16);
 }
 
 int main(void)
@@ -115,15 +133,65 @@ int main(void)
 	{
 		getLinesFromAFace(faces[i], lines);
 	}
+
+	float cube_vertices[] = {
+		-0.5f, -0.5f, -0.5f, 
+		 0.5f, -0.5f, -0.5f, 
+		 0.5f,  0.5f, -0.5f, 
+		 0.5f,  0.5f, -0.5f, 
+		-0.5f,  0.5f, -0.5f, 
+		-0.5f, -0.5f, -0.5f, 
+
+		-0.5f, -0.5f,  0.5f, 
+		 0.5f, -0.5f,  0.5f, 
+		 0.5f,  0.5f,  0.5f, 
+		 0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f,  0.5f, 
+		-0.5f, -0.5f,  0.5f, 
+
+		-0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f, -0.5f, 
+		-0.5f, -0.5f, -0.5f, 
+		-0.5f, -0.5f, -0.5f, 
+		-0.5f, -0.5f,  0.5f, 
+		-0.5f,  0.5f,  0.5f, 
+
+		 0.5f,  0.5f,  0.5f, 
+		 0.5f,  0.5f, -0.5f, 
+		 0.5f, -0.5f, -0.5f, 
+		 0.5f, -0.5f, -0.5f, 
+		 0.5f, -0.5f,  0.5f, 
+		 0.5f,  0.5f,  0.5f, 
+
+		-0.5f, -0.5f, -0.5f, 
+		 0.5f, -0.5f, -0.5f, 
+		 0.5f, -0.5f,  0.5f, 
+		 0.5f, -0.5f,  0.5f, 
+		-0.5f, -0.5f,  0.5f, 
+		-0.5f, -0.5f, -0.5f, 
+
+		-0.5f,  0.5f, -0.5f, 
+		 0.5f,  0.5f, -0.5f, 
+		 0.5f,  0.5f,  0.5f, 
+		 0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f, -0.5f 
+	};
 	
+	VertexArray VAO_cube;
+	VertexBuffer VBO_cube(cube_vertices, 108);
+	VAO_cube.addVertexLayout(0, 3, GL_FALSE, 3 * sizeof(float), 0);
+
 	std::vector<float> data;
 	getDataFromFaceList(faces, data);
 
-	VertexArray VAO;
-	VertexBuffer VBO(data.data(), data.size());
-	VAO.addVertexLayout(0, 3, GL_FALSE, 6 * sizeof(float), 0);
-	VAO.addVertexLayout(1, 3, GL_FALSE, 6 * sizeof(float), (3 * sizeof(float)));
-	VAO.bindVertexArray();
+	std::vector<jmk::Point3d> unq_points;
+	getUniquePoints(faces, unq_points);
+
+	VertexArray VAO_poly;
+	VertexBuffer VBO_poly(data.data(), data.size());
+	VAO_poly.addVertexLayout(0, 3, GL_FALSE, 6 * sizeof(float), 0);
+	VAO_poly.addVertexLayout(1, 3, GL_FALSE, 6 * sizeof(float), (3 * sizeof(float)));
 
 	ShaderProgram testShader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/basic_poly.shader");
 	testShader.activeAsCurrentShader();
@@ -145,6 +213,20 @@ int main(void)
 	glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
+	ShaderProgram cubeShader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/cube.shader");
+	cubeShader.activeAsCurrentShader();
+
+	glm::vec3 all_point_color_vec(1.0, 0.0, 0.0);
+	glm::vec3 convex_point_color_vec(0.4, 1.0, 0.2);
+
+	unsigned int cube_model_loc = cubeShader.getUniformId("model");
+	unsigned int cube_view_loc = cubeShader.getUniformId("view");
+	unsigned int cube_projection_loc = cubeShader.getUniformId("projection");
+	unsigned int cube_color = cubeShader.getUniformId("cubeColor");
+
+	glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(cube_projection_loc, 1, GL_FALSE, glm::value_ptr(projection));
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -159,16 +241,41 @@ int main(void)
 
 		processInput(window);
 		/* Render here */
-		
-		VAO.bindVertexArray();
-		testShader.activeAsCurrentShader();
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.95f, 0.95f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		view = camera.GetViewMatrix();
+
+
+		VAO_cube.bindVertexArray();
+		cubeShader.activeAsCurrentShader();
+
+		for (int i = 0; i < point_cloud.size(); i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(point_cloud[i][X], point_cloud[i][Y], point_cloud[i][Z]));
+			model = glm::scale(model, glm::vec3(0.08, 0.08, 0.08));
+			glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
+			glUniform3fv(cube_color, 1, glm::value_ptr(all_point_color_vec));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		for (int i = 0; i < unq_points.size(); i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(unq_points[i][X], unq_points[i][Y], unq_points[i][Z]));
+			model = glm::scale(model, glm::vec3(0.09, 0.09, 0.09));
+			glUniformMatrix4fv(cube_model_loc, 1, GL_FALSE, glm::value_ptr(model));
+			glUniformMatrix4fv(cube_view_loc, 1, GL_FALSE, glm::value_ptr(view));
+			glUniform3fv(cube_color, 1, glm::value_ptr(convex_point_color_vec));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		VAO_poly.bindVertexArray();
+		testShader.activeAsCurrentShader();
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
-		
 		glDrawArrays(GL_TRIANGLES, 0, data.size() / 6);
 
 		//for (size_t i = 0; i < lines.size(); i++)

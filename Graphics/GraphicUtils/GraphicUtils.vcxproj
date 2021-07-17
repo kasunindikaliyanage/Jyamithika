@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Geometry\GCube.h" />
     <ClInclude Include="Geometry\GFace.h" />
     <ClInclude Include="Geometry\GLine.h" />
     <ClInclude Include="Geometry\GPoint.h" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic_poly.shader" />
+    <None Include="Shaders\cube.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
