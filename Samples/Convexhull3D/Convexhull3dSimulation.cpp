@@ -121,7 +121,8 @@ int main(void)
 
 	VertexArray VAO;
 	VertexBuffer VBO(data.data(), data.size());
-	VAO.addVertexLayout(0, 3, GL_FALSE, 3 * sizeof(float), 0);
+	VAO.addVertexLayout(0, 3, GL_FALSE, 6 * sizeof(float), 0);
+	VAO.addVertexLayout(1, 3, GL_FALSE, 6 * sizeof(float), (3 * sizeof(float)));
 	VAO.bindVertexArray();
 
 	ShaderProgram testShader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/basic_poly.shader");
@@ -162,13 +163,13 @@ int main(void)
 		VAO.bindVertexArray();
 		testShader.activeAsCurrentShader();
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		view = camera.GetViewMatrix();
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
 		
-		glDrawArrays(GL_TRIANGLES, 0, data.size() / 3);
+		glDrawArrays(GL_TRIANGLES, 0, data.size() / 6);
 
 		//for (size_t i = 0; i < lines.size(); i++)
 		//{

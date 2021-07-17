@@ -3,17 +3,57 @@
 #include "GraphicUtils\Geometry\GLine.h"
 #include "Jyamithika\Core\Primitives\Polyhedron.h"
 
+float colors[36] = {
+	0.1 , 0.2 , 0.3, //1
+	0.6 , 0.3 , 0.4, //2
+	0.3 , 0.4 , 0.5, //3
+	0.4 , 0.5 , 0.6, //4
+	0.5 , 0.6 , 0.7, //5
+	0.6 , 0.7 , 0.8, //6
+	0.7 , 0.8 , 0.9, //7
+	0.8 , 0.9 , 0.1, //8
+	0.9 , 0.1 , 0.2, //9
+	0.5 , 0.2 , 0.3, //10
+	0.8 , 0.7 , 0.3, //11
+	0.9 , 0.9 , 0.3	 //12
+};
+
 void getDataFromFaceList(std::vector<jmk::Face*>& faces, std::vector<float>& data)
 {
+
 	for (size_t i = 0; i < faces.size(); i++)
 	{
-		for (size_t j = 0; j < faces[i]->vertices.size(); j++)
+		if (!faces[i]->normal_switch_needed)
 		{
-			jmk::Point3d ptn = *faces[i]->vertices[j]->point;
-			data.push_back(ptn[X]);
-			data.push_back(ptn[Y]);
-			data.push_back(ptn[Z]);
+			for (size_t j = 0; j < faces[i]->vertices.size(); j++)
+			{
+				jmk::Point3d ptn = *faces[i]->vertices[j]->point;
+				data.push_back(ptn[X]);
+				data.push_back(ptn[Y]);
+				data.push_back(ptn[Z]);
+
+				//Push colors
+				data.push_back(colors[i * 3 + 0]);
+				data.push_back(colors[i * 3 + 1]);
+				data.push_back(colors[i * 3 + 2]);
+			}
 		}
+		else
+		{
+			for ( int j = (faces[i]->vertices.size() - 1) ; j >=0 ; j--)
+			{
+				jmk::Point3d ptn = *faces[i]->vertices[j]->point;
+				data.push_back(ptn[X]);
+				data.push_back(ptn[Y]);
+				data.push_back(ptn[Z]);
+
+				//Push colors
+				data.push_back(colors[i * 3 + 0]);
+				data.push_back(colors[i * 3 + 1]);
+				data.push_back(colors[i * 3 + 2] );
+			}
+		}
+
 	}
 }
 
