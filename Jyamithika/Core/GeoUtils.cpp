@@ -59,6 +59,12 @@ bool jmk::leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c)
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
+bool jmk::leftOrBetween(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	int position = pointRelativePos(a, b, c);
+	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BETWEEN);
+}
+
 float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
 {
 	if (_other[Z] == 0 && _ref[Z] == 0)

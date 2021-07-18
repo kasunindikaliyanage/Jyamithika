@@ -172,6 +172,7 @@
     <ClCompile Include="Core\Distance.cpp" />
     <ClCompile Include="Core\GeoUtils.cpp" />
     <ClCompile Include="Core\Inclusion.cpp" />
+    <ClCompile Include="Core\Primitives\Line.cpp" />
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Primitives\Vector.cpp" />
   </ItemGroup>

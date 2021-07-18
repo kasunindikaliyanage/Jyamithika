@@ -285,13 +285,10 @@ static void find_hull(std::vector<Point3d>& _points, std::vector<Point3d>& _conv
 
 	for (Point3d& pnt : _points)
 	{
-		if (!isInside(_l, _r, maxd_point, pnt))
-		{
-			if (left(_l, _r, pnt))
-				s1.push_back(pnt);
-			else
-				s2.push_back(pnt);
-		}
+		if (leftOrBetween(_l, maxd_point, pnt))
+			s1.push_back(pnt);
+		else if (left(maxd_point, _r, pnt))
+			s2.push_back(pnt);
 	}
 
 	find_hull(s1, _convex, _l, _r);
@@ -315,8 +312,8 @@ void jmk::convexhull2DQuickhull(std::vector<Point3d>& _points, std::vector<Point
 			left_top = point;
 		}
 
-		if ((point[X] > left_top[X])
-			|| (point[X] == left_top[X]) && (point[Y] < left_top[X]))
+		if ((point[X] > right_bot[X])
+			|| (point[X] == right_bot[X]) && (point[Y] < right_bot[X]))
 		{
 			right_bot = point;
 		}
@@ -330,9 +327,9 @@ void jmk::convexhull2DQuickhull(std::vector<Point3d>& _points, std::vector<Point
 
 	for (Point3d& point : _points)
 	{
-		if (left(left_top, right_bot, point))
+		if (leftOrBetween(left_top, right_bot, point))
 			s1.push_back(point);
-		else
+		else if(right(left_top, right_bot, point))
 			s2.push_back(point);
 	}
 

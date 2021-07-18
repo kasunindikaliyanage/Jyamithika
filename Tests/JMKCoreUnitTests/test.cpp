@@ -3,6 +3,8 @@
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
 #include "Core\Primitives\Vector.h"
+#include "Core\Primitives\Line.h"
+#include "Core\Distance.h"
 
 using namespace jmk;
 
@@ -68,4 +70,18 @@ TEST(OrientationTest2, OrientationTest)
 	Face f(&v1, &v2, &v3);
 	float order = orientation(f, point_ref);
 	EXPECT_TRUE(order == 1);
+}
+
+TEST(distancePointLine, DistanceTest)
+{
+	Point3d point_ref(-1, -9, 1);
+	//Point3d point_ref(-0.34, 0, 0);
+	Point3d p1(-10, 8, 2);
+	Point3d p2(8, 5, -3);
+	Line l1(p1, p2);
+
+	float distance1 = distance(l1,point_ref);
+	float distance2 = distance(p1,p2, point_ref);
+
+	EXPECT_TRUE(isEqualD(distance1,distance2));
 }
