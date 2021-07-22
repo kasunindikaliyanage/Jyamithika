@@ -96,6 +96,9 @@
     <ClInclude Include="Core\Inclusion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Voronoi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Primitives\Vector.cpp">
@@ -117,6 +120,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Primitives\Line.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Voronoi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Primitives\Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

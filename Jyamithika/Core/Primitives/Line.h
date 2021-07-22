@@ -18,4 +18,23 @@ namespace jmk {
 
 		Point3d point();
 	};
+
+	class Line2d {
+		Vector2f dir;
+		Point2d point_in_line;
+
+	public:
+
+		Line2d() {}
+
+		Line2d( Point2d& p1, Vector2f& _dir )
+		{
+			point_in_line = p1;
+			dir = _dir;
+		}
+
+		Vector2f direction();
+
+		Point2d point();
+	};
 }

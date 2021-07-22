@@ -85,3 +85,23 @@ TEST(distancePointLine, DistanceTest)
 
 	EXPECT_TRUE(isEqualD(distance1,distance2));
 }
+
+TEST(increment, increTest)
+{
+	std::list<float> values;
+	values.push_back(1.0);
+	values.push_back(1.0);
+	values.push_back(1.0);
+
+	std::list<float>::iterator itr = values.begin();
+	std::advance(itr, 2);
+
+	if (itr!= values.begin())
+	{
+		std::cout << "Check 1" << std::endl;
+	}
+	{
+		std::cout << "Check 2" << std::endl;
+	}
+
+}

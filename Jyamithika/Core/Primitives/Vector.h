@@ -33,7 +33,9 @@ namespace jmk {
 		Vector(std::array<coordinate_type, dimensions> _coords) : coords(_coords) {}
 
 		// TODO this looks bad in 2D case. Need to change based on template parameter dimension
-		Vector(coordinate_type _x, coordinate_type _y, coordinate_type _z = 0.0) : coords({_x,_y,_z}) {}
+		Vector(coordinate_type _x, coordinate_type _y, coordinate_type _z) : coords({_x,_y,_z}) {}
+
+		Vector(coordinate_type _x, coordinate_type _y) : coords({ _x,_y}) {}
 
 		// Eqality check
 		bool operator==(const Vector<coordinate_type, dimensions>&) const;

@@ -15,4 +15,6 @@ namespace jmk {
 	float distance(Point3d& A, Point3d& B, Point3d& C);
 
 	float distance(Line& line, Point3d& C);
+
+	float distance(Point3d& p1, Point3d& p2);
 }
