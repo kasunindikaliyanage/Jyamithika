@@ -6,6 +6,9 @@
 #include "Primitives\Polygon.h"
 #include "Primitives\Polyhedron.h"
 
-bool intersect( const jmk::Line&, const jmk::Line&, jmk::Point3d&);
+namespace jmk {
 
-bool intersect( const jmk::Line2d&, const jmk::Line2d&, jmk::Point2d&);
+	bool intersect(jmk::Line&, jmk::Line&, jmk::Point3d&);
+
+	bool intersect(jmk::Line2d&,jmk::Line2d&, jmk::Point2d&);
+}

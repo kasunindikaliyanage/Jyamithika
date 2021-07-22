@@ -46,4 +46,6 @@ namespace jmk
 	// Compute the points in the convex hull.
 	// TODO : Have not implemented yet
 	void convexhull3DQuickhull(std::vector<Point3d>& _points, Polygon& _results);
+
+
 }

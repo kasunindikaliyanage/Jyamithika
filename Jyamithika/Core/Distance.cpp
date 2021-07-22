@@ -38,3 +38,11 @@ float jmk::distance(Point3d& p1, Point3d& p2)
 	float distance = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
 	return distance;
 }
+
+float jmk::distance(Point2d& p1, Point2d& p2)
+{
+	float dx = p1[X] - p2[X];
+	float dy = p1[Y] - p2[Y];
+	float distance = sqrt(pow(dx, 2) + pow(dy, 2));
+	return distance;
+}

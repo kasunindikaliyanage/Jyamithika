@@ -63,6 +63,8 @@ namespace jmk {
 		// Cross product
 		Vector<coordinate_type, dimensions> cross(const Vector<coordinate_type, dimensions>&);
 
+		void assign(int dim, coordinate_type value);
+
 		// Return the magnitude of the the vector (mod(A) / |A|)
 		float magnitude() const;
 
@@ -155,6 +157,12 @@ namespace jmk {
 		return coords[_index];
 	}
 	
+
+	template<typename coordinate_type, size_t dimensions>
+	inline void Vector<coordinate_type, dimensions>::assign(int dim, coordinate_type value)
+	{
+		coords[dim] = value;
+	}
 
 	template<typename coordinate_type, size_t dimensions>
 	inline float Vector<coordinate_type, dimensions>::magnitude() const

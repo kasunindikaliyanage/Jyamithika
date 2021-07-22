@@ -122,10 +122,13 @@
     <ClCompile Include="Core\Primitives\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Primitives\Point.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Voronoi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Primitives\Point.cpp">
+    <ClCompile Include="Core\Intersection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

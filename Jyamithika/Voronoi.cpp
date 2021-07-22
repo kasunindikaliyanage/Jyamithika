@@ -1,12 +1,13 @@
+#include "Voronoi.h"
+
 #include <algorithm>
 #include <queue>
 #include <list>
 #include <Iterator>
-
-#include "Voronoi.h"
 #include "Core\Primitives\Line.h"
-
+#include "Core\Primitives\Segment.h"
 #include "Core\Intersection.h"
+#include "Core\Distance.h"
 
 using namespace jmk;
 
@@ -25,7 +26,7 @@ struct Event;
 typedef Line2d EdgeItem;
 
 struct BeachLineItem {
-	Event* event;
+	Event* event = nullptr;
 	Point2d site;
 	BEACH_ITEM_TYPE type;
 
@@ -34,15 +35,15 @@ struct BeachLineItem {
 	BeachLineItem* next_edge = nullptr;
 	BeachLineItem* prev_edge = nullptr;
 
-	// For edge items
-	EdgeItem edge;
+	EdgeItem edge;			 // For edge items
 };
 
 struct Event {
 	EVENT_TYPE type;
 	Point2d site;
-	Point2d intersetion_point;
+	Point2d* intersetion_point; // For circle events
 	BeachLineItem* arc;
+	bool valid = true;
 };
 
 struct EventComparator {
@@ -64,6 +65,7 @@ struct EventComparator {
 
 std::priority_queue< Event*, std::vector<Event*>,EventComparator> p_queue;
 
+std::vector<Segment> segments;
 std::list<BeachLineItem*> beach_line;
 typedef std::list<BeachLineItem*>::iterator BeachLineItr;
 
@@ -125,8 +127,10 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 	auto arc_y = computeArcY((*itr)->site, site);
 	Point2d start_point(site[X],arc_y);
 
-	//TODO need to calculate direction vectors for edges;
-	Vector2f dir;
+	// Direction vectors for the two edges are prependicular to the vector between the two focuses
+	// - focus of new_arc and arc_to_replace
+	Vector2f fnfo = arc_to_replace->site - new_arc->site;	 // Direction vector from new site to arc_to_replace->site
+	Vector2f dir(fnfo[Y], -fnfo[X]);						 // Prependicular vector to fnfo
 	Vector2f neg_dir(dir[X], -dir[Y]);
 	EdgeItem l_edge(start_point, dir);
 	EdgeItem r_edge(start_point, neg_dir);
@@ -173,47 +177,55 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 	return itr;
 }
 
-void addCircleEvents(BeachLineItr& itr)
+void addCircleEvents(BeachLineItem* middle_arc)
 {
-	BeachLineItem* current_arc = *itr;
-	
 	// Check 3 arcs sequence ending current arc circle event
-	if (current_arc->prev_arc != nullptr && current_arc->prev_arc->prev_arc != nullptr)
+	if (middle_arc != nullptr && middle_arc->prev_arc != nullptr)
 	{
-		//Check the intersection of 2 edges separating above arcs
-		BeachLineItem* edg1 = current_arc->prev_edge;
-		BeachLineItem* edg2 = current_arc->prev_arc->prev_edge;
-		Point2d point;
+		// Check the intersection of 2 edges separating above arcs
+		BeachLineItem* edg1 = middle_arc->prev_edge;
+		BeachLineItem* edg2 = middle_arc->next_edge;
+		Point2d* intersection_point = new Point2d();
 
-		if (intersect(edg1->edge, edg2->edge, point))
+		bool is_intersect = intersect(edg1->edge, edg2->edge, *intersection_point);
+
+		if (is_intersect)
 		{
+			//Finding the circle event Y. which is (intersection.y - circle.radius)
+			float circle_radius = distance(*intersection_point, middle_arc->site);
+			float circle_event_y =  (*intersection_point)[Y] - circle_radius;
 
-		}
-	}
+			// If there is already a circle event for this arc, check the y coordinates.
+			// If already exsisting event's y coordinate is lower we can replace the circle event with the new one
+			if (middle_arc->event)
+			{
+				// Make previous circle event invalid one from queue
+				if (middle_arc->event->site[Y] > circle_event_y)
+					middle_arc->event->valid = false;
+				else
+					return; // If the previous circle event's y coordinate is higher we keep that event
+			}
 
-	// Check 3 arcs sequence begining from current arc circle event
-	if (current_arc->next_arc != nullptr && current_arc->next_arc->next_arc != nullptr)
-	{
-		//Check the intersection of 2 edges separating above arcs
-		BeachLineItem* edg1 = current_arc->next_arc;
-		BeachLineItem* edg2 = current_arc->next_arc->next_arc->prev_edge;
-		Point2d point;
+			Event* circle_event = new Event();
+			circle_event->type = EVENT_TYPE::CIRCLE;
+			circle_event->arc = middle_arc;
+			circle_event->site = Point2d((*intersection_point)[X], circle_event_y);
+			circle_event->intersetion_point = intersection_point;
+			p_queue.push(circle_event);
 
-		if (intersect(edg1->edge, edg2->edge, point))
-		{
-
+			middle_arc->event = circle_event;
 		}
 	}
 }
 
 void handleSiteEvent(Event* event) 
 {
+	// In site events new arcs is going to form
 	if (beach_line.empty())
 	{
 		// Beach line is emptry. So add the item(Arc) and return
 		BeachLineItem* item = new BeachLineItem();
 		item->type = BEACH_ITEM_TYPE::ARC;
-		item->event = event;
 		beach_line.push_back(item);
 		return;
 	}
@@ -223,21 +235,80 @@ void handleSiteEvent(Event* event)
 		BeachLineItr arc_above_itr	= getArcAbove(event->site);
 		BeachLineItr new_arc_itr	= addNewArc(arc_above_itr, event->site);
 
-		addCircleEvents(new_arc_itr);
+		addCircleEvents((*new_arc_itr)->prev_arc);
+		addCircleEvents((*new_arc_itr)->next_arc);
 	}
 }
 
-void handleCircleEvent(Event* event) 
+void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 {
+	// In circle events, exsisting arcs are going to shrink to a point
 	// Delete el,an,er related to current circle event
+	BeachLineItem* arc_to_remove = event->arc;
+	Point2d left_point = arc_to_remove->prev_edge->edge.point();
+	Point2d right_point = arc_to_remove->next_edge->edge.point();
 
-	// Add new edge for arc left and right to circle event arc.
+	Edge2d edg1(left_point, *event->intersetion_point);
+	Edge2d edg2(right_point, *event->intersetion_point);
 
+	// Add two completed edges
+	_edges.push_back(edg1);
+	_edges.push_back(edg2);
+
+	// Remove the arc and add new edge for arc left and right to circle event arc.
+	Point2d* start_point = event->intersetion_point;
+
+	float dir_x = 0.0;
+	float dir_y = 0.0;
+
+	BeachLineItem* left_arc = arc_to_remove->prev_arc;
+	BeachLineItem* right_arc = arc_to_remove->next_arc;
+	
+	if ( left_arc && right_arc)
+	{
+		Vector2f fnfo = right_arc->site - left_arc->site;	 // Direction vector from new site to arc_to_replace->site
+		dir_x = fnfo[Y];
+		dir_y = -fnfo[X];
+	}
+	else
+	{
+		dir_y = -1;
+	}
+
+	Vector2f dir(dir_x, dir_y);								// Prependicular vector to fnfo
+	EdgeItem edge(*start_point, dir);
+
+	BeachLineItem* new_edge = new BeachLineItem();
+	new_edge->type = BEACH_ITEM_TYPE::EDGE;
+	new_edge->edge = edge;
+
+	//BeachLineItem* left_arc = arc_to_remove->prev_arc;
+	//BeachLineItem* right_arc = arc_to_remove->next_arc;
+
+	if (left_arc)
+	{
+		left_arc->next_arc = arc_to_remove->next_arc;
+		left_arc->next_edge = new_edge;
+	}
+
+	if (right_arc)
+	{
+		right_arc->prev_arc = arc_to_remove->prev_arc;
+		right_arc->prev_edge = new_edge;
+	}
+
+	// Clean up the memory
+	delete arc_to_remove->prev_edge;
+	delete arc_to_remove->next_edge;
+	delete arc_to_remove;
+	
 	// Need to check for circle event due to this change in beach line
 	// two checks, one as left arc as middle and second as right arc as circle event
+	addCircleEvents(left_arc);
+	addCircleEvents(right_arc);
 }
 
-void constructVoronoiDiagram_fortunes(std::vector<Point2d> _points_list) 
+void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_list, std::vector<jmk::Edge2d>& _edges)
 {
 	// We need a unique list of points.
 	std::sort(_points_list.begin(), _points_list.end(), sort2DTBLR);
@@ -255,9 +326,12 @@ void constructVoronoiDiagram_fortunes(std::vector<Point2d> _points_list)
 		Event* event = p_queue.top();
 		p_queue.pop();
 
-		if (event->type == EVENT_TYPE::SITE)
-			handleSiteEvent(event);
-		else
-			handleCircleEvent(event);
+		if (event->valid)
+		{
+			if (event->type == EVENT_TYPE::SITE)
+				handleSiteEvent(event);
+			else
+				handleCircleEvent(event, _edges);
+		}
 	}
 }

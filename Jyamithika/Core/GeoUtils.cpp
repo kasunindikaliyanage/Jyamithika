@@ -115,7 +115,6 @@ double jmk::areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c)
 	return root / 2;
 }
 
-
 int jmk::orientation(const Face& _f, const Vector3f& _p)
 {
 	// If the plane of the face is prependicular to XY plane
@@ -248,3 +247,4 @@ bool jmk::coplaner(const Vector3f& _v1, const Vector3f& _v2, const Vector3f& _v3
 	float value = scalerTripleProduct(_v1, _v2, _v3);
 	return isEqualD(value, ZERO);
 }
+

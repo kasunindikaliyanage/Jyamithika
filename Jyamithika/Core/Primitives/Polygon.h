@@ -18,7 +18,14 @@ namespace jmk {
 		Point3d getPoint() const;
 	};
 
-	class Edge {};
+	class Edge2d {
+		Point2d p1;
+		Point2d p2;
+	public:
+		Edge2d(Point2d _p1, Point2d _p2) :p1(_p1), p2(_p2)
+		{}
+
+	};
 
 	class Polygon
 	{

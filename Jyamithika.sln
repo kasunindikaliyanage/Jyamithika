@@ -36,6 +36,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JMKCoreUnitTests", "Tests\JMKCoreUnitTests\JMKCoreUnitTests.vcxproj", "{C451D780-B9B8-46ED-B646-36C0A23F1614}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JMKAlgorithmsTests", "Tests\JMKAlgorithmsTests\JMKAlgorithmsTests.vcxproj", "{B16066AF-F4F0-476A-8DC3-4FCB8B265D2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C356D6F-F35E-48B2-BA47-3B3D828ED93A} = {1C356D6F-F35E-48B2-BA47-3B3D828ED93A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLAD", "Graphics\Externals\GLAD\GLAD.vcxproj", "{AD33D590-AB92-4D0D-B38C-EC1647E3FD18}"
 EndProject
