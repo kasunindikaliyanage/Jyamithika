@@ -52,9 +52,9 @@ struct EventComparator {
 		Point2d point = e1->site;
 		Point2d other = e2->site;
 
-		if (point[Y] > other[Y])
+		if (point[Y] < other[Y])
 			return true;
-		else if (isEqualD(point[Y], other[Y]) && point[Y] < other[Y])
+		else if (isEqualD(point[Y], other[Y]) && point[X] < other[X])
 		{
 			return true;
 		}
@@ -76,31 +76,48 @@ float computeArcY(Point2d& _arc_site, Point2d& _current_point)
 	auto xf = _arc_site[X];
 	auto xd = _current_point[X];
 
-	//return the y value of arc at this point
-	auto s1 = (xd - xf) * (xd - xf);
-	auto d1 = 1 / (2 * (yf - yd));
-	auto s2 = yf + yd;
-	
-	return s1 / d1 + s2 / 2;
+	////return the y value of arc at this point
+	//auto s1 = (xd - xf) * (xd - xf);
+	//auto d1 = 1 / (2 * (yf - yd));
+	//auto s2 = yf + yd;
+	//
+	//return s1 / d1 + s2 / 2;
+
+	double dp = 2 * (yf - yd);
+	double a1 = 1 / dp;
+	double b1 = -2 * xf / dp;
+	double c1 = yd + dp / 4 + xf * xf / dp;
+
+	return(a1 * xd * xd + b1 * xd + c1);
 }
 
 BeachLineItr getArcAbove(Point2d& _point)
 {
+	// Segments of same arc can repeat in the beach line. We need to  consider this as well.
 	BeachLineItr current_arc_itr = beach_line.begin();
 	float current_arc_y = FLT_MAX;
 	BeachLineItr itr = current_arc_itr;
-	
+	bool found_arc_with_greater_x = false;
+
 	while (itr != beach_line.end())
 	{
 		if ((*itr)->type == BEACH_ITEM_TYPE::ARC)
 		{
 			auto arc_y = computeArcY((*itr)->site, _point);
-			if (arc_y < current_arc_y)
+			if (arc_y < current_arc_y
+				|| (isEqualD(arc_y, current_arc_y) && !found_arc_with_greater_x) )
 			{
 				current_arc_itr = itr;
 				current_arc_y = arc_y;
+				found_arc_with_greater_x = false;
+			}
+			else
+			{
+				if ((*itr)->site[X] > _point[X])
+					found_arc_with_greater_x = true;
 			}
 		}
+		itr++;
 	}
 
 	return current_arc_itr;
@@ -116,8 +133,8 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 	left_arc->site = arc_to_replace->site;
 
 	BeachLineItem* new_arc = new BeachLineItem();
-	left_arc->type = BEACH_ITEM_TYPE::ARC;
-	left_arc->site = site;
+	new_arc->type = BEACH_ITEM_TYPE::ARC;
+	new_arc->site = site;
 
 	BeachLineItem* right_arc	= new BeachLineItem();
 	right_arc->type = BEACH_ITEM_TYPE::ARC;
@@ -129,9 +146,9 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 
 	// Direction vectors for the two edges are prependicular to the vector between the two focuses
 	// - focus of new_arc and arc_to_replace
-	Vector2f fnfo = arc_to_replace->site - new_arc->site;	 // Direction vector from new site to arc_to_replace->site
+	Vector2f fnfo = new_arc->site- arc_to_replace->site;	 // Direction vector from new site to arc_to_replace->site
 	Vector2f dir(fnfo[Y], -fnfo[X]);						 // Prependicular vector to fnfo
-	Vector2f neg_dir(dir[X], -dir[Y]);
+	Vector2f neg_dir(-dir[X], -dir[Y]);
 	EdgeItem l_edge(start_point, dir);
 	EdgeItem r_edge(start_point, neg_dir);
 
@@ -159,28 +176,28 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 
 	// Add the new itms in order. Add the last one first, then the second to last and so on 
 	// -as list::insert add element before the position.
-	beach_line.insert(itr, right_arc);
-	beach_line.insert(itr, right_edge);
-	beach_line.insert(itr, new_arc);
-	beach_line.insert(itr, left_edge);
 	beach_line.insert(itr, left_arc);
+	beach_line.insert(itr, left_edge);
+	beach_line.insert(itr, new_arc);
+	beach_line.insert(itr, right_edge);
+	beach_line.insert(itr, right_arc);
 
 	// delete the original arc finally. We do it finally here to take care the degenerate case of 
 	// having only one arc. If we delete it first then the iterator is going to invalid
 	// As we add 5 new elements, we need to delete the element 5 position higher than the initial iterator.
 
-	std::advance(itr, 5);
+	BeachLineItr new_Itr = itr;
+	std::advance(new_Itr, -3);
 	beach_line.erase(itr);
 
 	//decrement the iterator 3 position to point to the newly added arc.
-	std::advance(itr, -3);
-	return itr;
+	return new_Itr;
 }
 
 void addCircleEvents(BeachLineItem* middle_arc)
 {
 	// Check 3 arcs sequence ending current arc circle event
-	if (middle_arc != nullptr && middle_arc->prev_arc != nullptr)
+	if (middle_arc != nullptr && middle_arc->prev_arc != nullptr && middle_arc->next_arc != nullptr)
 	{
 		// Check the intersection of 2 edges separating above arcs
 		BeachLineItem* edg1 = middle_arc->prev_edge;
@@ -226,6 +243,7 @@ void handleSiteEvent(Event* event)
 		// Beach line is emptry. So add the item(Arc) and return
 		BeachLineItem* item = new BeachLineItem();
 		item->type = BEACH_ITEM_TYPE::ARC;
+		item->site = event->site;
 		beach_line.push_back(item);
 		return;
 	}

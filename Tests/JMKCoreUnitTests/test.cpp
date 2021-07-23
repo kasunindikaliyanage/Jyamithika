@@ -5,6 +5,7 @@
 #include "Core\Primitives\Vector.h"
 #include "Core\Primitives\Line.h"
 #include "Core\Distance.h"
+#include "Core\Intersection.h"
 
 using namespace jmk;
 
@@ -104,4 +105,26 @@ TEST(increment, increTest)
 		std::cout << "Check 2" << std::endl;
 	}
 
+}
+
+TEST(LineIntersection, intersection)
+{
+	Point2d p1, p2 , p_intersect;
+	p1.assign(X,5);
+	p1.assign(Y, 10);
+	p2.assign(X,11);
+	p2.assign(Y, 8.4);
+
+	Vector2f v1, v2;
+	v1.assign(X, 3);
+	v1.assign(Y,-3);
+	v2.assign(X,-5);
+	v2.assign(Y, -3);
+
+	Line2d l1(p1, v1);
+	Line2d l2(p2, v2);
+
+	bool result = intersect(l1, l2, p_intersect);
+
+	EXPECT_TRUE(result);
 }
