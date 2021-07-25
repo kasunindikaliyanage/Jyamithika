@@ -34,3 +34,8 @@ bool jmk::orthogonal(Vector3f a, Vector3f b)
 	float value = dotProduct(a, b);
 	return isEqualD(value, 0.0);
 }
+
+jmk::Vector2f jmk::prependicluar(Vector2f& vec)
+{
+	return Vector2f( vec[Y], -vec[X]);
+}

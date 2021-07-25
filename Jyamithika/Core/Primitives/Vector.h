@@ -202,6 +202,8 @@ namespace jmk {
 
 	Vector3f crossProduct(Vector3f a, Vector3f b);
 
+	Vector2f prependicluar(Vector2f&);
+
 	float scalerTripleProduct(Vector3f a, Vector3f b, Vector3f c);
 	
 	bool orthogonal(Vector3f a, Vector3f b);

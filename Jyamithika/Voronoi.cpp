@@ -36,6 +36,7 @@ struct BeachLineItem {
 	BeachLineItem* prev_edge = nullptr;
 
 	EdgeItem edge;			 // For edge items
+	bool is_completed_edge = false;
 };
 
 struct Event {
@@ -68,6 +69,97 @@ std::priority_queue< Event*, std::vector<Event*>,EventComparator> p_queue;
 std::vector<Segment> segments;
 std::list<BeachLineItem*> beach_line;
 typedef std::list<BeachLineItem*>::iterator BeachLineItr;
+
+void add_outer_edge(EdgeItem&edge, BoundRectangle& bound, std::vector<Edge2d>& _edges)
+{
+	Point2d p_start = edge.point();
+	Vector2f dir = edge.direction();
+
+	Point2d p_end;
+
+	//Check edge start with in bounds
+	if (p_start[X] >= bound.left_x && p_start[X] <= bound.right_x &&
+		p_start[Y] >= bound.bot_y && p_start[Y] <= bound.top_y)
+	{
+		if (dir[X] > 0 && dir[Y] > 0)
+		{
+			//Direction vector is point in first quadrant
+			auto t = (bound.right_x - p_start[X]) / dir[X];
+			auto y = p_start[Y] + t * dir[Y];
+
+			if (y <= bound.top_y)
+			{
+				p_end.assign(X,bound.right_x);
+				p_end.assign(Y,y);
+			}
+			else
+			{
+				auto s = (bound.top_y - p_start[Y]) / dir[Y];
+				auto x = p_start[X] + s * dir[X];
+				p_end.assign(X,x);
+				p_end.assign(Y, bound.top_y);
+			}
+		}
+		else if(dir[X] < 0 && dir[Y] > 0)
+		{
+			auto t = (bound.left_x - p_start[X]) / dir[X];
+			auto y = p_start[Y] + t * dir[Y];
+
+			if (y <= bound.top_y)
+			{
+				p_end.assign(X,bound.left_x);
+				p_end.assign(Y, y);
+			}
+			else
+			{
+				auto s = (bound.top_y - p_start[Y]) / dir[Y];
+				auto x = p_start[X] + s * dir[X];
+				p_end.assign(X,x);
+				p_end.assign(Y,bound.top_y);
+			}
+		}
+		else if (dir[X] < 0 && dir[Y] < 0)
+		{
+			//Direction vector is point in third quadrant
+			auto t = (bound.left_x - p_start[X]) / dir[X];
+			auto y = p_start[Y] + t * dir[Y];
+
+			if (y >= bound.bot_y)
+			{
+				p_end.assign(X, bound.left_x);
+				p_end.assign(Y, y);
+			}
+			else
+			{
+				auto s = (bound.bot_y - p_start[Y]) / dir[Y];
+				auto x = p_start[X] + s * dir[X];
+				p_end.assign(X, x);
+				p_end.assign(Y, bound.bot_y);
+			}
+		}
+		else
+		{
+			//Direction vector is point in furth quadrant
+			auto t = (bound.right_x - p_start[X]) / dir[X];
+			auto y = p_start[Y] + t * dir[Y];
+
+			if (y >= bound.bot_y)
+			{
+				p_end.assign(X,bound.right_x);
+				p_end.assign(Y, y);
+			}
+			else
+			{
+				auto s = (bound.bot_y - p_start[Y]) / dir[Y];
+				auto x = p_start[X] + s * dir[X];
+				p_end.assign(X, x);
+				p_end.assign(Y, bound.bot_y);
+			}
+		}
+
+		_edges.push_back(Edge2d(p_start, p_end));
+	}
+}
 
 float computeArcY(Point2d& _arc_site, Point2d& _current_point)
 {
@@ -147,7 +239,7 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 	// Direction vectors for the two edges are prependicular to the vector between the two focuses
 	// - focus of new_arc and arc_to_replace
 	Vector2f fnfo = new_arc->site- arc_to_replace->site;	 // Direction vector from new site to arc_to_replace->site
-	Vector2f dir(fnfo[Y], -fnfo[X]);						 // Prependicular vector to fnfo
+	Vector2f dir = prependicluar(fnfo);						 // Prependicular vector to fnfo
 	Vector2f neg_dir(-dir[X], -dir[Y]);
 	EdgeItem l_edge(start_point, dir);
 	EdgeItem r_edge(start_point, neg_dir);
@@ -192,6 +284,16 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 
 	//decrement the iterator 3 position to point to the newly added arc.
 	return new_Itr;
+}
+
+BeachLineItr getItr(BeachLineItem* item)
+{
+	BeachLineItr itr = beach_line.begin();
+	while (itr != beach_line.end() && *itr != item)
+	{
+		itr++;
+	}
+	return itr;
 }
 
 void addCircleEvents(BeachLineItem* middle_arc)
@@ -263,8 +365,12 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 	// In circle events, exsisting arcs are going to shrink to a point
 	// Delete el,an,er related to current circle event
 	BeachLineItem* arc_to_remove = event->arc;
+	BeachLineItr itr = getItr(arc_to_remove);
+
 	Point2d left_point = arc_to_remove->prev_edge->edge.point();
 	Point2d right_point = arc_to_remove->next_edge->edge.point();
+	arc_to_remove->prev_edge->is_completed_edge = true;
+	arc_to_remove->next_edge->is_completed_edge = true;
 
 	Edge2d edg1(left_point, *event->intersetion_point);
 	Edge2d edg2(right_point, *event->intersetion_point);
@@ -300,9 +406,6 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 	new_edge->type = BEACH_ITEM_TYPE::EDGE;
 	new_edge->edge = edge;
 
-	//BeachLineItem* left_arc = arc_to_remove->prev_arc;
-	//BeachLineItem* right_arc = arc_to_remove->next_arc;
-
 	if (left_arc)
 	{
 		left_arc->next_arc = arc_to_remove->next_arc;
@@ -315,10 +418,19 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 		right_arc->prev_edge = new_edge;
 	}
 
+	itr--; // go to the previous edge itr
+	BeachLineItr itr3 = itr;
+	std::advance(itr3, 3);
+
+	beach_line.erase(itr,itr3);
+	beach_line.insert(itr3, new_edge);
+
 	// Clean up the memory
-	delete arc_to_remove->prev_edge;
-	delete arc_to_remove->next_edge;
-	delete arc_to_remove;
+	//if(arc_to_remove->prev_edge)
+	//	delete arc_to_remove->prev_edge;
+	//if (arc_to_remove->next_edge)
+	//	delete arc_to_remove->next_edge;
+	//delete arc_to_remove;
 	
 	// Need to check for circle event due to this change in beach line
 	// two checks, one as left arc as middle and second as right arc as circle event
@@ -326,7 +438,8 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 	addCircleEvents(right_arc);
 }
 
-void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_list, std::vector<jmk::Edge2d>& _edges)
+void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_list, std::vector<jmk::Edge2d>& _edges,
+	BoundRectangle& rect)
 {
 	// We need a unique list of points.
 	std::sort(_points_list.begin(), _points_list.end(), sort2DTBLR);
@@ -350,6 +463,17 @@ void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_li
 				handleSiteEvent(event);
 			else
 				handleCircleEvent(event, _edges);
+		}
+	}
+
+	// Need to process the remaining edges in beach line inorder to construct edges extending outwards
+	// the center of points
+
+	for (BeachLineItem* item : beach_line)
+	{
+		if (item->type == BEACH_ITEM_TYPE::EDGE)
+		{
+			add_outer_edge(item->edge, rect, _edges);
 		}
 	}
 }

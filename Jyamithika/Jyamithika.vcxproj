@@ -148,6 +148,7 @@
     <ClInclude Include="Core\Inclusion.h" />
     <ClInclude Include="Core\Intersection.h" />
     <ClInclude Include="Core\Base\Core.h" />
+    <ClInclude Include="Core\Primitives\Bounds.h" />
     <ClInclude Include="Core\Primitives\Line.h" />
     <ClInclude Include="Core\Primitives\Plane.h" />
     <ClInclude Include="Core\Primitives\Point.h" />

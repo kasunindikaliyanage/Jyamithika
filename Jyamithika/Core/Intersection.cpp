@@ -1,3 +1,4 @@
+#include "Base\Core.h"
 #include "Intersection.h"
 
 
@@ -8,43 +9,51 @@ bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi)
 	Vector2f l1d = l1.direction();
 	Vector2f l2d = l2.direction();
 
-	Vector2f E = l1p - l2p;
-	float kross = l1d[X] * l2d[Y] - l1d[Y] * l2d[X];
-	float sqrKross = kross * kross;
-	float sqrLen1 = l1d[X] * l1d[X] + l1d[Y] * l1d[Y];
-	float sqrLen2 = l2d[X] * l2d[X] + l2d[Y] * l2d[Y];
-	if (sqrKross > 0.0001 * sqrLen1 * sqrLen2) {
-		// lines are not parallel
-		float s = (E[X] * l2d[Y] - E[Y] * l2d[X]) / kross;
-		Vector2f idir(s * l1d[X], s * l1d[Y]);
-		Vector2f inter(l1p + idir);
-		pi.assign(X, inter[X]);
-		pi.assign(Y, inter[Y]);
+	float a, b, c, d, e, f;
+
+	a = l1d[X];
+	b = -l2d[X];
+	c = l2p[X] - l1p[X];
+	d = l1d[Y];
+	e = -l2d[Y];
+	f = l2p[Y] - l1p[Y];
+
+	Vector2f diff = l2p - l1p;
+	auto prep_l2d = prependicluar(l2d);
+	float dot_d0_prepd1 = dotProduct(l1d, prep_l2d);
+
+	if (!isEqualD(dot_d0_prepd1, ZERO))
+	{
+		//// TODO need to check whether the intersection points is in correct side. Whether the lines 
+		//// -are converge or not.
+		//float invD0DotPerpD1 = (float)1 / dot_d0_prepd1;
+		//float diffDotPerpD0 = dotProduct(diff, prep_l1d);
+		//float diffDotPerpD1 = dotProduct(diff, prep_l2d);
+		//float s0 = diffDotPerpD1 * invD0DotPerpD1;
+		//float s1 = diffDotPerpD0 * invD0DotPerpD1;
+
+		float denominator = a * e - b * d;
+		float t_numerator = c * e - b * f;
+		float s_numerator = a * f - c * a;
+
+		float t = t_numerator / denominator;
+
+		float x = l1p[X] + t * l1d[X];
+		float y = l1p[Y] + t * l1d[Y];
+
+		if ((x - l1p[X]) / l1d[X] < 0) return false;
+		if ((y - l1p[Y]) / l1d[Y] < 0) return false;
+
+		if ((x - l2p[X]) / l2d[X] < 0) return false;
+		if ((y - l2p[Y]) / l2d[Y] < 0) return false;
+	
+		pi.assign(X, x);
+		pi.assign(Y, y);
 		return true;
 	}
-	return false;
-
-	//float dx = l2p[X] - l1p[X];
-	//float dy = l2p[Y] - l2p[Y];
-	//float det = l2d[X] * l1d[Y] - l2d[Y] * l1d[X];
-	//float u = (dy * l2d[X] - dx * l2d[Y]) / det;
-	//float v = (dy * l1d[X] - dx * l1d[Y]) / det;
-
-	////if ((u < 0.0f) && !e1.extendsUpwardsForever) return false;
-	////if ((v < 0.0f) && !e2.extendsUpwardsForever) return false;
-	////if ((u == 0.0f) && (v == 0.0f) && !e1.extendsUpwardsForever && !e2.extendsUpwardsForever) return false;
-
-	//float kross = l1d[X] * l2d[Y] - l1d[Y] * l2d[X];
-	//float sqrKross = kross * kross;
-	//float sqrLen1 = l1d[X] * l1d[X] + l1d[Y] * l1d[Y];
-	//float sqrLen2 = l2d[X] * l2d[X] + l2d[Y] * l2d[Y];
-	//
-	//if (sqrKross > 0.0001 * sqrLen1 * sqrLen2) {
-	//	pi.assign(X, l1p[X] + l1d[X] * u);
-	//	pi.assign(Y, l1p[Y] + l1d[Y] * u);
-
-	//	return true;
-	//}
-	//
-	//return false;
+	else
+	{
+		//Lines are parallel
+		return false;
+	}
 }

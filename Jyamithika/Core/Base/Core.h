@@ -6,7 +6,7 @@
 #include<math.h>
 
 namespace jmk {
-#define TOLERANCE 0.00001
+#define TOLERANCE 0.00000001
 #define ZERO 0.0
 
 #define CW  1
