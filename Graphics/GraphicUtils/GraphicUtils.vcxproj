@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Graphics\Externals\GLAD\include;$(SolutionDir)\Graphics\Externals\GLFW\include;$(SolutionDir)\Graphics\Externals\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Graphics\Externals\GLAD\include;$(SolutionDir)Graphics\Externals\GLFW\include;$(SolutionDir)Graphics\Externals\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,6 +161,7 @@
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="Imgui\InputHandler.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="GraphicUtils.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
@@ -173,12 +174,14 @@
     <ClCompile Include="Imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Shaders\GraphicUtils.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic_poly.shader" />
     <None Include="Shaders\cube.shader" />
+    <None Include="Shaders\triangle2d.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,7 +18,7 @@ namespace jmk {
 		Point3d getPoint() const;
 	};
 
-	class Edge2d {
+	struct Edge2d {
 		Point2d p1;
 		Point2d p2;
 	public:
