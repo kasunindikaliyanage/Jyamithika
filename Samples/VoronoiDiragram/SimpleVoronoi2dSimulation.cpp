@@ -60,8 +60,17 @@ void setup_pointcloud(std::vector<jmk::Point2d>& points)
 	points.push_back(jmk::Point2d(0.2, 0.1));
 	points.push_back(jmk::Point2d(0.6, 0.2));
 	points.push_back(jmk::Point2d(0.8, 0.6));
-	points.push_back(jmk::Point2d(0.4, 0.5));
-	points.push_back(jmk::Point2d(0.5, 0.7));
+	//points.push_back(jmk::Point2d(0.4, 0.5));
+	//points.push_back(jmk::Point2d(0.5, 0.7));
+	 
+	//points.push_back(jmk::Point2d(-0.2, -0.1));
+	//points.push_back(jmk::Point2d(-0.6, -0.2));
+	//points.push_back(jmk::Point2d(-0.8, -0.6));
+	//points.push_back(jmk::Point2d(-0.4, -0.5));
+	//points.push_back(jmk::Point2d(-0.5, -0.7));
+ 
+	points.push_back(jmk::Point2d(-0.6, 0.5));
+	//points.push_back(jmk::Point2d( 0.4, -0.8));
 }
 
 int main(void)
@@ -101,7 +110,7 @@ int main(void)
 			return -1;
 		}
 
-		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_DEPTH_TEST);
 	}
 
 	std::vector<jmk::Point2d> points;
@@ -112,7 +121,7 @@ int main(void)
 	setup_pointcloud(points);
 	getReactanglePointClouds(points, point_data);
 
-	jmk::BoundRectangle rect{ 0.0,1.0,1.0,0.0 };
+	jmk::BoundRectangle rect{ -1.0,1.0,1.0,-1.0 };
 	jmk::constructVoronoiDiagram_fortunes(points, edges, rect);
 
 	get2DLinePointsFromEdgeList(edges, edge_data);
@@ -126,7 +135,7 @@ int main(void)
 	VAO_edges.addVertexLayout(0, 2, GL_FALSE, 2 * sizeof(float), 0);
 
 	ShaderProgram shader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/triangle2d.shader");
-	shader.activeAsCurrentShader();
+	ShaderProgram line_shader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/line.shader");
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -143,13 +152,13 @@ int main(void)
 		glClearColor(0.95f, 0.95f, 0.95f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		VAO_points.bindVertexArray();
 		shader.activeAsCurrentShader();
-
+		VAO_points.bindVertexArray();
 		glDrawArrays(GL_TRIANGLES, 0, point_data.size()/2);
 
+		line_shader.activeAsCurrentShader();
 		VAO_edges.bindVertexArray();
-		glDrawArrays(GL_LINE, 0, edge_data.size() / 2);
+		glDrawArrays(GL_LINES, 0, edge_data.size()/2);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

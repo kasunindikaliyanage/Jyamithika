@@ -1,4 +1,4 @@
-#include "..\GraphicUtils.h"
+#include "GraphicUtils.h"
 
 #define NUM_POINT_2D_REACT 12
 

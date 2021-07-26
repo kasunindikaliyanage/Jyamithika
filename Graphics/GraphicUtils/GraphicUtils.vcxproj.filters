@@ -101,7 +101,7 @@
     <ClCompile Include="Imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shaders\GraphicUtils.cpp">
+    <ClCompile Include="GraphicUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -109,5 +109,6 @@
     <None Include="Shaders\basic_poly.shader" />
     <None Include="Shaders\cube.shader" />
     <None Include="Shaders\triangle2d.shader" />
+    <None Include="Shaders\line.shader" />
   </ItemGroup>
 </Project>
