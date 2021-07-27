@@ -23,5 +23,8 @@
     <Image Include="..\Images\voronoi_simulation.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\Images\voronoi_simulation1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

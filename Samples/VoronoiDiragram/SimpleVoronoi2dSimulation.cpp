@@ -29,6 +29,11 @@
 #include <random>
 #include <vector>
 
+using std::chrono::duration;
+using std::chrono::duration_cast;
+using std::chrono::high_resolution_clock;
+using std::milli;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -114,9 +119,13 @@ int main(void)
 
 	setup_pointcloud(points);
 	getReactanglePointClouds(points, point_data);
-
 	jmk::BoundRectangle rect{ -1.0,1.0,1.0,-1.0 };
-	jmk::constructVoronoiDiagram_fortunes(points, edges, rect);
+	
+	auto startTime = high_resolution_clock::now();
+	jmk::constructVoronoiDiagram_fortunes(points, edges, rect);	
+	auto endTime = high_resolution_clock::now();
+	std::chrono::duration<double> diff = endTime - startTime;
+	std::cout << "Voronoi Diagram 2d construction time - " << diff.count() << std::endl;
 
 	get2DLinePointsFromEdgeList(edges, edge_data);
 
@@ -143,7 +152,7 @@ int main(void)
 		processInput(window);
 		/* Render here */
 
-		glClearColor(0.95f, 0.95f, 0.95f, 1.0f);
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shader.activeAsCurrentShader();
