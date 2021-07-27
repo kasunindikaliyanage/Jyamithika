@@ -1,7 +1,7 @@
 
 #include "Point.h"
 
-bool jmk::sort2DLRTB(const Point3d& a, const Point3d& b)
+bool jmk::sort2DLRTB(const Point2d& a, const Point2d& b)
 {
 	if ((a[X] < b[X])
 		|| (a[X] == b[X]) && (a[Y] < b[Y]))

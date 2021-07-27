@@ -23,8 +23,11 @@
 #include "Jyamithika\Core\Primitives\Bounds.h"
 #include "Jyamithika\Voronoi.h"
 
+#include <algorithm>
+#include <chrono>
 #include <iostream>
-#include <cstdio>
+#include <random>
+#include <vector>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -46,35 +49,31 @@ int option = 0;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
+
 void setup_pointcloud(std::vector<jmk::Point2d>& points)
 {
-	//jmk::Point2d p1(-1, -1);
-	//jmk::Point2d p2(-1, -1);
-	//jmk::Point2d p3(-1, 1 );
-	//jmk::Point2d p4(-1, 1 );
-	//jmk::Point2d p5(1, -1 );
-	//jmk::Point2d p6(1, -1 );
-	//jmk::Point2d p7(1, 1  );
-	//jmk::Point2d p8(1, 1  );
+	std::vector<float> x_values;
+	std::vector<float> y_values;
 
-	points.push_back(jmk::Point2d(0.2, 0.1));
-	points.push_back(jmk::Point2d(0.6, 0.2));
-	points.push_back(jmk::Point2d(0.8, 0.6));
-	//points.push_back(jmk::Point2d(0.4, 0.5));
-	//points.push_back(jmk::Point2d(0.5, 0.7));
-	 
-	//points.push_back(jmk::Point2d(-0.2, -0.1));
-	//points.push_back(jmk::Point2d(-0.6, -0.2));
-	//points.push_back(jmk::Point2d(-0.8, -0.6));
-	//points.push_back(jmk::Point2d(-0.4, -0.5));
-	//points.push_back(jmk::Point2d(-0.5, -0.7));
- 
-	points.push_back(jmk::Point2d(-0.6, 0.5));
-	//points.push_back(jmk::Point2d( 0.4, -0.8));
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+	for (float i = 1; i < 199; i++)
+		x_values.push_back((i - 98)/100);
+	
+	std::shuffle(x_values.begin(), x_values.end(), std::default_random_engine(seed));
+	y_values = x_values;
+	std::shuffle(y_values.begin(), y_values.end(), std::default_random_engine(seed));
+
+	for(int i=0; i< x_values.size(); i++)
+		points.push_back(jmk::Point2d(x_values[i], y_values[i]));
+
+	std::sort(points.begin(), points.end(), jmk::sort2DLRTB);
+	std::unique(points.begin(), points.end());
 }
 
 int main(void)
 {
+	std::srand(std::time(nullptr));
 	GLFWwindow* window;
 
 	//Set up glfw context and window
@@ -97,11 +96,6 @@ int main(void)
 
 		/* Make the window's context current */
 		glfwMakeContextCurrent(window);
-		//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-		//glfwSetCursorPosCallback(window, mouse_callback);
-		//glfwSetScrollCallback(window, scroll_callback);
-
-		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -158,6 +152,7 @@ int main(void)
 
 		line_shader.activeAsCurrentShader();
 		VAO_edges.bindVertexArray();
+		glLineWidth(2);
 		glDrawArrays(GL_LINES, 0, edge_data.size()/2);
 
 		/* Swap front and back buffers */
@@ -191,15 +186,6 @@ void processInput(GLFWwindow* window)
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-
-		//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		//	camera.ProcessKeyboard(FORWARD, deltaTime);
-		//if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		//	camera.ProcessKeyboard(BACKWARD, deltaTime);
-		//if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		//	camera.ProcessKeyboard(LEFT, deltaTime);
-		//if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		//	camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 }
 

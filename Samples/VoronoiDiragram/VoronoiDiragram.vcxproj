@@ -154,6 +154,9 @@
   <ItemGroup>
     <ClCompile Include="SimpleVoronoi2dSimulation.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\voronoi_simulation.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

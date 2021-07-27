@@ -3,12 +3,12 @@
 #define NUM_POINT_2D_REACT 12
 
 float Rect2dPoints[] = {
-	-0.008f, -0.008f,  // left  
-	 0.008f, -0.008f,  // right 
-	 0.008f,  0.008f,  // top 
-	 0.008f,  0.008f,  // left  
-	-0.008f, -0.008f,  // right 
-	-0.008f,  0.008f  // top   
+	-0.005f, -0.005f,  // left  
+	 0.005f, -0.005f,  // right 
+	 0.005f,  0.005f,  // top 
+	 0.005f,  0.005f,  // left  
+	-0.005f, -0.005f,  // right 
+	-0.005f,  0.005f  // top   
 };
 
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)

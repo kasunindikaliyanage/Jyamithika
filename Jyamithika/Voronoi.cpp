@@ -26,7 +26,7 @@ struct Event;
 typedef Line2d EdgeItem;
 
 struct BeachLineItem {
-	Event* event = nullptr;
+	std::vector<Event*> events;
 	Point2d site;
 	BEACH_ITEM_TYPE type;
 
@@ -161,12 +161,18 @@ void add_outer_edge(EdgeItem&edge, BoundRectangle& bound, std::vector<Edge2d>& _
 	}
 }
 
-float computeArcY(Point2d& _arc_site, Point2d& _current_point)
+double computeArcY(Point2d& _arc_site, Point2d& _current_point)
 {
-	auto yf = _arc_site[Y];
-	auto yd = _current_point[Y];
-	auto xf = _arc_site[X];
-	auto xd = _current_point[X];
+	double yf = _arc_site[Y];
+	double yd = _current_point[Y];
+	double xf = _arc_site[X];
+	double xd = _current_point[X];
+
+	if (isEqualD(yf, yd))
+		return 0.0;
+
+	if (isEqualD(xf, xd))
+		return (yf + yd) / 2;
 
 	////return the y value of arc at this point
 	//auto s1 = (xd - xf) * (xd - xf);
@@ -187,7 +193,7 @@ BeachLineItr getArcAbove(Point2d& _point)
 {
 	// Segments of same arc can repeat in the beach line. We need to  consider this as well.
 	BeachLineItr current_arc_itr = beach_line.begin();
-	float current_arc_y = FLT_MAX;
+	double current_arc_y = DBL_MAX;
 	BeachLineItr itr = current_arc_itr;
 	bool found_arc_with_greater_x = false;
 
@@ -195,9 +201,13 @@ BeachLineItr getArcAbove(Point2d& _point)
 	{
 		if ((*itr)->type == BEACH_ITEM_TYPE::ARC)
 		{
-			auto arc_y = computeArcY((*itr)->site, _point);
-			if (arc_y < current_arc_y
-				|| (isEqualD(arc_y, current_arc_y) && !found_arc_with_greater_x) )
+			// TODO There is a fault in this implementation when two different arcs have almost same distance
+			// This fault is due to part of computeArcY implementation and other part due to precision.
+			double arc_y = computeArcY((*itr)->site, _point);
+			bool condition =  arc_y < current_arc_y;
+			if ( condition
+				|| (isEqualD(arc_y, current_arc_y) && 
+					(!found_arc_with_greater_x ) ))
 			{
 				current_arc_itr = itr;
 				current_arc_y = arc_y;
@@ -218,6 +228,8 @@ BeachLineItr getArcAbove(Point2d& _point)
 BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 {
 	BeachLineItem* arc_to_replace = *itr;
+	BeachLineItem* prev_left_arc = arc_to_replace->prev_arc;
+	BeachLineItem* prev_right_arc = arc_to_replace->next_arc;
 
 	//afl,el,an,er,afr
 	BeachLineItem* left_arc		= new BeachLineItem();
@@ -266,6 +278,12 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 	right_arc->prev_edge = right_edge;
 	right_arc->next_edge = arc_to_replace->next_edge;
 
+	if (prev_left_arc)
+		prev_left_arc->next_arc = left_arc;
+
+	if (prev_right_arc)
+		prev_right_arc->prev_arc = right_arc;
+
 	// Add the new itms in order. Add the last one first, then the second to last and so on 
 	// -as list::insert add element before the position.
 	beach_line.insert(itr, left_arc);
@@ -280,6 +298,15 @@ BeachLineItr addNewArc(BeachLineItr& itr, Point2d& site)
 
 	BeachLineItr new_Itr = itr;
 	std::advance(new_Itr, -3);
+
+	//if ((*itr)->events && (*itr)->event->type == EVENT_TYPE::CIRCLE)
+	//	(*itr)->event->valid = false;
+	for (auto event : (*itr)->events)
+	{
+		if (event->type == EVENT_TYPE::CIRCLE)
+			event->valid = false;
+	}
+
 	beach_line.erase(itr);
 
 	//decrement the iterator 3 position to point to the newly added arc.
@@ -307,6 +334,7 @@ void addCircleEvents(BeachLineItem* middle_arc)
 		Point2d* intersection_point = new Point2d();
 
 		bool is_intersect = intersect(edg1->edge, edg2->edge, *intersection_point);
+		bool has_higher_cycle_events = false;
 
 		if (is_intersect)
 		{
@@ -316,23 +344,35 @@ void addCircleEvents(BeachLineItem* middle_arc)
 
 			// If there is already a circle event for this arc, check the y coordinates.
 			// If already exsisting event's y coordinate is lower we can replace the circle event with the new one
-			if (middle_arc->event)
+				
+			//if (middle_arc->event)
+			//{
+			//	// Make previous circle event invalid one from queue
+			//	if (middle_arc->event->site[Y] > circle_event_y)
+			//		middle_arc->event->valid = false;
+			//	else
+			//		return; // If the previous circle event's y coordinate is higher we keep that event
+			//}
+
+			for (auto event : middle_arc->events)
 			{
-				// Make previous circle event invalid one from queue
-				if (middle_arc->event->site[Y] > circle_event_y)
-					middle_arc->event->valid = false;
+				if (event->site[Y] < circle_event_y)
+					event->valid = false;
 				else
-					return; // If the previous circle event's y coordinate is higher we keep that event
+					has_higher_cycle_events = true;
 			}
 
-			Event* circle_event = new Event();
-			circle_event->type = EVENT_TYPE::CIRCLE;
-			circle_event->arc = middle_arc;
-			circle_event->site = Point2d((*intersection_point)[X], circle_event_y);
-			circle_event->intersetion_point = intersection_point;
-			p_queue.push(circle_event);
+			if (!has_higher_cycle_events)
+			{
+				Event* circle_event = new Event();
+				circle_event->type = EVENT_TYPE::CIRCLE;
+				circle_event->arc = middle_arc;
+				circle_event->site = Point2d((*intersection_point)[X], circle_event_y);
+				circle_event->intersetion_point = intersection_point;
+				p_queue.push(circle_event);
 
-			middle_arc->event = circle_event;
+				middle_arc->events.push_back(circle_event);
+			}
 		}
 	}
 }
@@ -408,19 +448,30 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 
 	if (left_arc)
 	{
-		left_arc->next_arc = arc_to_remove->next_arc;
+		left_arc->next_arc = right_arc;
 		left_arc->next_edge = new_edge;
 	}
 
 	if (right_arc)
 	{
-		right_arc->prev_arc = arc_to_remove->prev_arc;
+		right_arc->prev_arc = left_arc;
 		right_arc->prev_edge = new_edge;
 	}
 
 	itr--; // go to the previous edge itr
 	BeachLineItr itr3 = itr;
 	std::advance(itr3, 3);
+
+	BeachLineItr itr1 = itr;
+	itr1++;
+	//if ((*itr1)->event && (*itr1)->event->type == EVENT_TYPE::CIRCLE)
+	//	(*itr1)->event->valid = false;
+
+	for (auto event : (*itr1)->events)
+	{
+		if (event->type == EVENT_TYPE::CIRCLE)
+			event->valid = false;
+	}
 
 	beach_line.erase(itr,itr3);
 	beach_line.insert(itr3, new_edge);
@@ -452,10 +503,14 @@ void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_li
 		p_queue.push(event);
 	}
 
+	int count = 0;
+
 	while (!p_queue.empty())
 	{
 		Event* event = p_queue.top();
 		p_queue.pop();
+
+		std::cout << "iteration " << ++count << " Queue size " << p_queue.size() << std::endl;
 
 		if (event->valid)
 		{
@@ -469,11 +524,17 @@ void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_li
 	// Need to process the remaining edges in beach line inorder to construct edges extending outwards
 	// the center of points
 
+	int x = 0;
+
 	for (BeachLineItem* item : beach_line)
 	{
 		if (item->type == BEACH_ITEM_TYPE::EDGE)
 		{
+			x++;
 			add_outer_edge(item->edge, rect, _edges);
+			
+			//if(x==2)
+			//	break;
 		}
 	}
 }
