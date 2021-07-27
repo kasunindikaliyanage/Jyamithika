@@ -24,7 +24,7 @@ I have added set of simulations for demonstration purposes. These simulations us
 
 ### Voronoi Diagram 2D
 
-![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_simulation.png)
+![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_simulation1.png)
 
 ## License
 MIT
