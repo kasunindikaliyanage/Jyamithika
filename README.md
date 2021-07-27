@@ -22,6 +22,10 @@ I have added set of simulations for demonstration purposes. These simulations us
 
 ![Convexhull3D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/convexhull3d_sample.jpg)
 
+### Voronoi Diagram 2D
+
+![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_simulation.png)
+
 ## License
 MIT
 This is a free software. 
