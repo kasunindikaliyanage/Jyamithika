@@ -3,6 +3,7 @@
 #include <vector>
 #include "Primitives\Point.h"
 #include "Primitives\Plane.h"
+#include "Primitives\Segment.h"
 #include "Primitives\Polygon.h"
 #include "Primitives\Polyhedron.h"
 
@@ -14,6 +15,9 @@ namespace jmk
 
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
 	bool left(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	// Predicate to determine whether the [Point c] is left to the segment [a b]
+	bool left(const Point2d& a, const Point2d& b, const Point2d& c);
 
 	// Predicate to determine whether the [Point c] is right to the segment [a b]
 	bool right(const Point3d& a, const Point3d& b, const Point3d& c);
@@ -71,9 +75,13 @@ namespace jmk
 	// Vectors parallel to the same plane, or lie on the same plane are called coplanar
 	bool coplaner(const Vector3f& _v1, const Vector3f& _v2, const Vector3f& _v3);
 
+	bool segmentIsLeft(const Segment2d& base, const Segment2d& compare, const Point2d& _point);
+
 	Vector3f getFaceNormal(const Point3d& a, const Point3d& b, const Point3d& c);
 
 	float volumTetrahedron(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d);
+
+	void get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_polies);
 }
 
 

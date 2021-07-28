@@ -8,6 +8,7 @@ namespace jmk {
 	typedef Vector3f Point3d;
 
 	static const Point2d DEFAULT_POINT_2D(FLT_MAX, FLT_MAX);
+	static const Point3d DEFAULT_POINT_3D(FLT_MAX, FLT_MAX, FLT_MAX);
 
 	bool sort2DLRTB(const Point2d& a, const Point2d& b);
 

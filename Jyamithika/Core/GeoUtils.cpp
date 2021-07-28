@@ -1,8 +1,141 @@
 #include "GeoUtils.h"
 
 #include <math.h>
+#include <set>
+#include <map>
+#include <algorithm>
+#include <list>
 
 using namespace jmk;
+
+
+enum class VERTEX_CATEGORY {
+	START,
+	END,
+	REGULAR,
+	SPLIT,
+	MERGE,
+	INVALID
+};
+
+// static functions
+
+VERTEX_CATEGORY categorize_vertex(Vertex2d& v)
+{
+	Vertex2d* v_prev = v.prev;
+	Vertex2d* v_next = v.next;
+
+	// Need vertex beside the given one to get the dicission. Return INVALID if one is missing
+	if (!v_prev || !v_next)
+		return VERTEX_CATEGORY::INVALID;
+
+	Point2d p_prev = v_prev->point;
+	Point2d p = v.point;
+	Point2d p_next = v_next->point;
+
+	float p_prev_y = p_prev[Y];
+	float p_y = p_prev[Y];
+	float p_next_y = p_next[Y];
+
+	bool is_left = left(p_prev, p, p_next);
+
+	if (p_y > p_prev_y && p_y > p_next_y)
+	{
+		if (is_left)
+			return VERTEX_CATEGORY::START;
+		else
+			return VERTEX_CATEGORY::SPLIT;
+	}
+	else if (p_y < p_prev_y && p_y < p_next_y)
+	{
+		if (is_left)
+			return VERTEX_CATEGORY::END;
+		else
+			return VERTEX_CATEGORY::MERGE;
+	}
+	else
+	{
+		return VERTEX_CATEGORY::REGULAR;
+	}
+}
+
+// Custome comparator to be used in sweep line status data structure.
+struct CustomeComparator {
+	Point2d* sweep_line_point;
+
+	CustomeComparator(Point2d* _point)
+	{
+		sweep_line_point = _point;
+	}
+
+	//Return true the segment _a is left to the segment _b in the sweep line point
+	bool operator()(Segment2d* _a, Segment2d* _b) const
+	{
+		if (_a == _b)
+			return false;
+		return segmentIsLeft(*_a, *_b, *sweep_line_point);
+	}
+};
+
+struct Sweep_line {
+	std::list<Edge2d> edge_list;
+	Point2d* point;
+
+	Sweep_line(Point2d* _point) :point(_point) {}
+};
+
+struct vertex_ordering_from_id {
+	bool operator() (const Vertex& lhs, const Vertex& rhs) const
+	{
+		return lhs.id < lhs.id;
+	}
+};
+
+void get_vertex_edge_map(Polygon2d &poly,std::map<Vertex2d, Edge2d, vertex_ordering_from_id>& v_e_map)
+{
+	std::vector<Vertex2d> vertices = poly.getVertcies();
+	if (!vertices.size() > 3)
+		return;
+
+	Vertex2d* root = &vertices[0];
+	Vertex2d* current = &vertices[1];
+
+	if (root != current)
+	{
+		v_e_map.insert(std::pair<Vertex2d, Edge2d>(*root, Edge2d(root->point, current->point)));
+	}
+	//Create the edges from vertices
+	while (current != root)
+	{
+		v_e_map.insert(std::pair<Vertex2d, Edge2d>(*current, Edge2d(current->point, current->next->point)));
+		current = current->next;
+	}
+}
+
+static void handle_start_vertices(Vertex* start, std::set<Segment2d*, CustomeComparator>& T, std::vector<Edge2d*>& diagonals)
+{
+}
+
+static void handle_end_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T, std::vector<Edge2d*>& diagonals)
+{
+
+}
+
+static void handle_split_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T, std::vector<Edge2d*>& diagonals)
+{
+
+}
+
+static void handle_merge_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T, std::vector<Edge2d*>& diagonals)
+{
+
+}
+
+static void handle_regular_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T, std::vector<Edge2d*>& diagonals)
+{
+
+}
+
 
 // This can be only used in 2d XY plane. 
 // TODO  has to modify to consider the 3D plane as well
@@ -46,6 +179,11 @@ int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
 bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	return pointRelativePos(a,b,c) == RELATIVE_POSITION::LEFT;
+}
+
+bool jmk::left(const Point2d& a, const Point2d& b, const Point2d& c)
+{
+	return pointRelativePos(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
@@ -246,5 +384,99 @@ bool jmk::coplaner(const Vector3f& _v1, const Vector3f& _v2, const Vector3f& _v3
 {
 	float value = scalerTripleProduct(_v1, _v2, _v3);
 	return isEqualD(value, ZERO);
+}
+
+bool jmk::segmentIsLeft(const Segment2d& base, const Segment2d& compare, const Point2d& _point)
+{
+	return base.get_x(_point[Y]) < compare.get_x(_point[Y]);
+}
+
+void jmk::get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_polies)
+{
+	std::vector<Vertex2d> vertex_list;
+	std::vector<Edge2d> diagonal_list;
+
+	vertex_list = poly->getVertcies();
+
+	//Sort the vertex_list from vertex with highest y to lowest y
+	std::sort(vertex_list.begin(), vertex_list.end(), [](auto x, auto y) 
+	{
+		Point2d a = x.point;
+		Point2d b = y.point;
+		if ((a[Y] > b[Y])
+			|| (a[Y] == b[Y]) && (a[X] < b[X]))
+		{
+			return true;
+		}
+		return false;
+	});
+
+	Vertex2d top_vertex = *vertex_list.begin();
+
+	std::map<Vertex2d, Edge2d, vertex_ordering_from_id> v_e_map;
+	get_vertex_edge_map(*poly,v_e_map);
+
+	// Configuring T. We can update the sweep point to move the sweep line downwards and rearrange the edges
+	Point2d* sweep_point = new Point2d(top_vertex.point[X], top_vertex.point[Y]);
+	Sweep_line T(sweep_point);
+
+	// TODO for now just store the sweep line a std::list and in each split or merge vertex we recalculate the order 
+	// -depending on the point and find out the left edge to the given vertex
+
+	Edge2d temp_edge;
+	Vertex* temp_vertex;
+
+	std::map<Vertex, Edge2d>::iterator itr;
+	for (auto vertex_ptr : vertex_list)
+	{
+		VERTEX_CATEGORY v_cat = categorize_vertex(vertex_ptr);
+
+		////temp_edge = new Edge(vertex_ptr->get_point(), vertex_ptr->get_next()->get_point());
+		//temp_edge = v_e_map.find(vertex_ptr)->second;
+
+		//if (v_cat == VERTEX_CATEGORY::START)
+		//{
+		//	temp_edge.set_helper(vertex_ptr);
+		//	T.push(temp_edge);
+		//}
+		//else if (v_cat == VERTEX_CATEGORY::END)
+		//{
+		//	//Need to find the helper of the E(i-1)
+		//	itr = v_e_map.find(*vertex_ptr);
+		//	if (itr != v_e_map.begin())
+		//		itr = --itr;
+		//	else
+		//		itr = --v_e_map.end();
+		//	//Get helper vertex of the E(i-1)
+		//	temp_vertex = itr->second.get_helper();
+
+		//	if (VERTEX_CATEGORY::MERGE == categorize_vertex(temp_vertex))
+		//	{
+		//		diagonal_list.push_back(Edge(vertex_ptr, temp_vertex));
+		//	}
+
+		//	T.erase(itr->second);
+		//}
+		//else if (v_cat == VERTEX_CATEGORY::SPLIT)
+		//{
+		//	sweep_point->assign(vertex_ptr->get_point()->get_x(), vertex_ptr->get_point()->get_x());
+		//	T.rearrange();
+		//	// need a way to retrieve the left edge to the vertex from the T 
+		//	bool left_edge_found = T.get_edge_to_left(temp_edge);
+
+		//	if (left_edge_found)
+		//	{
+		//		diagonal_list.push_back(Edge(vertex_ptr, temp_edge.get_helper()));
+		//		//temp_edge
+		//	}
+		//}
+		//else if (v_cat == VERTEX_CATEGORY::MERGE)
+		//{
+		//}
+		//else
+		//{
+		//	// Regular vertex handling
+		//}
+	}
 }
 
