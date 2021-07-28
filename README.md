@@ -24,7 +24,16 @@ I have added set of simulations for demonstration purposes. These simulations us
 
 ### Voronoi Diagram 2D
 
-![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_simulation1.png)
+![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_diagram.png)
+
+### Delaunay triangulation  2D
+
+![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_delanuay.png)
+
+### Delaunay triangulation  and Voronoi 2D
+
+![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_both.png)
+
 
 ## License
 MIT
