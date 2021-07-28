@@ -70,8 +70,9 @@ std::vector<Segment> segments;
 std::list<BeachLineItem*> beach_line;
 typedef std::list<BeachLineItem*>::iterator BeachLineItr;
 
-void add_outer_edge(EdgeItem&edge, BoundRectangle& bound, std::vector<Edge2d>& _edges)
+void add_outer_edge(BeachLineItem* item, BoundRectangle& bound, std::vector<Edge2d>& _edges)
 {
+	EdgeItem edge = item->edge;
 	Point2d p_start = edge.point();
 	Vector2f dir = edge.direction();
 
@@ -157,7 +158,11 @@ void add_outer_edge(EdgeItem&edge, BoundRectangle& bound, std::vector<Edge2d>& _
 			}
 		}
 
-		_edges.push_back(Edge2d(p_start, p_end));
+		Edge2d new_edge(p_start, p_end);
+		new_edge.fp1 = DEFAULT_POINT_2D;
+		new_edge.fp2 = DEFAULT_POINT_2D;
+
+		_edges.push_back(new_edge);
 	}
 }
 
@@ -414,7 +419,11 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 
 	Edge2d edg1(left_point, *event->intersetion_point);
 	Edge2d edg2(right_point, *event->intersetion_point);
-
+	edg1.fp1 = arc_to_remove->prev_arc->site;
+	edg1.fp2 = arc_to_remove->site;
+	edg2.fp1 = arc_to_remove->site;
+	edg2.fp2 = arc_to_remove->next_arc->site;
+	
 	// Add two completed edges
 	_edges.push_back(edg1);
 	_edges.push_back(edg2);
@@ -531,7 +540,7 @@ void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_li
 		if (item->type == BEACH_ITEM_TYPE::EDGE)
 		{
 			x++;
-			add_outer_edge(item->edge, rect, _edges);
+			add_outer_edge(item, rect, _edges);
 			
 			//if(x==2)
 			//	break;

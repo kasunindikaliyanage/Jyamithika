@@ -110,5 +110,6 @@
     <None Include="Shaders\cube.shader" />
     <None Include="Shaders\triangle2d.shader" />
     <None Include="Shaders\line.shader" />
+    <None Include="Shaders\line2.shader" />
   </ItemGroup>
 </Project>

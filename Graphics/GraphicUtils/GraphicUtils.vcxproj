@@ -182,6 +182,7 @@
     <None Include="Shaders\basic_poly.shader" />
     <None Include="Shaders\cube.shader" />
     <None Include="Shaders\line.shader" />
+    <None Include="Shaders\line2.shader" />
     <None Include="Shaders\triangle2d.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

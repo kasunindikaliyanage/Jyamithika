@@ -3,12 +3,12 @@
 #define NUM_POINT_2D_REACT 12
 
 float Rect2dPoints[] = {
-	-0.005f, -0.005f,  // left  
-	 0.005f, -0.005f,  // right 
-	 0.005f,  0.005f,  // top 
-	 0.005f,  0.005f,  // left  
-	-0.005f, -0.005f,  // right 
-	-0.005f,  0.005f  // top   
+	-0.01f, -0.01f,  // left  
+	 0.01f, -0.01f,  // right 
+	 0.01f,  0.01f,  // top 
+	 0.01f,  0.01f,  // left  
+	-0.01f, -0.01f,  // right 
+	-0.01f,  0.01f  // top   
 };
 
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)
@@ -41,5 +41,20 @@ void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<fl
 		data.push_back(edge.p1[Y]);
 		data.push_back(edge.p2[X]);
 		data.push_back(edge.p2[Y]);
+	}
+}
+
+
+void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data)
+{
+	for (const auto& edge : edges)
+	{
+		if (edge.fp1 != jmk::DEFAULT_POINT_2D && edge.fp2 != jmk::DEFAULT_POINT_2D)
+		{
+			data.push_back(edge.fp1[X]);
+			data.push_back(edge.fp1[Y]);
+			data.push_back(edge.fp2[X]);
+			data.push_back(edge.fp2[Y]);
+		}
 	}
 }

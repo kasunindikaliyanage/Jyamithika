@@ -4,7 +4,7 @@ layout(location = 0) in vec2 vertex;
 
 void main()
 {
-	gl_Position = vec4(vertex,0.0, 1.0);
+	gl_Position = vec4(vertex, 0.0, 1.0);
 };
 
 
@@ -15,5 +15,5 @@ out vec4 FragColor;
 
 void main()
 {
-	FragColor = vec4(1.0,1.0,0.0, 1.0f);
+	FragColor = vec4(0.0, 1.0, 0.5, 1.0f);
 }

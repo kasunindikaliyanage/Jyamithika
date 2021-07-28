@@ -20,3 +20,5 @@ std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d&);
 void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<float>& data);
 
 void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>&data);
+
+void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data);

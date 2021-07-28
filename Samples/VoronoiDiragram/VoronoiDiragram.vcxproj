@@ -157,6 +157,10 @@
   <ItemGroup>
     <Image Include="..\Images\voronoi_simulation.png" />
     <Image Include="..\Images\voronoi_simulation1.png" />
+    <Image Include="..\Images\voronoi_sim_both.png" />
+    <Image Include="..\Images\voronoi_sim_delanuay.png" />
+    <Image Include="..\Images\voronoi_sim_diagram.png" />
+    <Image Include="..\Images\voronoi_sim_points.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -62,8 +62,8 @@ void setup_pointcloud(std::vector<jmk::Point2d>& points)
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-	for (float i = 1; i < 199; i++)
-		x_values.push_back((i - 98)/100);
+	for (float i = 1; i < 99; i++)
+		x_values.push_back((i - 49)/50);
 	
 	std::shuffle(x_values.begin(), x_values.end(), std::default_random_engine(seed));
 	y_values = x_values;
@@ -112,10 +112,26 @@ int main(void)
 		//glEnable(GL_DEPTH_TEST);
 	}
 
+	//Set up ImGui
+	{
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer bindings
+		ImGui_ImplOpenGL3_Init("#version 130");
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
+	}
+
 	std::vector<jmk::Point2d> points;
 	std::vector<float> point_data;
 	std::vector<jmk::Edge2d> edges;
 	std::vector<float> edge_data;
+	std::vector<float> face_edge_data;
 
 	setup_pointcloud(points);
 	getReactanglePointClouds(points, point_data);
@@ -128,6 +144,7 @@ int main(void)
 	std::cout << "Voronoi Diagram 2d construction time - " << diff.count() << std::endl;
 
 	get2DLinePointsFromEdgeList(edges, edge_data);
+	get2DLinePointsFromFaceEdgeList(edges, face_edge_data);
 
 	VertexArray VAO_points;
 	VertexBuffer VBO_points(point_data.data(), point_data.size());
@@ -137,8 +154,17 @@ int main(void)
 	VertexBuffer VBO_edge(edge_data.data(), edge_data.size());
 	VAO_edges.addVertexLayout(0, 2, GL_FALSE, 2 * sizeof(float), 0);
 
+	VertexArray VAO_face_edges;
+	VertexBuffer VBO_face_edge(face_edge_data.data(), face_edge_data.size());
+	VAO_face_edges.addVertexLayout(0, 2, GL_FALSE, 2 * sizeof(float), 0);
+
+	// TODO no need for multiple shaders. Just use uniforms. Currently we need to switch the shaders which adds 
+	// lots for overhead
 	ShaderProgram shader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/triangle2d.shader");
 	ShaderProgram line_shader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/line.shader");
+	ShaderProgram line2_shader("C:/Users/intellect/source/repos/Jyamithika/Graphics/GraphicUtils/Shaders/line2.shader");
+
+	bool show_points = true, show_voronoi = false, show_delanuay = false;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -149,20 +175,50 @@ int main(void)
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		processInput(window);
 		/* Render here */
 
 		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader.activeAsCurrentShader();
-		VAO_points.bindVertexArray();
-		glDrawArrays(GL_TRIANGLES, 0, point_data.size()/2);
+		if (show_points)
+		{
+			shader.activeAsCurrentShader();
+			VAO_points.bindVertexArray();
+			glDrawArrays(GL_TRIANGLES, 0, point_data.size() / 2);
+		}
 
-		line_shader.activeAsCurrentShader();
-		VAO_edges.bindVertexArray();
-		glLineWidth(2);
-		glDrawArrays(GL_LINES, 0, edge_data.size()/2);
+		if (show_voronoi)
+		{
+			line_shader.activeAsCurrentShader();
+			VAO_edges.bindVertexArray();
+			glLineWidth(2);
+			glDrawArrays(GL_LINES, 0, edge_data.size() / 2);
+		}
+
+		if (show_delanuay)
+		{
+			line2_shader.activeAsCurrentShader();
+			VAO_face_edges.bindVertexArray();
+			glLineWidth(0.5);
+			glDrawArrays(GL_LINES, 0, face_edge_data.size() / 2);
+		}
+
+		ImGui::Begin(" Sample : Voronoi Diagram and Delaunay triangulation in 2d");
+		ImGui::Checkbox("Points", &show_points);
+		ImGui::Checkbox("Voronoi", &show_voronoi);
+		ImGui::Checkbox("Delaunay", &show_delanuay);
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

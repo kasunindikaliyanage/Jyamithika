@@ -26,5 +26,17 @@
     <Image Include="..\Images\voronoi_simulation1.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\Images\voronoi_sim_both.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\voronoi_sim_delanuay.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\voronoi_sim_diagram.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\voronoi_sim_points.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
