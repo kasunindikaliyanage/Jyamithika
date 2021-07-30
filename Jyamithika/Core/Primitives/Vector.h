@@ -37,6 +37,8 @@ namespace jmk {
 
 		Vector(coordinate_type _x, coordinate_type _y) : coords({ _x,_y}) {}
 
+		//Vector(const Vector<coordinate_type, other_dimensions>&);
+
 		// Eqality check
 		bool operator==(const Vector<coordinate_type, dimensions>&) const;
 

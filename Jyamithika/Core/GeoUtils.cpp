@@ -85,9 +85,9 @@ struct Sweep_line {
 };
 
 struct vertex_ordering_from_id {
-	bool operator() (const Vertex& lhs, const Vertex& rhs) const
+	bool operator() (const Vertex2d& lhs, const Vertex2d& rhs) const
 	{
-		return lhs.id < lhs.id;
+		return true;
 	}
 };
 

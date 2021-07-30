@@ -102,6 +102,9 @@
     <ClInclude Include="Core\Primitives\Bounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Primitives\PolygonDCEL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Primitives\Vector.cpp">

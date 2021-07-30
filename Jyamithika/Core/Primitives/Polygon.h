@@ -73,6 +73,5 @@ namespace jmk {
 
 	};
 
-
 	void merge(Polygon& poly1, Polygon& poly2, Polygon& final_poly);
 }
