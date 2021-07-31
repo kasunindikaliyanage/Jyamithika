@@ -428,9 +428,9 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Face*>& faces)
 
 	// Find 3 non collinear points and 4 coplaner points
 	// TODO : For now implementation is looking for consecutive ones. But this is not needed
-	int i = 0 , j =0 ;
+	size_t i = 0 , j =0 ;
 	bool found_noncollinear = false,found_noncoplaner = false;
-	for ( i = 0; i < _points.size() -3 ; i++ )
+	for (  i = 0; i < _points.size() -3 ; i++ )
 	{
 		found_noncollinear = false;
 

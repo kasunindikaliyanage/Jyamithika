@@ -6,6 +6,7 @@
 #include "Primitives\Segment.h"
 #include "Primitives\Polygon.h"
 #include "Primitives\Polyhedron.h"
+#include "Primitives\PolygonDCEL.h"
 
 namespace jmk 
 {
