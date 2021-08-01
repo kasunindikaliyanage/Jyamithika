@@ -6,6 +6,7 @@
 #include "Core\Primitives\Line.h"
 #include "Core\Distance.h"
 #include "Core\Intersection.h"
+#include "Core\Primitives\PolygonDCEL.h"
 
 using namespace jmk;
 
@@ -128,3 +129,39 @@ TEST(LineIntersection, intersection)
 
 	EXPECT_TRUE(result);
 }
+
+TEST(DCELConstructionSplit,DCELTest)
+{
+	std::vector<Point2d> points;
+	points.push_back(jmk::Point2d(2 ,4));
+	points.push_back(jmk::Point2d(6, 2));
+	points.push_back(jmk::Point2d(8,5));
+	points.push_back(jmk::Point2d(9, 7));
+	points.push_back(jmk::Point2d(5,9));
+	points.push_back(jmk::Point2d(4, 6));
+	points.push_back(jmk::Point2d(1,8));
+	points.push_back(jmk::Point2d(-2, 6.5));
+	points.push_back(jmk::Point2d(0,6.5));
+	points.push_back(jmk::Point2d(1, 4.5));
+
+	PolygonDCEL<float, DIM2> poly(points);
+
+	for (auto edge : poly.getEdgeList()){
+		edge->print();
+		std::cout << "\n";
+	}
+	auto vertex1 = poly.getVertex(jmk::Point2d(1, 4.5));
+	auto vertex2 = poly.getVertex(jmk::Point2d(4, 6));
+
+	poly.split( vertex1, vertex2);
+
+	for (auto face_ptr : poly.getFaceList())
+	{
+		face_ptr->print();
+		std::cout << std::endl;
+	}
+	EXPECT_TRUE(true);
+}
+
+TEST(DCELSplit2, DCELTest)
+{}
