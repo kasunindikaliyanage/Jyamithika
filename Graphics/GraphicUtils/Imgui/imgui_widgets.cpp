@@ -6476,10 +6476,10 @@ static int IMGUI_CDECL TabItemComparerByVisibleOffset(const void* lhs, const voi
     return (int)(a->Offset - b->Offset);
 }
 
-static ImGuiTabBar* GetTabBarFromTabBarRef(const ImGuiPtrOrIndex& point)
+static ImGuiTabBar* GetTabBarFromTabBarRef(const ImGuiPtrOrIndex& ref)
 {
     ImGuiContext& g = *GImGui;
-    return point.Ptr ? (ImGuiTabBar*)point.Ptr : g.TabBars.GetByIndex(point.Index);
+    return ref.Ptr ? (ImGuiTabBar*)ref.Ptr : g.TabBars.GetByIndex(ref.Index);
 }
 
 static ImGuiPtrOrIndex GetTabBarRefFromTabBar(ImGuiTabBar* tab_bar)

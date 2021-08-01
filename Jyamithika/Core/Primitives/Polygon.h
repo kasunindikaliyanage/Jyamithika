@@ -17,14 +17,16 @@ namespace jmk {
 		Vertex(Point3d& _point, Vertex* _next = nullptr, Vertex* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
 	};
 
-	//struct Vertex2d {
-	//	Point2d point;
-	//	Vertex2d* next = nullptr;
-	//	Vertex2d* prev = nullptr;
-	//	
-	//public:
-	//	Vertex2d(Point2d& _point, Vertex2d* _next = nullptr, Vertex2d* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
-	//};
+	struct Vertex2d {
+		Point2d point;
+		Vertex2d* next = nullptr;
+		Vertex2d* prev = nullptr;
+
+		friend class Polygon2d;
+
+	public:
+		Vertex2d(Point2d& _point, Vertex2d* _next = nullptr, Vertex2d* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
+	};
 
 	struct Edge2d {
 		Point2d p1;
@@ -54,22 +56,22 @@ namespace jmk {
 		std::vector<Point3d> getPoints();
 	};
 
-	//class Polygon2d {
-	//	std::vector<Vertex2d> vertex_list;
-	//public:
-	//	Polygon2d();
+	class Polygon2d {
+		std::vector<Vertex2d> vertex_list;
+	public:
+		Polygon2d();
 
-	//	// Construct the Polyhon with given point set
-	//	Polygon2d(std::vector<Point2d> _point_list);
+		// Construct the Polyhon with given point set
+		Polygon2d(std::vector<Point2d> _point_list);
 
-	//	void Insert(Point2d&);
+		void Insert(Point2d&);
 
-	//	std::vector<Vertex2d> getVertcies();
+		std::vector<Vertex2d> getVertcies();
 
-	//	// Return the points list of underline vertices
-	//	std::vector<Point2d> getPoints();
+		// Return the points list of underline vertices
+		std::vector<Point2d> getPoints();
 
-	//};
+	};
 
 	void merge(Polygon& poly1, Polygon& poly2, Polygon& final_poly);
 }

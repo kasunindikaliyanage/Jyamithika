@@ -105,11 +105,6 @@ namespace jmk {
 		VertexDCEL<type, dim>* getVertex(VectorNf&);
 	};
 
-	typedef PolygonDCEL<float, 2U> Polygon2d;
-	typedef PolygonDCEL<float, 3U> Polygon3d;
-	typedef VertexDCEL<float, 2U> Vertex2dDCEL;
-	typedef EdgeDCEL<float, 2U> Edge2dDCEL;
-
 	template<class type, size_t dim>
 	inline PolygonDCEL<type, dim>::PolygonDCEL(std::vector<VectorNf>& _points)
 	{
@@ -323,18 +318,4 @@ namespace jmk {
 		}
 		return nullptr;
 	}
-
-	struct Vertex2DSortTBLR {
-		bool operator()(Vertex2dDCEL* _a, Vertex2dDCEL* _b) const
-		{
-			auto a = _a->point;
-			auto b = _b->point;
-			if ((a[Y] > b[Y])
-				|| (a[Y] == b[Y]) && (a[X] < b[X]))
-			{
-				return true;
-			}
-			return false;
-		}
-	};
 }
