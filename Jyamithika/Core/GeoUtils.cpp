@@ -100,7 +100,7 @@ struct Edge2dDCELWrapper {
 		dest = edge->twin->origin->point;
 	}
 
-	float computeX(Point2d& point) const{
+	const float computeX(const Point2d& point) const {
 		float _deno = (dest[Y] - orgin[Y]);
 		float _x = point[X];
 		if (_deno != 0) {
@@ -132,34 +132,115 @@ struct SweepLineComparator {
 		point = _point;
 	}
 
-	bool operator()(const Edge2dDCELWrapper& _ref1, const Edge2dDCELWrapper& _ref2){
-		return _ref1.computeX(*point) < _ref2.computeX(*point);
+	bool operator()( const Edge2dDCELWrapper* _ref1, const Edge2dDCELWrapper* _ref2) const{
+		return _ref1->computeX(*point) < _ref2->computeX(*point);
 	}
 };
 
-//static void handle_start_vertices(Vertex* start, std::set<Segment2d*, CustomeComparator>& T )
-//{
-//}
-//
-//static void handle_end_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T )
-//{
-//
-//}
-//
-//static void handle_split_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T )
-//{
-//
-//}
-//
-//static void handle_merge_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T )
-//{
-//
-//}
-//
-//static void handle_regular_vertices(Vertex* start, std::set<Segment*, CustomeComparator>& T	)
-//{
-//
-//}
+static void handle_start_vertices(Vertex2dDCELWrapper& vertex
+	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
+	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*> edge_mapper, Polygon2d* poly)
+{
+	Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
+	sweep_line.insert(edge);
+	edge_mapper.insert(std::pair<Edge2dDCEL*, Edge2dDCELWrapper*>(vertex.vert->incident_edge, edge));
+}
+
+static void handle_end_vertices(Vertex2dDCELWrapper& vertex
+	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
+	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
+{
+	auto found = sweep_line.find(edge_mapper[vertex.vert->incident_edge->prev]);
+	auto helper = (*found)->helper;
+	if (helper.category == VERTEX_CATEGORY::MERGE)
+		poly->split(vertex.vert, helper.vert);
+	sweep_line.erase(found);
+}
+
+static void handle_split_vertices(Vertex2dDCELWrapper& vertex
+	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
+	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
+{
+	auto found = sweep_line.lower_bound(edge_mapper[vertex.vert->incident_edge]);
+	Edge2dDCELWrapper* ej;
+	if (found == sweep_line.end()){
+		if (sweep_line.size() > 0) {
+			ej = *(found--);
+			poly->split(vertex.vert, ej->helper.vert);
+			ej->helper = vertex;
+		}
+	}
+	else if (found != sweep_line.begin())
+	{
+		ej = *(found--);
+		poly->split(vertex.vert, ej->helper.vert);
+		ej->helper = vertex;
+	}
+	Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
+	sweep_line.insert(edge);
+}
+
+static void handle_merge_vertices(Vertex2dDCELWrapper& vertex
+	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
+	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
+{
+	auto edge_wrapper = edge_mapper[vertex.vert->incident_edge->prev];
+	if (edge_wrapper->helper.category == VERTEX_CATEGORY::MERGE) {
+		poly->split(vertex.vert, edge_wrapper->helper.vert);
+	}
+
+	auto found = sweep_line.find(edge_wrapper);
+	if(found!= sweep_line.end())
+		sweep_line.erase(found);
+
+	found = sweep_line.lower_bound(edge_mapper[vertex.vert->incident_edge]);
+	Edge2dDCELWrapper* ej;
+	if (found == sweep_line.end()) {
+		if (sweep_line.size() > 0) {
+			ej = *(found--);
+			if(ej->helper.category == VERTEX_CATEGORY::MERGE)
+				poly->split(vertex.vert, ej->helper.vert);
+			ej->helper = vertex;
+		}
+	}
+	else if (found != sweep_line.begin())
+	{
+		ej = *(found--);
+		if (ej->helper.category == VERTEX_CATEGORY::MERGE)
+			poly->split(vertex.vert, ej->helper.vert);
+		ej->helper = vertex;
+	}
+}
+
+static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
+	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
+	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
+{
+	// Check whether the interior of the polygon lies right to vertex point
+	if (true) {
+
+	}
+	else {
+		auto found = sweep_line.lower_bound(edge_mapper[vertex.vert->incident_edge]);
+		Edge2dDCELWrapper* ej;
+		if (found == sweep_line.end()) {
+			if (sweep_line.size() > 0) {
+				ej = *(found--);
+				if (ej->helper.category == VERTEX_CATEGORY::MERGE)
+					poly->split(vertex.vert, ej->helper.vert);
+				ej->helper = vertex;
+			}
+		}
+		else if (found != sweep_line.begin())
+		{
+			ej = *(found--);
+			if (ej->helper.category == VERTEX_CATEGORY::MERGE)
+				poly->split(vertex.vert, ej->helper.vert);
+			ej->helper = vertex;
+		}
+	}
+
+}
 
 
 // This can be only used in 2d XY plane. 
@@ -429,28 +510,31 @@ void jmk::get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_po
 	sweep_point->assign(X, vertices[0].vert->point[X]);
 	sweep_point->assign(Y, vertices[0].vert->point[Y]);
 
-	//SweepLineComparator comp(sweep_point);
-	//std::set<Edge2dDCELWrapper, SweepLineComparator> tree;
+	SweepLineComparator comp(sweep_point);
+	std::set<Edge2dDCELWrapper*, SweepLineComparator> tree(comp);
+	std::map<Edge2dDCEL*, Edge2dDCELWrapper*> edge_mapping;
 
-	//for (auto vertex : vertices)
-	//{
-	//	switch (category)
-	//	{
-	//	case VERTEX_CATEGORY::START:
-	//		
-	//		break;
-	//	case VERTEX_CATEGORY::END:
-	//		break;
-	//	case VERTEX_CATEGORY::REGULAR:
-	//		break;
-	//	case VERTEX_CATEGORY::SPLIT:
-	//		break;
-	//	case VERTEX_CATEGORY::MERGE:
-	//		break;
-	//	case VERTEX_CATEGORY::INVALID:
-	//		break;
-	//	}
-	//}
+	for (auto vertex : vertices)
+	{
+		sweep_point->assign(X, vertex.vert->point[X]);
+		sweep_point->assign(Y, vertex.vert->point[Y]);
+
+		switch (vertex.category)
+		{
+		case VERTEX_CATEGORY::START:	
+			break;
+		case VERTEX_CATEGORY::END:
+			break;
+		case VERTEX_CATEGORY::REGULAR:
+			break;
+		case VERTEX_CATEGORY::SPLIT:
+			break;
+		case VERTEX_CATEGORY::MERGE:
+			break;
+		case VERTEX_CATEGORY::INVALID:
+			break;
+		}
+	}
 }
 
 
