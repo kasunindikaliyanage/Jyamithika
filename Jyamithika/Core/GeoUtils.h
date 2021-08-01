@@ -82,7 +82,8 @@ namespace jmk
 
 	float volumTetrahedron(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d);
 
-	void get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_polies);
+	// Partition the polygon to monotone pieces
+	void get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_pieces);
 }
 
 
