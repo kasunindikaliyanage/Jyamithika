@@ -2,11 +2,11 @@
 #include "Core\Base\Core.h"
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
+#include "Core\Primitives\PolygonDCEL.h"
 #include "Core\Primitives\Vector.h"
 #include "Core\Primitives\Line.h"
 #include "Core\Distance.h"
 #include "Core\Intersection.h"
-#include "Core\Primitives\PolygonDCEL.h"
 
 using namespace jmk;
 
@@ -163,5 +163,3 @@ TEST(DCELConstructionSplit,DCELTest)
 	EXPECT_TRUE(true);
 }
 
-TEST(DCELSplit2, DCELTest)
-{}

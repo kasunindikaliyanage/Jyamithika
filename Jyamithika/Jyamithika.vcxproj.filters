@@ -105,6 +105,9 @@
     <ClInclude Include="Core\Primitives\PolygonDCEL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MonotonePartition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Primitives\Vector.cpp">
@@ -137,7 +140,7 @@
     <ClCompile Include="Core\Intersection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Primitives\PolygonDCEL.cpp">
+    <ClCompile Include="MonotonePartition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -157,6 +157,7 @@
     <ClInclude Include="Core\Primitives\Polyhedron.h" />
     <ClInclude Include="Core\Primitives\Segment.h" />
     <ClInclude Include="Core\Primitives\Vector.h" />
+    <ClInclude Include="MonotonePartition.h" />
     <ClInclude Include="PartitionTree.h" />
     <ClInclude Include="RedBlackTree.h" />
     <ClInclude Include="IntervelTree.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Core\Primitives\Point.cpp" />
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Primitives\Vector.cpp" />
+    <ClCompile Include="MonotonePartition.cpp" />
     <ClCompile Include="Voronoi.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
