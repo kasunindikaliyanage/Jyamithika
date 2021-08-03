@@ -11,6 +11,21 @@ float Rect2dPoints[] = {
 	-0.01f,  0.01f  // top   
 };
 
+float colorsnew[36] = {
+	0.1 , 0.2 , 0.3, //1
+	0.95 , 0.01 , 0.02, //2
+	0.3 , 0.95 , 0.05, //3
+	0.4 , 0.5 , 0.6, //4
+	0.5 , 0.6 , 0.7, //5
+	0.6 , 0.7 , 0.8, //6
+	0.7 , 0.8 , 0.9, //7
+	0.8 , 0.9 , 0.1, //8
+	0.9 , 0.1 , 0.2, //9
+	0.5 , 0.2 , 0.9, //10
+	0.8,  0.1 , 0.2, //11
+	0.1 , 0.9 , 0.2	 //12
+};
+
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)
 {
 	std::vector<float> data;
@@ -44,7 +59,6 @@ void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<fl
 	}
 }
 
-
 void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data)
 {
 	for (const auto& edge : edges)
@@ -58,3 +72,39 @@ void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vecto
 		}
 	}
 }
+
+void get2DLinePointsFromDCEL2d(std::vector<jmk::EdgeDCEL<float, DIM2>*>& edges, std::vector<float>& data)
+{
+	for (const auto& edge : edges)
+	{
+		auto origin = edge->origin->point;
+		auto dest = edge->destination()->point;
+		data.push_back(origin[X]);
+		data.push_back(origin[Y]);
+		data.push_back(dest[X]);
+		data.push_back(dest[Y]);
+	}
+}
+
+void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector<float>& data)
+{
+	int random_integer;
+	int lowest = 1, highest = 12;
+	int range = (highest - lowest) + 1;
+	random_integer = lowest + int(range * rand() / (RAND_MAX + 1.0));
+
+	for (auto point : points)
+	{
+		data.push_back(point[X]);
+		data.push_back(point[Y]);
+		data.push_back(0.0f);
+
+		//Push colors
+		data.push_back(colorsnew[random_integer * 3 + 0]);
+		data.push_back(colorsnew[random_integer * 3 + 1]);
+		data.push_back(colorsnew[random_integer * 3 + 2]);
+	}
+}
+
+
+

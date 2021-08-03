@@ -22,14 +22,14 @@ TEST(MonotonePartitions1, PolygonPartitions)
 	points.push_back(jmk::Point2d(1, 4.5));
 
 	PolygonDCEL<float, DIM2> poly(points);
-	std::vector<Polygon2d> mono_polies;
+	std::vector<Polygon2d*> mono_polies;
 	get_monotone_polygons(&poly, mono_polies);
 
-	for (auto face_ptr : poly.getFaceList())
-	{
-		face_ptr->print();
-		std::cout << std::endl;
-	}
+	//for (auto polygon : mono_polies) {
+	//	for (auto face_ptr : polygon.getFaceList())
+	//		face_ptr->print();
+	//	std::cout << std::endl;
+	//}
 
 	EXPECT_TRUE(true);
 }
@@ -54,14 +54,14 @@ TEST(MonotonePartitions2, PolygonPartitions)
 	points.push_back(jmk::Point2d(6, -2));
 
 	PolygonDCEL<float, DIM2> poly(points);
-	std::vector<Polygon2d> mono_polies;
+	std::vector<Polygon2d*> mono_polies;
 	get_monotone_polygons(&poly, mono_polies);
 
-	for (auto face_ptr : poly.getFaceList())
-	{
-		face_ptr->print();
-		std::cout << std::endl;
-	}
+	//for (auto polygon : mono_polies){
+	//	for (auto face_ptr : polygon.getFaceList())
+	//		face_ptr->print();
+	//	std::cout << std::endl;
+	//}
 
 	EXPECT_TRUE(true);
 }

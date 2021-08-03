@@ -182,6 +182,7 @@
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Primitives\Vector.cpp" />
     <ClCompile Include="MonotonePartition.cpp" />
+    <ClCompile Include="Triangulation.cpp" />
     <ClCompile Include="Voronoi.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

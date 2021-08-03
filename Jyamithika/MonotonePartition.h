@@ -6,5 +6,5 @@
 #include "Core\GeoUtils.h"
 
 namespace jmk {
-	void get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_polies);
+	void get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d*>& mono_polies);
 }

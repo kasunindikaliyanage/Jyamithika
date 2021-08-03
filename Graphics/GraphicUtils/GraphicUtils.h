@@ -5,6 +5,7 @@
 
 #include "Jyamithika\Core\Primitives\Point.h"
 #include "Jyamithika\Core\Primitives\Polygon.h"
+#include "Jyamithika\Core\Primitives\PolygonDCEL.h"
 
 //float Rect2dPoints[] = {
 //	-0.008f, -0.008f,  // left  
@@ -22,3 +23,7 @@ void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<
 void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>&data);
 
 void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data);
+
+void get2DLinePointsFromDCEL2d(std::vector<jmk::EdgeDCEL<float, DIM2>*>& edge_list, std::vector<float>& data);
+
+void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector<float>& data);

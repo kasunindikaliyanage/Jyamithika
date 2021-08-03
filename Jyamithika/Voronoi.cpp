@@ -519,7 +519,7 @@ void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_li
 		Event* event = p_queue.top();
 		p_queue.pop();
 
-		std::cout << "iteration " << ++count << " Queue size " << p_queue.size() << std::endl;
+		//std::cout << "iteration " << ++count << " Queue size " << p_queue.size() << std::endl;
 
 		if (event->valid)
 		{

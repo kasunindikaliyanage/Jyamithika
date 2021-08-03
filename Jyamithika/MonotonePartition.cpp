@@ -15,8 +15,6 @@ enum class VERTEX_CATEGORY {
 	INVALID
 };
 
-// static functions
-
 VERTEX_CATEGORY categorize_vertex(Vertex2dDCEL* vertex)
 {
 	Vertex2dDCEL* v_prev = vertex->incident_edge->prev->origin;
@@ -55,7 +53,6 @@ VERTEX_CATEGORY categorize_vertex(Vertex2dDCEL* vertex)
 		return VERTEX_CATEGORY::REGULAR;
 	}
 }
-
 
 struct Vertex2dDCELWrapper {
 	Vertex2dDCEL* vert;
@@ -110,6 +107,8 @@ struct SweepLineComparator {
 	}
 };
 
+// TODO : Check the posibility of Refactoring the code to remove duplicate lines
+
 static void handle_start_vertices(Vertex2dDCELWrapper& vertex
 	, std::set<Edge2dDCELWrapper*, SweepLineComparator>& sweep_line
 	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
@@ -151,7 +150,6 @@ static void handle_split_vertices(Vertex2dDCELWrapper& vertex
 		poly->split(vertex.vert, ej->helper.vert);
 		ej->helper = vertex;
 	}
-	//Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
 	sweep_line.insert(edge);
 	edge_mapper.insert(std::pair<Edge2dDCEL*, Edge2dDCELWrapper*>(vertex.vert->incident_edge, edge));
 }
@@ -195,10 +193,11 @@ static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
 {
 	// Check whether the interior of the polygon lies right to vertex point
 	// if the orgin(prev).y > origin(current).y && orgin(current).y > origin(next).y
-
 	auto prev_y = vertex.vert->incident_edge->prev->origin->point[Y];
 	auto current_y = vertex.vert->point[Y];
 	auto next_y = vertex.vert->incident_edge->next->origin->point[Y];
+
+	Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
 
 	if (prev_y >= current_y && current_y >= next_y) {
 		auto edge_wrapper = edge_mapper[vertex.vert->incident_edge->prev];
@@ -210,12 +209,10 @@ static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
 		if (found != sweep_line.end())
 			sweep_line.erase(found);
 
-		Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
 		sweep_line.insert(edge);
 		edge_mapper.insert(std::pair<Edge2dDCEL*, Edge2dDCELWrapper*>(vertex.vert->incident_edge, edge));
 	}
 	else {
-		Edge2dDCELWrapper* edge = new Edge2dDCELWrapper(vertex.vert->incident_edge, vertex);
 		auto found = sweep_line.lower_bound(edge);
 		Edge2dDCELWrapper* ej;
 		if (found == sweep_line.end()) {
@@ -234,11 +231,10 @@ static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
 			ej->helper = vertex;
 		}
 	}
-
 }
 
 
-void jmk::get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_polies)
+void jmk::get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d*>& mono_polies)
 {
 	std::vector<Vertex2dDCELWrapper> vertices;
 	for (auto vertex : poly->getVertexList()) {
@@ -281,4 +277,25 @@ void jmk::get_monotone_polygons(Polygon2d* poly, std::vector<Polygon2d>& mono_po
 			break;
 		}
 	}
+
+	std::vector<std::vector<Point2d>> polygon_pieces_vertices;
+
+	for (auto face_ptr : poly->getFaceList()) {
+		auto first_edge_ptr = face_ptr->outer;
+		if (first_edge_ptr) {
+			std::vector<Point2d> vertices;
+			vertices.push_back(first_edge_ptr->origin->point);
+
+			auto next_edge_ptr = first_edge_ptr->next;
+			while (next_edge_ptr != first_edge_ptr) {
+				vertices.push_back(next_edge_ptr->origin->point);
+				next_edge_ptr = next_edge_ptr->next;
+			}
+
+			polygon_pieces_vertices.push_back(vertices);
+		}
+	}
+	
+	for(auto vertices : polygon_pieces_vertices)
+		mono_polies.push_back(new Polygon2d(vertices));
 }

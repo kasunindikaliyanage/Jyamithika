@@ -111,5 +111,7 @@
     <None Include="Shaders\triangle2d.shader" />
     <None Include="Shaders\line.shader" />
     <None Include="Shaders\line2.shader" />
+    <None Include="Shaders\generic_line.shader" />
+    <None Include="Shaders\basic_poly_2d.shader" />
   </ItemGroup>
 </Project>

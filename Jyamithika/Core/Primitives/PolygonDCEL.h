@@ -72,6 +72,36 @@ namespace jmk {
 				}
 			}
 		}
+
+		std::vector<EdgeDCEL<type, dim>*> getEdgeList(){
+			std::vector<EdgeDCEL<type, dim>*> edge_list;
+			if (outer){
+				auto edge_ptr = outer;
+				auto next_ptr = outer->next;
+				edge_list.push_back(edge_ptr);
+				edge_ptr->origin->print();
+				while (next_ptr != edge_ptr) {
+					edge_list.push_back(next_ptr);
+					next_ptr = next_ptr->next;
+				}
+			}
+			return edge_list;
+		}
+
+		std::vector<Vector<float, dim>> getPoints()
+		{
+			std::vector<Vector<float, dim>> point_list;
+			if (outer) {
+				auto edge_ptr = outer;
+				auto next_ptr = outer->next;
+				point_list.push_back(edge_ptr->origin->point);
+				while (next_ptr != edge_ptr) {
+					point_list.push_back(next_ptr->origin->point);
+					next_ptr = next_ptr->next;
+				}
+			}
+			return point_list;
+		}
 	};
 
 	template<class type = float, size_t dim = DIM3 >
@@ -103,6 +133,9 @@ namespace jmk {
 		std::vector<EdgeDCEL<type, dim>*> getEdgeList();
 
 		VertexDCEL<type, dim>* getVertex(VectorNf&);
+
+		void getEdgesWithSamefaceAndGivenOrigins(VertexDCEL<type, dim>* _v1, VertexDCEL<type, dim>* _v2,
+			EdgeDCEL<type, dim>** edge_leaving_v1, EdgeDCEL<type, dim>** edge_leaving_v2);
 	};
 
 	typedef VertexDCEL<float, 2U>	Vertex2dDCEL;
@@ -196,7 +229,7 @@ namespace jmk {
 	}
 
 	template<class type, size_t dim>
-	static void getEdgesWithSamefaceAndGivenOrigins(VertexDCEL<type, dim>* _v1, VertexDCEL<type, dim>* _v2,
+	inline void PolygonDCEL<type, dim>::getEdgesWithSamefaceAndGivenOrigins(VertexDCEL<type, dim>* _v1, VertexDCEL<type, dim>* _v2,
 		EdgeDCEL<type, dim>** edge_leaving_v1, EdgeDCEL<type, dim>** edge_leaving_v2)
 	{
 		std::vector<EdgeDCEL<type, dim>*> edges_with_v1_ori, edges_with_v2_ori;
@@ -223,10 +256,12 @@ namespace jmk {
 		// Get two edges, one with origin v1 and other with origin v2 and incident to same face
 		for ( auto ev1 : edges_with_v1_ori){
 			for ( auto ev2 : edges_with_v2_ori){
-				if (ev1->incident_face == ev2->incident_face) {
-					*edge_leaving_v1 = ev1;
-					*edge_leaving_v2 = ev2;
-					return;
+				if (ev1->incident_face->outer != nullptr) {
+					if (ev1->incident_face == ev2->incident_face) {
+						*edge_leaving_v1 = ev1;
+						*edge_leaving_v2 = ev2;
+						return;
+					}
 				}
 			}
 		}
@@ -242,6 +277,10 @@ namespace jmk {
 		getEdgesWithSamefaceAndGivenOrigins(_v1, _v2, &edge_oriV1, &edge_oriV2);
 		if (edge_oriV1->id == -1 || edge_oriV2->id == -1)
 			return false;						// Cannot find a edges with same face with ori _v1, _v2
+
+		// If the vertices are adjucent we can return.
+		if (edge_oriV1->next->origin == _v2 || edge_oriV1->prev->origin == _v2)
+			return false;
 
 		// Later we can delete this entry
 		FaceDCEL<type, dim>* previous_face = edge_oriV1->incident_face;
@@ -322,4 +361,17 @@ namespace jmk {
 		}
 		return nullptr;
 	}
+
+	struct Vertex2DSortTBLR {
+		bool operator()(Vertex2dDCEL* ref1, Vertex2dDCEL* ref2) {
+			auto a = ref1->point;
+			auto b = ref2->point;
+			if ((a[Y] > b[Y])
+				|| (a[Y] == b[Y]) && (a[X] < b[X]))
+			{
+				return true;
+			}
+			return false;
+		}
+	};
 }
