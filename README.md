@@ -18,22 +18,22 @@ Following are the major topics implemented
 
 I have added set of simulations for demonstration purposes. These simulations use the algorithms implemented in the library.
 
+### Polygon Triangulation with monotone partitions
+
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/triangulation_monotone_partition.png" width="600" height="600">
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/triangulation_faces.png" width="600" height="600">
+
 ### Convexhull3D
 
-![Convexhull3D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/convexhull3d_sample.jpg)
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/convexhull3d_sample.jpg" width="600" height="600">
 
 ### Voronoi Diagram 2D
 
-![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_diagram.png)
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_diagram.png" width="600" height="600">
 
 ### Delaunay triangulation  2D
 
-![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_delanuay.png)
-
-### Delaunay triangulation  and Voronoi 2D
-
-![Voronoi2D](https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_both.png)
-
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_delanuay.png" width="600" height="600">
 
 ## License
 MIT
