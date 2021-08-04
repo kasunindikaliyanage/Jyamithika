@@ -19,4 +19,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\triangulation_faces.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\triangulation_lines.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\triangulation_monotone_partition.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\triangulation_poly.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

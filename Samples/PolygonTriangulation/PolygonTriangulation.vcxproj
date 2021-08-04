@@ -154,6 +154,12 @@
   <ItemGroup>
     <ClCompile Include="PolygonTriangulationSimulation.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\triangulation_faces.png" />
+    <Image Include="..\Images\triangulation_lines.png" />
+    <Image Include="..\Images\triangulation_monotone_partition.png" />
+    <Image Include="..\Images\triangulation_poly.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

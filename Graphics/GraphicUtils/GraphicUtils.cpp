@@ -12,19 +12,21 @@ float Rect2dPoints[] = {
 };
 
 float colorsnew[36] = {
-	0.1 , 0.2 , 0.3, //1
-	0.95 , 0.01 , 0.02, //2
-	0.3 , 0.95 , 0.05, //3
-	0.4 , 0.5 , 0.6, //4
-	0.5 , 0.6 , 0.7, //5
-	0.6 , 0.7 , 0.8, //6
-	0.7 , 0.8 , 0.9, //7
-	0.8 , 0.9 , 0.1, //8
-	0.9 , 0.1 , 0.2, //9
-	0.5 , 0.2 , 0.9, //10
+	0.95 , 0.45 , 0.2,  // Orangish
+	0.2 ,  0.95 , 0.4,  // Greenish
+	0.95 , 0.2 ,  0.84,	// Pickish
+	1.0 , 0.0 , 0.0,	// Red
+	0.0 , 1.0 , 0.0,	// Green
+	0.0 , 0.0 , 1.0,	// Blue
+	0.6 ,  0.2 , 0.95,	// Violetish
+	0.2 ,  0.94 , 0.95, // Cyan
+	0.9 , 0.95, 0.2,	// Yellow
+	0.6 , 0.95 ,0.2,	// light Green
 	0.8,  0.1 , 0.2, //11
-	0.1 , 0.9 , 0.2	 //12
+	0.0 , 0.0 , 1.2	 //12
 };
+
+static int current_color_index = 0;
 
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)
 {
@@ -100,10 +102,11 @@ void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector
 		data.push_back(0.0f);
 
 		//Push colors
-		data.push_back(colorsnew[random_integer * 3 + 0]);
-		data.push_back(colorsnew[random_integer * 3 + 1]);
-		data.push_back(colorsnew[random_integer * 3 + 2]);
+		data.push_back(colorsnew[current_color_index % 6 * 3 + 0]);
+		data.push_back(colorsnew[current_color_index % 6 * 3 + 1]);
+		data.push_back(colorsnew[current_color_index % 6 * 3 + 2]);
 	}
+	current_color_index++;
 }
 
 

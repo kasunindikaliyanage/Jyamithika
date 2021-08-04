@@ -113,39 +113,6 @@ void jmk::triangulate_monotone(Polygon2d* poly)
 	triangulate(poly, vertices);
 }
 
-//void jmk::triangulate_general(Polygon2d* poly)
-//{
-//	std::vector<Polygon2d> mono_polies;
-//	get_monotone_polygons(poly, mono_polies);
-//
-//	std::vector<std::vector<Vertex2dDCEL*>> polygon_pieces_vertices;
-//
-//	for (auto face_ptr : poly->getFaceList()) {
-//		auto first_edge_ptr = face_ptr->outer;
-//		if (first_edge_ptr) {
-//			std::vector<Vertex2dDCEL*> vertices;
-//			vertices.push_back(first_edge_ptr->origin);
-//
-//			auto next_edge_ptr = first_edge_ptr->next;
-//			while (next_edge_ptr != first_edge_ptr) {
-//				vertices.push_back(next_edge_ptr->origin);
-//				next_edge_ptr = next_edge_ptr->next;
-//			}
-//
-//			polygon_pieces_vertices.push_back(vertices);
-//		}
-//	}
-//
-//	int count = 0;
-//
-//	for (auto vertices : polygon_pieces_vertices) {
-//		triangulate(poly, vertices);
-//		//std::cout << "Print the face for iteration" << count++ << std::endl;
-//
-//		//for (auto face_ptr : poly->getFaceList())
-//		//{
-//		//	face_ptr->print();
-//		//	std::cout << std::endl;
-//		//}
-//	}
-//}
+void jmk::triangulate_earclipping(Polygon2d* poly, std::vector<Polygon2d>& triangles){
+
+}

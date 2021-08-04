@@ -90,7 +90,7 @@ int main(void)
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		/* Create a windowed mode window and its OpenGL context */
-		window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Voronoi 2d Simulation", NULL, NULL);
+		window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Polygon triagulation with monotone partitioning", NULL, NULL);
 		if (!window)
 		{
 			glfwTerminate();
@@ -131,7 +131,6 @@ int main(void)
 	std::vector<float> monotone_poly_edge_data;
 	std::vector<float> trigulation_data;
 	std::vector<float> trigulation_face_data;
-	//std::vector<float> face_edge_data;
 
 	setup_pointcloud(points);
 	getReactanglePointClouds(points, point_data);
@@ -217,7 +216,7 @@ int main(void)
 		processInput(window);
 		/* Render here */
 
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if (show_tri_faces)
