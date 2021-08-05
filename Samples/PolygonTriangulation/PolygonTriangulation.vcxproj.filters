@@ -32,5 +32,8 @@
     <Image Include="..\Images\triangulation_poly.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\Images\triangulation_ear_clipping.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
