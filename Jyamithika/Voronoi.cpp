@@ -70,7 +70,7 @@ std::vector<Segment> segments;
 std::list<BeachLineItem*> beach_line;
 typedef std::list<BeachLineItem*>::iterator BeachLineItr;
 
-void add_outer_edge(BeachLineItem* item, BoundRectangle& bound, std::vector<Edge2d>& _edges)
+void add_outer_edge(BeachLineItem* item, BoundRectangle& bound, std::vector<Edge2dSimple>& _edges)
 {
 	EdgeItem edge = item->edge;
 	Point2d p_start = edge.point();
@@ -158,7 +158,7 @@ void add_outer_edge(BeachLineItem* item, BoundRectangle& bound, std::vector<Edge
 			}
 		}
 
-		Edge2d new_edge(p_start, p_end);
+		Edge2dSimple new_edge(p_start, p_end);
 		new_edge.fp1 = DEFAULT_POINT_2D;
 		new_edge.fp2 = DEFAULT_POINT_2D;
 
@@ -405,7 +405,7 @@ void handleSiteEvent(Event* event)
 	}
 }
 
-void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
+void handleCircleEvent(Event* event, std::vector<Edge2dSimple>& _edges)
 {
 	// In circle events, exsisting arcs are going to shrink to a point
 	// Delete el,an,er related to current circle event
@@ -417,8 +417,8 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 	arc_to_remove->prev_edge->is_completed_edge = true;
 	arc_to_remove->next_edge->is_completed_edge = true;
 
-	Edge2d edg1(left_point, *event->intersetion_point);
-	Edge2d edg2(right_point, *event->intersetion_point);
+	Edge2dSimple edg1(left_point, *event->intersetion_point);
+	Edge2dSimple edg2(right_point, *event->intersetion_point);
 	edg1.fp1 = arc_to_remove->prev_arc->site;
 	edg1.fp2 = arc_to_remove->site;
 	edg2.fp1 = arc_to_remove->site;
@@ -498,7 +498,7 @@ void handleCircleEvent(Event* event, std::vector<Edge2d>& _edges)
 	addCircleEvents(right_arc);
 }
 
-void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_list, std::vector<jmk::Edge2d>& _edges,
+void jmk::constructVoronoiDiagram_fortunes(std::vector<jmk::Point2d>& _points_list, std::vector<jmk::Edge2dSimple>& _edges,
 	BoundRectangle& rect)
 {
 	// We need a unique list of points.

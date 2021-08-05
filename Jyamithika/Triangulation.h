@@ -10,7 +10,7 @@
 namespace jmk {
 	
 	// triangulate the given polygon using ear clipping method
-	void triangulate_earclipping( Polygon2d* poly, std::vector<Polygon2d>& triangles );
+	void triangulate_earclipping( Polygon2dSimple* poly, std::vector<Edge2dSimple>& edge_list);
 
 	// Triangulate the given monotone polygon. Result is undefined if the polygon is not monotone
 	void triangulate_monotone(Polygon2d* poly);

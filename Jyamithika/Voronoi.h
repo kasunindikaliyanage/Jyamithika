@@ -11,5 +11,5 @@ namespace jmk
 	void constructVoronoiDiagram_halfplaneIntersection(std::vector<Point2d>&);
 
 	// Compute the voronoi diagram using fortune's algorithm
-	void constructVoronoiDiagram_fortunes(std::vector<Point2d>&, std::vector<Edge2d>&, BoundRectangle& rect);
+	void constructVoronoiDiagram_fortunes(std::vector<Point2d>&, std::vector<Edge2dSimple>&, BoundRectangle& rect);
 }

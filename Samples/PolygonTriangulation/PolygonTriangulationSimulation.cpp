@@ -74,6 +74,16 @@ void setup_pointcloud(std::vector<jmk::Point2d>& points)
 	points.push_back(jmk::Point2d(0.5, -0.1));
 }
 
+void setup_pointcloud_2(std::vector<jmk::Point2d>& points)
+{
+	points.push_back(jmk::Point2d(0.2, 0.4));
+	points.push_back(jmk::Point2d(0.6, 0.2));
+	points.push_back(jmk::Point2d(0.8, 0.5));
+	points.push_back(jmk::Point2d(0.9, 0.7));
+	points.push_back(jmk::Point2d(0.5, 0.9));
+	points.push_back(jmk::Point2d(0.4, 0.6));
+}
+
 int main(void)
 {
 	std::srand(std::time(nullptr));
@@ -131,15 +141,15 @@ int main(void)
 	std::vector<float> monotone_poly_edge_data;
 	std::vector<float> trigulation_data;
 	std::vector<float> trigulation_face_data;
+	std::vector<float> trigulation_ear_clipping;
 
 	setup_pointcloud(points);
 	getReactanglePointClouds(points, point_data);
+	
 	jmk::Polygon2d polygon(points);
 	auto edge_list = polygon.getEdgeList();
 	get2DLinePointsFromDCEL2d(edge_list, original_poly_edge_data);
 
-	auto startTime = high_resolution_clock::now();
-	
 	std::vector<jmk::Polygon2d*> poly_peices;
 	jmk::get_monotone_polygons(&polygon, poly_peices);
 	for (auto poly_ptr : poly_peices) {
@@ -152,20 +162,25 @@ int main(void)
 	}
 
 	for (auto polygon : poly_peices) {
-		for (auto face_ptr : polygon->getFaceList())
-		{
+		for (auto face_ptr : polygon->getFaceList()){
 			edge_list = face_ptr->getEdgeList();
 			get2DLinePointsFromDCEL2d(edge_list, trigulation_data);
 		}
 	}
 
 	for (auto polygon : poly_peices) {
-		for (auto face_ptr : polygon->getFaceList())
-		{
+		for (auto face_ptr : polygon->getFaceList()){
 			auto points = face_ptr->getPoints();
 			getGraphicDataFromPointsList(points, trigulation_face_data);
 		}
 	}
+
+	//Triangulation ear clipping
+	jmk::Polygon2dSimple poly_simple(points);
+	std::vector<jmk::Edge2dSimple> edge_list_ear;
+	triangulate_earclipping(&poly_simple, edge_list_ear);
+	get2DLinePointsFromEdgeList(edge_list_ear,trigulation_ear_clipping);
+
 
 	VertexArray VAO_points;
 	VertexBuffer VBO_points(point_data.data(), point_data.size());
@@ -183,6 +198,10 @@ int main(void)
 	VertexBuffer VBO_tri_edge(trigulation_data.data(), trigulation_data.size());
 	VAO_triangulation_edges.addVertexLayout(0, 2, GL_FALSE, 2 * sizeof(float), 0);
 
+	VertexArray VAO_triangulation_ear_edges;
+	VertexBuffer VBO_tri_ear_edge(trigulation_ear_clipping.data(), trigulation_ear_clipping.size());
+	VAO_triangulation_ear_edges.addVertexLayout(0, 2, GL_FALSE, 2 * sizeof(float), 0);
+
 	VertexArray VAO_triangulation_faces;
 	VertexBuffer VBO_tri_faces(trigulation_face_data.data(), trigulation_face_data.size());
 	VAO_triangulation_faces.addVertexLayout(0, 3, GL_FALSE, 6 * sizeof(float), 0);
@@ -196,8 +215,10 @@ int main(void)
 	glm::vec3 red = glm::vec3(0.95f, 0.02f, 0.03f);
 	glm::vec3 blue = glm::vec3(0.55f, 0.42f, 0.83f);
 	glm::vec3 green = glm::vec3(0.15f, 0.92f, 0.13f);
+	glm::vec3 yellow = glm::vec3(0.9f, 0.95f, 0.2f);
 
-	bool show_points = true, show_monotone_partitioning = false, show_triangulation = false, show_tri_faces = false;
+	bool show_points = true, show_monotone_partitioning = false, show_triangulation = false,
+		show_tri_faces = false, show_tri_ear = false;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -234,6 +255,15 @@ int main(void)
 			glLineWidth(2);
 			glDrawArrays(GL_LINES, 0, trigulation_data.size() / 2);
 		}
+
+		if (show_tri_ear)
+		{
+			line_shader.activeAsCurrentShader();
+			glUniform3fv(line_color_loc, 1, glm::value_ptr(yellow));
+			VAO_triangulation_ear_edges.bindVertexArray();
+			glLineWidth(2);
+			glDrawArrays(GL_LINES, 0, trigulation_data.size() / 2);
+		}
 		
 		if (show_monotone_partitioning)
 		{
@@ -261,6 +291,7 @@ int main(void)
 		ImGui::Checkbox("Monotone partitions", &show_monotone_partitioning);
 		ImGui::Checkbox("Triangulation", &show_triangulation);
 		ImGui::Checkbox("Triangulation faces", &show_tri_faces);
+		ImGui::Checkbox("Triangulation Ear clipping", &show_tri_ear);
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();

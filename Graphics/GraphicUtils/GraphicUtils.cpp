@@ -50,7 +50,7 @@ void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<
 	}
 }
 
-void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data)
+void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>& data)
 {
 	for (const auto& edge : edges)
 	{
@@ -61,7 +61,7 @@ void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<fl
 	}
 }
 
-void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2d>& edges, std::vector<float>& data)
+void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>& data)
 {
 	for (const auto& edge : edges)
 	{
@@ -95,7 +95,7 @@ void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector
 	int range = (highest - lowest) + 1;
 	random_integer = lowest + int(range * rand() / (RAND_MAX + 1.0));
 
-	for (auto point : points)
+	for (const auto& point : points)
 	{
 		data.push_back(point[X]);
 		data.push_back(point[Y]);

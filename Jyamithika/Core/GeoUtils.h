@@ -12,7 +12,9 @@ namespace jmk
 {
 	// Return integer indicating relative position of [Point c] related to segment [a b]
 	// This is only for 2D in XY plane.
-	int pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c);
+	int relation3d(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	int relation2d(const Point2d& a, const Point2d& b, const Point2d& c);
 
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
 	bool left(const Point3d& a, const Point3d& b, const Point3d& c);
@@ -23,11 +25,17 @@ namespace jmk
 	// Predicate to determine whether the [Point c] is right to the segment [a b]
 	bool right(const Point3d& a, const Point3d& b, const Point3d& c);
 
+	// Predicate to determine whether the[Point c] is left to the segment[a b]
+	bool leftOrBeyond(const Point2d& a, const Point2d& b, const Point2d& c);
+
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
 	bool leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c);
 
 	// Predicate to determine whether the [Point c] is left to or between the segment [a b]
 	bool leftOrBetween(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	// Return true if the v1-v2 is a diagonal. Use to poly to get the vertice list
+	bool isDiagonal(const Vertex2dSimple* v1, const Vertex2dSimple* v2, Polygon2dSimple* poly = nullptr);
 
 	// Returns counter clockwise angle (0 - 360) measure from referece point to the give point 
 	float polarAngle( const Point3d& _other, const Point3d& _ref) ;
@@ -35,6 +43,9 @@ namespace jmk
 	// Return the area of the triangle defined by given 3 points
 	// TODO change the parameter types form 3d to 2d
 	double areaTriangle2d(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	// Return the area of the triangle defined by given 3 points in XY 2D space
+	double areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c);
 
 	// Return the area of the triangle defined by given 3 points
 	double areaTriangle3d(const Point3d& a, const Point3d& b, const Point3d& c);

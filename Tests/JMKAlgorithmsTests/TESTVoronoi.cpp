@@ -34,7 +34,7 @@ TEST(VoronoiFortunes, Voronoi)
 	points.push_back(Point2d(4, 5));
 	points.push_back(Point2d(5, 7));
 
-	std::vector<Edge2d> edges;
+	std::vector<Edge2dSimple> edges;
 
 	BoundRectangle rect{0.0,10.0,15.0,0.0};
 

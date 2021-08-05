@@ -29,4 +29,8 @@ namespace jmk {
 	{
 		return fabs(x - y) < TOLERANCE;
 	}
+
+	static bool _xor (bool x, bool y) {
+		return !x ^ !y;
+	}
 }

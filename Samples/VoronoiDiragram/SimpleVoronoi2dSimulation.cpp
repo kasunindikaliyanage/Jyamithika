@@ -76,6 +76,7 @@ void setup_pointcloud(std::vector<jmk::Point2d>& points)
 	std::unique(points.begin(), points.end());
 }
 
+
 int main(void)
 {
 	std::srand(std::time(nullptr));
@@ -108,8 +109,6 @@ int main(void)
 			std::cout << "Failed to initialize GLAD" << std::endl;
 			return -1;
 		}
-
-		//glEnable(GL_DEPTH_TEST);
 	}
 
 	//Set up ImGui
@@ -129,7 +128,7 @@ int main(void)
 
 	std::vector<jmk::Point2d> points;
 	std::vector<float> point_data;
-	std::vector<jmk::Edge2d> edges;
+	std::vector<jmk::Edge2dSimple> edges;
 	std::vector<float> edge_data;
 	std::vector<float> face_edge_data;
 

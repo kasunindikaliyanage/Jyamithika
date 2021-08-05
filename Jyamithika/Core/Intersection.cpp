@@ -1,9 +1,9 @@
 #include "Base\Core.h"
 #include "Intersection.h"
+#include "GeoUtils.h"
 
 
-bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi)
-{
+bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi){
 	Vector2f l1p = l1.point();
 	Vector2f l2p = l2.point();
 	Vector2f l1d = l1.direction();
@@ -56,4 +56,18 @@ bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi)
 		//Lines are parallel
 		return false;
 	}
+}
+
+bool jmk::intersect(const jmk::Point2d& a, const jmk::Point2d& b, const jmk::Point2d& c, const jmk::Point2d& d) {
+	
+	// if one of the end points of a segment is in between other segment endpoints we consider it as intersection.
+	if (jmk::relation2d(a, b, c) == jmk::BETWEEN 
+		|| jmk::relation2d(a, b, d) == jmk::BETWEEN 
+		|| jmk::relation2d(c, d, a) == jmk::BETWEEN 
+		|| jmk::relation2d(c, d, b) == jmk::BETWEEN )
+	{
+		return true;
+	}
+
+	return jmk::_xor(jmk::left(a,b,c), jmk::left(a,b,d)) && jmk::_xor(jmk::left(c, d, a), jmk::left(c, d, b));
 }

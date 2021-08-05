@@ -6,36 +6,13 @@
 #include <algorithm>
 #include <list>
 
-using namespace jmk;
+#include "Intersection.h"
 
-//// Custome comparator to be used in sweep line status data structure.
-//struct CustomeComparator {
-//	Point2d* sweep_line_point;
-//
-//	CustomeComparator(Point2d* _point)
-//	{
-//		sweep_line_point = _point;
-//	}
-//
-//	//Return true the segment _a is left to the segment _b in the sweep line point
-//	bool operator()(Segment2d* _a, Segment2d* _b) const
-//	{
-//		if (_a == _b)
-//			return false;
-//		return segmentIsLeft(*_a, *_b, *sweep_line_point);
-//	}
-//};
-//
-//struct Sweep_line {
-//	std::list<Edge2d> edge_list;
-//	Point2d* point;
-//
-//	Sweep_line(Point2d* _point) :point(_point) {}
-//};
+using namespace jmk;
 
 // This can be only used in 2d XY plane. 
 // TODO  has to modify to consider the 3D plane as well
-int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
+int jmk::relation3d(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	float area = areaTriangle2d(a, b, c);
 	
@@ -72,31 +49,118 @@ int jmk::pointRelativePos(const Point3d& a, const Point3d& b, const Point3d& c)
 	return 0;
 }
 
+int jmk::relation2d(const Point2d& a, const Point2d& b, const Point2d& c)
+{
+	float area = areaTriangle2d(a, b, c);
+
+	if (area > 0 && area < TOLERANCE)
+		area = 0;
+
+	if (area < 0 && area > TOLERANCE)
+		area = 0;
+
+	Point2d p1 = b - a;
+	Point2d p2 = c - a;
+
+	double p1x, p1y, p2x, p2y;
+
+	p1x = p1[X];
+	p1y = p1[Y];
+	p2x = p2[X];
+	p2y = p2[Y];
+
+	if (area > 0.0)
+		return LEFT;
+	if (area < 0.0)
+		return RIGHT;
+	if ((p1x * p2x < 0.0) || (p1y * p2y < 0.0))
+		return BEHIND;
+	if (p1.magnitude() < p2.magnitude())
+		return BEYOND;
+	if (a == c)
+		return ORIGIN;
+	if (b == c)
+		return DESTINATION;
+	return BETWEEN;
+
+	return 0;
+}
+
 bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	return pointRelativePos(a,b,c) == RELATIVE_POSITION::LEFT;
+	return relation3d(a,b,c) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::left(const Point2d& a, const Point2d& b, const Point2d& c)
 {
-	return pointRelativePos(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
+	return relation2d(a, b, c) == RELATIVE_POSITION::LEFT;
+	//return relation3d(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	return pointRelativePos(a, b, c) == RELATIVE_POSITION::RIGHT;
+	return relation3d(a, b, c) == RELATIVE_POSITION::RIGHT;
+}
+
+bool jmk::leftOrBeyond(const Point2d& a, const Point2d& b, const Point2d& c)
+{
+	int position = relation2d(a, b, c);
+	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
 bool jmk::leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	int position = pointRelativePos(a, b, c);
+	int position = relation3d(a, b, c);
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
 bool jmk::leftOrBetween(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	int position = pointRelativePos(a, b, c);
+	int position = relation3d(a, b, c);
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BETWEEN);
+}
+
+static bool incone(const Vertex2dSimple* v1, const Vertex2dSimple* v2)
+{
+	if (jmk::leftOrBeyond(v1->point, v1->next->point, v1->prev->point)) {
+		// v1 is vonvx vertex
+		return jmk::left(v1->point, v2->point, v1->prev->point)
+			&& jmk::left(v2->point, v1->point, v1->next->point);
+	}
+
+	// v1 is relex vertex
+	return !(jmk::leftOrBeyond(v1->point, v2->next->point, v1->next->point)
+		&& jmk::leftOrBeyond(v2->point, v1->next->point, v1->prev->point));
+}
+
+bool jmk::isDiagonal( const Vertex2dSimple* v1, const Vertex2dSimple* v2, Polygon2dSimple* poly)
+{
+	bool prospect = true;
+	std::vector<Vertex2dSimple*> vertices;
+	if(poly)
+		vertices = poly->getVertcies();
+	else {
+		auto vertex_ptr = v1->next;
+		vertices.push_back((Vertex2dSimple*)v1);
+		while (vertex_ptr != v1) {
+			vertices.push_back(vertex_ptr);
+			vertex_ptr = vertex_ptr->next;
+		}
+	}
+
+	Vertex2dSimple *current, *next;
+	current = vertices[0];
+	do{
+		next = current->next;
+		if (current != v1 && next != v1 && current != v2 && next != v2
+			&& jmk::intersect(v1->point, v2->point, current->point, next->point)) {
+			prospect = false;
+			break;
+		}
+		current = next;
+	} while (current != vertices[0]);
+
+	return prospect && incone(v1, v2) && incone(v2, v1);
 }
 
 float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
@@ -129,6 +193,11 @@ float jmk::polarAngle( const Point3d& _other, const Point3d& _ref)
 }
 
 double jmk::areaTriangle2d(const Point3d& a, const Point3d& b, const Point3d& c)
+{
+	return 0.5 * ((b[X] - a[X]) * (c[Y] - a[Y]) - (c[X] - a[X]) * (b[Y] - a[Y]));
+}
+
+double jmk::areaTriangle2d(const Point2d& a, const Point2d& b, const Point2d& c)
 {
 	return 0.5 * ((b[X] - a[X]) * (c[Y] - a[Y]) - (c[X] - a[X]) * (b[Y] - a[Y]));
 }

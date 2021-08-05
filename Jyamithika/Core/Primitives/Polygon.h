@@ -17,26 +17,28 @@ namespace jmk {
 		Vertex(Point3d& _point, Vertex* _next = nullptr, Vertex* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
 	};
 
-	//struct Vertex2d {
-	//	Point2d point;
-	//	Vertex2d* next = nullptr;
-	//	Vertex2d* prev = nullptr;
+	struct Vertex2dSimple {
+		Point2d point;
+		Vertex2dSimple* next = nullptr;
+		Vertex2dSimple* prev = nullptr;
+		bool is_ear = false;
+		bool is_processed = false;
 
-	//	friend class Polygon2d;
+		friend class Polygon2dSimple;
 
-	//public:
-	//	Vertex2d(Point2d& _point, Vertex2d* _next = nullptr, Vertex2d* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
-	//};
+	public:
+		Vertex2dSimple(Point2d& _point, Vertex2dSimple* _next = nullptr, Vertex2dSimple* _prev = nullptr) : point(_point), next(_next), prev(_prev) {}
+	};
 
-	struct Edge2d {
+	struct Edge2dSimple {
 		Point2d p1;
 		Point2d p2;
 		Point2d fp1;
 		Point2d fp2;
 	public:
-		Edge2d() {}
+		Edge2dSimple() {}
 
-		Edge2d(Point2d _p1, Point2d _p2) :p1(_p1), p2(_p2)
+		Edge2dSimple(Point2d _p1, Point2d _p2) :p1(_p1), p2(_p2)
 		{}
 
 	};
@@ -56,22 +58,29 @@ namespace jmk {
 		std::vector<Point3d> getPoints();
 	};
 
-	//class Polygon2d {
-	//	std::vector<Vertex2d> vertex_list;
-	//public:
-	//	Polygon2d();
+	class Polygon2dSimple {
+		std::vector<Vertex2dSimple*> vertex_list;
+	public:
+		Polygon2dSimple();
 
-	//	// Construct the Polyhon with given point set
-	//	Polygon2d(std::vector<Point2d> _point_list);
+		// Construct the Polyhon with given point set
+		Polygon2dSimple(std::vector<Point2d> _point_list);
 
-	//	void Insert(Point2d&);
+		Polygon2dSimple(Vertex2dSimple* root_vertex);
 
-	//	std::vector<Vertex2d> getVertcies();
+		void Insert(Point2d&);
 
-	//	// Return the points list of underline vertices
-	//	std::vector<Point2d> getPoints();
+		// If vert exist in the polygon, update the neighbour pointer accoidingly and remove the vertex.
+		void RemoveVertex(Vertex2dSimple* vert);
 
-	//};
+		std::vector<Vertex2dSimple*> getVertcies();
+
+		// Return the points list of underline vertices
+		std::vector<Point2d> getPoints();
+
+		int size();
+
+	};
 
 	void merge(Polygon& poly1, Polygon& poly2, Polygon& final_poly);
 }

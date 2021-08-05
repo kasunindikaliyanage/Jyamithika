@@ -1,6 +1,8 @@
 #include "Triangulation.h"
 #include <algorithm>
 #include <stack>
+#include <map>
+#include "Core\GeoUtils.h"
 
 using namespace jmk;
 
@@ -13,7 +15,7 @@ static bool is_in_same_chain(Vertex2dDCEL* a, Vertex2dDCEL* b)
 
 // Vertex should be in a monotone polygon
 // a[Y] <= b[Y]
-static bool valid_diagonal(Vertex2dDCEL* a, Vertex2dDCEL* b)
+static bool valid_diagonal_DCEL(Vertex2dDCEL* a, Vertex2dDCEL* b)
 {
 	auto edge = a->incident_edge;
 	// If the vertices are adjucent we can return.
@@ -76,7 +78,7 @@ static void triangulate(Polygon2d* poly, std::vector<Vertex2dDCEL*>& vertices)
 
 			while (vertex_stack.size() != 0){
 				last_vertex_ptr = vertex_stack.top();
-				if (valid_diagonal(vertices[i], last_vertex_ptr)) {
+				if (valid_diagonal_DCEL(vertices[i], last_vertex_ptr)) {
 					poly->split(vertices[i], last_vertex_ptr);
 					last_diagonal_vert = last_vertex_ptr;
 				}
@@ -113,6 +115,53 @@ void jmk::triangulate_monotone(Polygon2d* poly)
 	triangulate(poly, vertices);
 }
 
-void jmk::triangulate_earclipping(Polygon2d* poly, std::vector<Polygon2d>& triangles){
+static void initialize_ear_status(Polygon2dSimple* polygon)
+{
+	Vertex2dSimple* v0, * v1, * v2;
 
+	auto vertices = polygon->getVertcies();
+	v1 = vertices[0];
+	do {
+		v0 = v1->prev;
+		v2 = v1->next;
+		v1->is_ear = isDiagonal(v0,v2);
+		v1 = v1->next;
+	} while (v1 != vertices[0]);
+}
+
+void jmk::triangulate_earclipping(Polygon2dSimple* poly, std::vector<Edge2dSimple>& edge_list){
+	
+	initialize_ear_status(poly);
+
+	auto vertex_list = poly->getVertcies();
+	int no_vertex_to_process = vertex_list.size();
+	
+	Vertex2dSimple* v0, * v1, * v2, * v3, * v4;
+	int index = 0;
+
+	while (no_vertex_to_process > 3){
+		v2 = vertex_list[index];
+		for (auto vertex_ptr : vertex_list){			
+			if (v2->is_ear && !v2->is_processed) {
+				v3 = v2->next;
+				v4 = v3->next;
+				v1 = v2->prev;
+				v0 = v1->prev;
+
+				edge_list.push_back(Edge2dSimple(v1->point, v3->point));
+				v2->is_processed = true;
+
+				v1->is_ear = isDiagonal(v0, v3, nullptr);
+				v3->is_ear = isDiagonal(v1, v4, nullptr);
+
+				v1->next = v3;
+				v3->prev = v1;
+
+				no_vertex_to_process--;
+				index++;
+				break;
+			}
+			v2 = v2->next;
+		}
+	}
 }
