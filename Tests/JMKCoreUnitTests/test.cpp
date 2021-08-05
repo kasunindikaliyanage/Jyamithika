@@ -10,33 +10,34 @@
 
 using namespace jmk;
 
-const Point3d origin(0.0, 0.0, 0.0);
+const Point3d origin3d(0.0, 0.0, 0.0);
+const Point2d origin2d(0.0, 0.0);
 
 TEST(PointIn_1st_QuadToOrigin2D, PolarAngle)
 {
-	Point3d check(4.0, 3.5);
-	double angle = polarAngle(check, origin);
+	Point2d check(4.0, 3.5);
+	double angle = polarAngle(check, origin2d);
 	EXPECT_TRUE(isEqualD(41.18592, angle));
 }
 
 TEST(PointIn_2nd_QuadToOrigin2D, PolarAngle)
 {
-	Point3d check(-4.0, 3.5);
-	double angle = polarAngle(check, origin);
+	Point2d check(-4.0, 3.5);
+	double angle = polarAngle(check, origin2d);
 	EXPECT_TRUE(isEqualD(138.81407, angle));
 }
 
 TEST(PointIn_3rd_QuadToOrigin2D, PolarAngle)
 {
-	Point3d check(-4.0, -3.5);
-	double angle = polarAngle(check, origin);
+	Point2d check(-4.0, -3.5);
+	double angle = polarAngle(check, origin2d);
 	EXPECT_TRUE(isEqualD(221.18592, angle));
 }
 
 TEST(PointIn_4th_QuadToOrigin2D, PolarAngle)
 {
-	Point3d check(4.0, -3.5);
-	double angle = polarAngle(check, origin);
+	Point2d check(4.0, -3.5);
+	double angle = polarAngle(check, origin2d);
 	EXPECT_TRUE(isEqualD(318.81408, angle));
 }
 

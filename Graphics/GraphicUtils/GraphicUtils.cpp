@@ -90,11 +90,6 @@ void get2DLinePointsFromDCEL2d(std::vector<jmk::EdgeDCEL<float, DIM2>*>& edges, 
 
 void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector<float>& data)
 {
-	int random_integer;
-	int lowest = 1, highest = 12;
-	int range = (highest - lowest) + 1;
-	random_integer = lowest + int(range * rand() / (RAND_MAX + 1.0));
-
 	for (const auto& point : points)
 	{
 		data.push_back(point[X]);

@@ -38,7 +38,7 @@ namespace jmk
 	bool isDiagonal(const Vertex2dSimple* v1, const Vertex2dSimple* v2, Polygon2dSimple* poly = nullptr);
 
 	// Returns counter clockwise angle (0 - 360) measure from referece point to the give point 
-	float polarAngle( const Point3d& _other, const Point3d& _ref) ;
+	float polarAngle( const Point2d& _other, const Point2d& _ref) ;
 
 	// Return the area of the triangle defined by given 3 points
 	// TODO change the parameter types form 3d to 2d
@@ -60,7 +60,7 @@ namespace jmk
 	float volumeSigned(const Face& _f, const Point3d& _p);
 
 	// Return the angle between two vectors
-	float angle(const Vector3f& _v1, const Vector3f& _v2);
+	float angle(const Vector2f& _v1, const Vector2f& _v2);
 
 	// Return whether the [point] is inside the polygon represented by [_points].
 	// Note that the check assume that [_points] are in counter clockwise order

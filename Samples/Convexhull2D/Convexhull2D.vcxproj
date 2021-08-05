@@ -143,6 +143,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConstructingConvexhull_2d_simulation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Graphics\Externals\GLAD\GLAD.vcxproj">
+      <Project>{ad33d590-ab92-4d0d-b38c-ec1647e3fd18}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Graphics\GraphicUtils\GraphicUtils.vcxproj">
+      <Project>{69a4e05e-30cd-4992-8b57-27fdbfcf8276}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Jyamithika\Jyamithika.vcxproj">
+      <Project>{1c356d6f-f35e-48b2-ba47-3b3d828ed93a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\convexhull2d.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

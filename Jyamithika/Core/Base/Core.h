@@ -7,6 +7,7 @@
 
 namespace jmk {
 #define TOLERANCE 0.0000000001
+#define TOLERANCEL 0.00001
 #define ZERO 0.0
 
 #define CW  1
@@ -28,6 +29,11 @@ namespace jmk {
 	static bool isEqualD(double x, double y)
 	{
 		return fabs(x - y) < TOLERANCE;
+	}
+
+	static bool isEqualDL(double x, double y)
+	{
+		return fabs(x - y) < TOLERANCEL;
 	}
 
 	static bool _xor (bool x, bool y) {

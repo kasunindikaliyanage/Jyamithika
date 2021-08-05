@@ -15,14 +15,14 @@ namespace jmk
 	// Assumptions : (Preprocess the points sets to satisfy following assumptions)
 	//				 The points are in XY 2D plane.
 	//				 No duplicate points.
-	void convexhull2DGiftwrapping(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
+	void convexhull2DGiftwrapping(std::vector<Point2d>& _points, std::vector<Point2d>& _convex);
 	
 	// Compute the points in the convex hull. Assume the points are in XY 2D plane.
 	// Note : Order of the [_points] will be changed due to internal sort calls
 	// Assumptions : (Preprocess the points sets to satisfy following assumptions)
 	//				 The points are in XY 2D plane.
 	//				 No duplicate points.
-	void convexhull2DModifiedGrahams(std::vector<Point3d>& _points, std::vector<Point3d>& _convex);
+	void convexhull2DModifiedGrahams(std::vector<Point2d>& _points, std::vector<Point2d>& _convex);
 
 	// Compute the points in the convex hull in incremental way. Assume the points are in XY 2D plane.
 	// Pre order the points from left to right to reduce the time

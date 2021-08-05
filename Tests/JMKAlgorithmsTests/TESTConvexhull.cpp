@@ -11,19 +11,19 @@ using namespace jmk;
 
 TEST(Giftwrapping2d, Convexhull)
 {
-	Point3d p1(3, 1);
-	Point3d p2(-2, 2);
-	Point3d p3(-3, -2);
-	Point3d p4(-4, -6);
-	Point3d p5(3.5, -4);
-	Point3d p6(-7, 4);
-	Point3d p7(2.5, 6);
-	Point3d p8(8, 5);
-	Point3d p9(6, -8);
-	Point3d p10(-1, -9);
-	Point3d p11(-10, 8);
+	Point2d p1(3, 1);
+	Point2d p2(-2, 2);
+	Point2d p3(-3, -2);
+	Point2d p4(-4, -6);
+	Point2d p5(3.5, -4);
+	Point2d p6(-7, 4);
+	Point2d p7(2.5, 6);
+	Point2d p8(8, 5);
+	Point2d p9(6, -8);
+	Point2d p10(-1, -9);
+	Point2d p11(-10, 8);
 
-	std::vector<Point3d> vertices;
+	std::vector<Point2d> vertices;
 
 	vertices.push_back(p1);
 	vertices.push_back(p2);
@@ -37,8 +37,8 @@ TEST(Giftwrapping2d, Convexhull)
 	vertices.push_back(p10);
 	vertices.push_back(p11);
 	
-	std::vector<Point3d> covexhull;
-	std::vector<Point3d> manualhull;
+	std::vector<Point2d> covexhull;
+	std::vector<Point2d> manualhull;
 
 	convexhull2DGiftwrapping(vertices, covexhull);
 
@@ -65,19 +65,19 @@ TEST(Giftwrapping2d, Convexhull)
 
 TEST(DModifiedGrahams2d, Convexhull)
 {
-	Point3d p1(3, 1);
-	Point3d p2(-2, 2);
-	Point3d p3(-3, -2);
-	Point3d p4(-4, -6);
-	Point3d p5(3.5, -4);
-	Point3d p6(-7, 4);
-	Point3d p7(2.5, 6);
-	Point3d p8(8, 5);
-	Point3d p9(6, -8);
-	Point3d p10(-1, -9);
-	Point3d p11(-10, 8);
+	Point2d p1(3, 1);
+	Point2d p2(-2, 2);
+	Point2d p3(-3, -2);
+	Point2d p4(-4, -6);
+	Point2d p5(3.5, -4);
+	Point2d p6(-7, 4);
+	Point2d p7(2.5, 6);
+	Point2d p8(8, 5);
+	Point2d p9(6, -8);
+	Point2d p10(-1, -9);
+	Point2d p11(-10, 8);
 
-	std::vector<Point3d> vertices;
+	std::vector<Point2d> vertices;
 
 	vertices.push_back(p1);
 	vertices.push_back(p2);
@@ -91,8 +91,8 @@ TEST(DModifiedGrahams2d, Convexhull)
 	vertices.push_back(p10);
 	vertices.push_back(p11);
 
-	std::vector<Point3d> covexhull;
-	std::vector<Point3d> manualhull;
+	std::vector<Point2d> covexhull;
+	std::vector<Point2d> manualhull;
 
 	convexhull2DModifiedGrahams(vertices, covexhull);
 	
@@ -148,7 +148,7 @@ TEST(Incremental2d, Convexhull)
 	std::vector<Point3d> covexhull;
 	std::vector<Point3d> manualhull;
 
-	convexhull2DModifiedGrahams(vertices, covexhull);
+	//convexhull2DModifiedGrahams(vertices, covexhull);
 
 	manualhull.push_back(p11);
 	manualhull.push_back(p7);
