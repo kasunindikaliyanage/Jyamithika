@@ -24,6 +24,12 @@ I have added set of simulations for demonstration purposes. These simulations us
 <img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/triangulation_faces.png" width="600" height="600">
 </p>
 
+### Polygon Triangulation using ear clipping method
+
+<p align="center">
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/triangulation_ear_clipping.png" width="600" height="600">
+</p>
+
 ### Convexhull3D
 
 <p align="center">
