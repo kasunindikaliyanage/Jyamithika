@@ -154,25 +154,23 @@ namespace jmk {
 			vertex_list.push_back(new VertexDCEL<type, dim>(_points[i]));
 		}
 
-		for (size_t i = 0; i < _points.size() - 1; i++) {
-			edge_list.push_back(new EdgeDCEL<type, dim>(vertex_list[i]));
-			edge_list.push_back(new EdgeDCEL<type, dim>(vertex_list[i + 1]));
-
-			// Each iteration added 2 edges. So we have to multiple the index by 2 to get the ith edge
-			int hfindex1 = i * 2, hfindex2 = hfindex1 + 1;
-
-			vertex_list[i]->incident_edge = edge_list[hfindex1];
-
-			edge_list[hfindex1]->twin = edge_list[hfindex2];
-			edge_list[hfindex2]->twin = edge_list[hfindex1];
+		for (size_t i = 0; i < vertex_list.size() - 1; i++) {
+			auto hfedge = new EdgeDCEL<type, dim>(vertex_list[i]);
+			auto edge_twin = new EdgeDCEL<type, dim>(vertex_list[i + 1]);
+			vertex_list[i]->incident_edge = hfedge;
+			hfedge->twin = edge_twin;
+			edge_twin->twin = hfedge;
+			edge_list.push_back(hfedge);
+			edge_list.push_back(edge_twin);
 		}
-		
-		edge_list.push_back(new EdgeDCEL<type, dim>(vertex_list.back()));
-		edge_list.push_back(new EdgeDCEL<type, dim>(vertex_list.front()));
-		edge_list[edge_list.size() - 2]->twin = edge_list[edge_list.size() - 1];
-		edge_list[edge_list.size() - 1]->twin = edge_list[edge_list.size() - 2];
+		auto hfedge = new EdgeDCEL<type, dim>(vertex_list.back());
+		auto edge_twin = new EdgeDCEL<type, dim>(vertex_list.front());
+		hfedge->twin = edge_twin;
+		edge_twin->twin = hfedge;
+		edge_list.push_back(hfedge);
+		edge_list.push_back(edge_twin);
 
-		vertex_list[vertex_list.size() - 1]->incident_edge = edge_list[edge_list.size() - 2];
+		vertex_list[vertex_list.size() - 1]->incident_edge = hfedge;
 
 		// Set the prev and next for the element middle of the list ( 2 : size- 2)
 		for (size_t i = 2; i < edge_list.size()-2; i++) {

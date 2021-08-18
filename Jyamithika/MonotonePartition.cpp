@@ -28,20 +28,16 @@ VERTEX_CATEGORY categorize_vertex(Vertex2dDCEL* vertex)
 	Point2d p = vertex->point;
 	Point2d p_next = v_next->point;
 
-	float p_prev_y = p_prev[Y];
-	float p_y = p[Y];
-	float p_next_y = p_next[Y];
-
 	bool is_left = left(p_prev, p, p_next);
 
-	if (p_y > p_prev_y && p_y > p_next_y)
+	if (p[Y] > p_prev[Y] && p[Y] > p_next[Y])
 	{
 		if (is_left)
 			return VERTEX_CATEGORY::START;
 		else
 			return VERTEX_CATEGORY::SPLIT;
 	}
-	else if (p_y < p_prev_y && p_y < p_next_y)
+	else if (p[Y] < p_prev[Y] && p[Y] < p_next[Y])
 	{
 		if (is_left)
 			return VERTEX_CATEGORY::END;
@@ -84,11 +80,11 @@ private:
 };
 
 struct Vertex2DWrapperSort {
-	bool operator()(Vertex2dDCELWrapper& ref1, Vertex2dDCELWrapper& ref2) {
-		auto a = ref1.vert->point;
-		auto b = ref2.vert->point;
-		if ((a[Y] > b[Y])
-			|| (a[Y] == b[Y]) && (a[X] < b[X]))
+	bool operator()(Vertex2dDCELWrapper& current, Vertex2dDCELWrapper& ref) {
+		auto cur_pnt = current.vert->point;
+		auto ref_pnt = ref.vert->point;
+		if ((cur_pnt[Y] > ref_pnt[Y])
+			|| (cur_pnt[Y] == ref_pnt[Y]) && (cur_pnt[X] < ref_pnt[X]))
 		{
 			return true;
 		}

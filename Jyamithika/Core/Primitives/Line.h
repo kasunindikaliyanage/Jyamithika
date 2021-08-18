@@ -4,7 +4,7 @@
 
 namespace jmk {
 	class Line {
-		Vector3f dir;
+		Vector3f dir;				// Normalized direction vector. 
 		Point3d point_in_line;
 
 	public:
@@ -12,11 +12,12 @@ namespace jmk {
 		{
 			point_in_line = p1;
 			dir = p2 - p1;
+			dir.normalize();
 		}
 
-		Vector3f direction();
+		Vector3f direction() const;
 
-		Point3d point();
+		Point3d point() const;
 	};
 
 	class Line2d {
@@ -31,10 +32,11 @@ namespace jmk {
 		{
 			point_in_line = p1;
 			dir = _dir;
+			dir.normalize();
 		}
 
-		Vector2f direction();
+		Vector2f direction() const;
 
-		Point2d point();
+		Point2d point() const;
 	};
 }

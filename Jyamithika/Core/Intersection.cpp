@@ -2,6 +2,7 @@
 #include "Intersection.h"
 #include "GeoUtils.h"
 
+using namespace jmk;
 
 bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi){
 	Vector2f l1p = l1.point();
@@ -24,14 +25,6 @@ bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi){
 
 	if (!isEqualD(dot_d0_prepd1, ZERO))
 	{
-		//// TODO need to check whether the intersection points is in correct side. Whether the lines 
-		//// -are converge or not.
-		//float invD0DotPerpD1 = (float)1 / dot_d0_prepd1;
-		//float diffDotPerpD0 = dotProduct(diff, prep_l1d);
-		//float diffDotPerpD1 = dotProduct(diff, prep_l2d);
-		//float s0 = diffDotPerpD1 * invD0DotPerpD1;
-		//float s1 = diffDotPerpD0 * invD0DotPerpD1;
-
 		float denominator = a * e - b * d;
 		float t_numerator = c * e - b * f;
 		float s_numerator = a * f - c * a;
@@ -61,13 +54,44 @@ bool jmk::intersect(jmk::Line2d& l1, jmk::Line2d& l2, jmk::Point2d& pi){
 bool jmk::intersect(const jmk::Point2d& a, const jmk::Point2d& b, const jmk::Point2d& c, const jmk::Point2d& d) {
 	
 	// if one of the end points of a segment is in between other segment endpoints we consider it as intersection.
-	if (jmk::relation2d(a, b, c) == jmk::BETWEEN 
-		|| jmk::relation2d(a, b, d) == jmk::BETWEEN 
-		|| jmk::relation2d(c, d, a) == jmk::BETWEEN 
-		|| jmk::relation2d(c, d, b) == jmk::BETWEEN )
+	if (jmk::orientation2d(a, b, c) == jmk::BETWEEN 
+		|| jmk::orientation2d(a, b, d) == jmk::BETWEEN 
+		|| jmk::orientation2d(c, d, a) == jmk::BETWEEN 
+		|| jmk::orientation2d(c, d, b) == jmk::BETWEEN )
 	{
 		return true;
 	}
 
 	return jmk::_xor(jmk::left(a,b,c), jmk::left(a,b,d)) && jmk::_xor(jmk::left(c, d, a), jmk::left(c, d, b));
+}
+
+bool intersect(jmk::Point2d& a, jmk::Point2d& b , jmk::Point2d& c , jmk::Point2d& d , jmk::Point2d& interseciton)
+{
+	Vector2f AB = b - a;
+	Vector2f CD = d - c;
+
+	//Normal vector to CD
+	Vector2f n( CD[Y], -CD[X]);
+
+	//Denominator = n.(b-a)
+	auto deno = dotProduct(n, AB);
+
+	if (!isEqualD(deno, ZERO))
+	{
+		auto CA = a - c;
+		auto nume = dotProduct(n, CA);
+		auto t = nume / deno;
+
+		auto x = a[X] + t * AB[X];
+		auto y = a[Y] + t * AB[Y];
+
+		interseciton.assign(X, x);
+		interseciton.assign(Y, y);
+		return true;
+	}
+	else
+	{
+		// Lines are parallel or colinear
+		return false;
+	}
 }

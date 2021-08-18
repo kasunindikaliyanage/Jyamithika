@@ -2,6 +2,7 @@
 // Include functions to calculate distance between different geometric promitives
 #include "Primitives\Point.h"
 #include "Primitives\Line.h"
+#include "Primitives\Plane.h"
 
 namespace jmk {
 
@@ -16,7 +17,11 @@ namespace jmk {
 
 	float distance(Line& line, Point3d& C);
 
+	float distance(Line2d& line, Point2d& C);
+
 	float distance(Point3d& p1, Point3d& p2);
 
 	float distance(Point2d& p1, Point2d& p2);
+
+	float distance(Planef& p, Point3d& Q);
 }

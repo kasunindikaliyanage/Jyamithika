@@ -17,6 +17,7 @@ static bool is_in_same_chain(Vertex2dDCEL* a, Vertex2dDCEL* b)
 // a[Y] <= b[Y]
 static bool valid_diagonal_DCEL(Vertex2dDCEL* a, Vertex2dDCEL* b)
 {
+	// TODO this is wrong. have to modify. Here only incode test would be needed.
 	auto edge = a->incident_edge;
 	// If the vertices are adjucent we can return.
 	if (edge->next->origin == b || edge->prev->origin == b)
@@ -57,19 +58,20 @@ static void triangulate(Polygon2d* poly, std::vector<Vertex2dDCEL*>& vertices)
 			bool popped = false;
 			Vertex2dDCEL* top = vertex_stack.top();
 
-			while (vertex_stack.size() > 0) {
+			while (!vertex_stack.empty()) {
 				if (vertex_stack.size() > 1)
 					poly->split(vertices[i], vertex_stack.top());
 				vertex_stack.pop();
-				popped = true;
+				//popped = true;
 			}
 
-			if(popped)
+			//if(popped)
+			if(top)
 				vertex_stack.push(top);
 			vertex_stack.push(vertices[i]);
 		}
 		else{
-			Vertex2dDCEL* edge_in_poly = vertex_stack.top();
+			Vertex2dDCEL* top_before_ops = vertex_stack.top();
 			vertex_stack.pop();
 			Vertex2dDCEL* last_vertex_ptr = nullptr;
 			Vertex2dDCEL* last_diagonal_vert = nullptr;
@@ -92,7 +94,7 @@ static void triangulate(Polygon2d* poly, std::vector<Vertex2dDCEL*>& vertices)
 				vertex_stack.push(last_diagonal_vert);
 			}
 			else {
-				vertex_stack.push(edge_in_poly);
+				vertex_stack.push(top_before_ops);
 			}
 			vertex_stack.push(vertices[i]);
 		}
@@ -107,6 +109,8 @@ static void triangulate(Polygon2d* poly, std::vector<Vertex2dDCEL*>& vertices)
 		poly->split(vertices[size - 1], vertex_stack.top());
 		vertex_stack.pop();
 	}
+
+	vertex_stack.pop();
 }
 
 void jmk::triangulate_monotone(Polygon2d* poly)
@@ -141,7 +145,7 @@ void jmk::triangulate_earclipping(Polygon2dSimple* poly, std::vector<Edge2dSimpl
 
 	while (no_vertex_to_process > 3){
 		v2 = vertex_list[index];
-		for (auto vertex_ptr : vertex_list){			
+		do {
 			if (v2->is_ear && !v2->is_processed) {
 				v3 = v2->next;
 				v4 = v3->next;
@@ -162,6 +166,6 @@ void jmk::triangulate_earclipping(Polygon2dSimple* poly, std::vector<Edge2dSimpl
 				break;
 			}
 			v2 = v2->next;
-		}
+		} while (v2 != vertex_list[0]);
 	}
 }

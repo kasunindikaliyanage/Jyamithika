@@ -142,6 +142,7 @@
     <ClInclude Include="BinarySearchTree.h" />
     <ClInclude Include="BinarySpacePartition.h" />
     <ClInclude Include="Convexhull.h" />
+    <ClInclude Include="Core\Angle.h" />
     <ClInclude Include="Core\AreaVolumn.h" />
     <ClInclude Include="Core\Distance.h" />
     <ClInclude Include="Core\GeoUtils.h" />
@@ -173,6 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Convexhull.cpp" />
+    <ClCompile Include="Core\Angle.cpp" />
     <ClCompile Include="Core\Distance.cpp" />
     <ClCompile Include="Core\GeoUtils.cpp" />
     <ClCompile Include="Core\Inclusion.cpp" />

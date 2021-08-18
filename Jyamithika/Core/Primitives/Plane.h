@@ -13,16 +13,21 @@ namespace jmk {
 
 		Plane() {}
 
-		Plane(Vector3f& _normal) :normal(_normal) {}
+		Plane(Vector3f& _normal) :normal(_normal) {
+			normal.normalize();
+		}
 
-		Plane(Vector3f& _normal, float _constant) : normal(_normal), d(_constant) {}
+		Plane(Vector3f& _normal, float _constant) : normal(_normal), d(_constant) {
+			normal.normalize();
+		}
 
 		Plane(Point3d& _p1, Point3d& _p2, Point3d& _p3)
 		{
 			Vector3f v21 = _p2 - _p1;
 			Vector3f v31 = _p3 - _p1;
 
-			normal = crossProduct(v21, v31);
+			normal = crossProduct3d(v21, v31);
+			normal.normalize();
 
 			d = dotProduct(normal, _p1);
 		}
@@ -43,12 +48,12 @@ namespace jmk {
 			return !(*this == _other);
 		}
 
-		Vector<T> getNormal()
+		Vector<T> getNormal() const
 		{
 			return normal;
 		}
 
-		float getD()
+		float getD() const
 		{
 			return d;
 		}

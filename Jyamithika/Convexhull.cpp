@@ -50,7 +50,7 @@ void jmk::convexhull2DGiftwrapping(std::vector<Point2d>& _points, std::vector<Po
 	while (true){
 		current_polor_angle = 360.0;
 		for (size_t i = 0; i < _points.size(); i++){
-			Vector2f vec1 = ref_point - _convex[index_before_last];
+			Vector2f vec1 = ref_point - _convex[index_before_last]; // vector for line from last two vert in the convexhull
 			Vector2f vec2 = _points[i] - ref_point;
 
 			float between_angle = angle(vec1, vec2);
@@ -91,15 +91,15 @@ void jmk::convexhull2DModifiedGrahams(std::vector<Point2d>& _points, std::vector
 	l_upper.push_back(*_points.begin());
 	l_upper.push_back(*(std::next(_points.begin())));
 
-	int lu_size = 0;
+	int index = 0;
 	for (int i = 2; i < _points.size(); i++)
 	{
-		lu_size = l_upper.size();
+		index = l_upper.size();
 		const auto& next_point = _points[i];
-		while (l_upper.size() >= 2 && leftOrBeyond(l_upper[lu_size - 2], l_upper[lu_size - 1], next_point))
+		while (l_upper.size() > 1 && left(l_upper[index - 2], l_upper[index - 1], next_point))
 		{
 			l_upper.pop_back();
-			lu_size = l_upper.size();
+			index = l_upper.size();
 		}
 
 		l_upper.push_back(next_point);
@@ -114,13 +114,13 @@ void jmk::convexhull2DModifiedGrahams(std::vector<Point2d>& _points, std::vector
 
 	for (int i = 2; i < _points.size(); i++)
 	{
-		lu_size = l_lower.size();
+		index = l_lower.size();
 		const auto& next_point = _points[i];
 
-		while (l_lower.size() >= 2 && left(l_lower[lu_size - 2], l_lower[lu_size - 1], next_point))
+		while (l_lower.size() > 1 && left(l_lower[index - 2], l_lower[index - 1], next_point))
 		{
 			l_lower.pop_back();
-			lu_size = l_lower.size();
+			index = l_lower.size();
 		}
 
 		l_lower.push_back(next_point);

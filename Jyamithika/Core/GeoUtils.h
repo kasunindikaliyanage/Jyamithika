@@ -12,9 +12,9 @@ namespace jmk
 {
 	// Return integer indicating relative position of [Point c] related to segment [a b]
 	// This is only for 2D in XY plane.
-	int relation3d(const Point3d& a, const Point3d& b, const Point3d& c);
+	int orientation3d(const Point3d& a, const Point3d& b, const Point3d& c);
 
-	int relation2d(const Point2d& a, const Point2d& b, const Point2d& c);
+	int orientation2d(const Point2d& a, const Point2d& b, const Point2d& c);
 
 	// Predicate to determine whether the [Point c] is left to the segment [a b]
 	bool left(const Point3d& a, const Point3d& b, const Point3d& c);
@@ -75,9 +75,10 @@ namespace jmk
 	int getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points);
 
 	// Check the collinearity of given three points in 3D.
-	// Three points are colinear if the coeficient taken by determinant is zero.
-	// No need to calculate area.(Calculation of area could be much slower as we have pow and sqrt)
 	bool collinear(const Point3d& a, const Point3d& b, const Point3d& c);
+
+	// Check whether the given two vectors are collinear
+	bool collinear(const Vector3f& a, const Vector3f& b);
 
 	// Check the coplaness of given four points in 3D.
 	// The three vectors are coplanar if their scalar triple product is zero.

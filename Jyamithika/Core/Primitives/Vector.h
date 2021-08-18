@@ -32,7 +32,6 @@ namespace jmk {
 
 		Vector(std::array<coordinate_type, dimensions> _coords) : coords(_coords) {}
 
-		// TODO this looks bad in 2D case. Need to change based on template parameter dimension
 		Vector(coordinate_type _x, coordinate_type _y, coordinate_type _z) : coords({_x,_y,_z}) {}
 
 		Vector(coordinate_type _x, coordinate_type _y) : coords({ _x,_y}) {}
@@ -50,6 +49,8 @@ namespace jmk {
 
 		// Greater than operator for comparison
 		bool operator>(const Vector<coordinate_type, dimensions>&);
+
+		Vector<coordinate_type, dimensions> operator*(coordinate_type value);
 
 		// Substraction operator. Substract x and y component separately.
 		Vector<coordinate_type, dimensions> operator-(const Vector<coordinate_type, dimensions>&) const;
@@ -118,9 +119,22 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator>(const Vector<coordinate_type, dimensions>&)
+	inline bool Vector<coordinate_type, dimensions>::operator>(const Vector<coordinate_type, dimensions>& _other)
 	{
-		return false;
+		if (*this == _other)
+			return false;
+		return !(*this < _other); ;
+	}
+
+	template<typename coordinate_type, size_t dimensions>
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator*(coordinate_type value)
+	{
+		std::array<coordinate_type, dimensions> temp_array;
+
+		for (int i = 0; i < dimensions; i++)
+			temp_array[i] = coords[i] * value;
+
+		return Vector<coordinate_type, dimensions>(temp_array);
 	}
 
 	
@@ -161,9 +175,13 @@ namespace jmk {
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline void Vector<coordinate_type, dimensions>::assign(int dim, coordinate_type value)
+	inline void Vector<coordinate_type, dimensions>::assign(int _index, coordinate_type value)
 	{
-		coords[dim] = value;
+		if (_index >= coords.size()) {
+			std::cout << "Index out of bounds";
+		}
+
+		coords[_index] = value;
 	}
 
 	template<typename coordinate_type, size_t dimensions>
@@ -180,6 +198,9 @@ namespace jmk {
 	template<typename coordinate_type, size_t dimensions>
 	inline void Vector<coordinate_type, dimensions>::normalize()
 	{
+		auto mag = magnitude();
+		for (int i = 0; i < dimensions; i++)
+			assign(i, coords[i] / mag);
 	}
 
 
@@ -202,7 +223,9 @@ namespace jmk {
 		return product;
 	}
 
-	Vector3f crossProduct(Vector3f a, Vector3f b);
+	Vector3f crossProduct3d(Vector3f a, Vector3f b);
+
+	float corssProduct2d(Vector2f a, Vector2f b);
 
 	Vector2f prependicluar(Vector2f&);
 

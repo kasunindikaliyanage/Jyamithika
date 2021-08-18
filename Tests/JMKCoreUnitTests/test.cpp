@@ -7,6 +7,7 @@
 #include "Core\Primitives\Line.h"
 #include "Core\Distance.h"
 #include "Core\Intersection.h"
+#include "Core\Angle.h"
 
 using namespace jmk;
 
@@ -17,28 +18,28 @@ TEST(PointIn_1st_QuadToOrigin2D, PolarAngle)
 {
 	Point2d check(4.0, 3.5);
 	double angle = polarAngle(check, origin2d);
-	EXPECT_TRUE(isEqualD(41.18592, angle));
+	EXPECT_TRUE(isEqualDL(41.18592, angle));
 }
 
 TEST(PointIn_2nd_QuadToOrigin2D, PolarAngle)
 {
 	Point2d check(-4.0, 3.5);
 	double angle = polarAngle(check, origin2d);
-	EXPECT_TRUE(isEqualD(138.81407, angle));
+	EXPECT_TRUE(isEqualDL(138.81407, angle));
 }
 
 TEST(PointIn_3rd_QuadToOrigin2D, PolarAngle)
 {
 	Point2d check(-4.0, -3.5);
 	double angle = polarAngle(check, origin2d);
-	EXPECT_TRUE(isEqualD(221.18592, angle));
+	EXPECT_TRUE(isEqualDL(221.18592, angle));
 }
 
 TEST(PointIn_4th_QuadToOrigin2D, PolarAngle)
 {
 	Point2d check(4.0, -3.5);
 	double angle = polarAngle(check, origin2d);
-	EXPECT_TRUE(isEqualD(318.81408, angle));
+	EXPECT_TRUE(isEqualDL(318.81408, angle));
 }
 
 TEST(OrientationTest1, OrientationTest)
@@ -86,7 +87,7 @@ TEST(distancePointLine, DistanceTest)
 	float distance1 = distance(l1,point_ref);
 	float distance2 = distance(p1,p2, point_ref);
 
-	EXPECT_TRUE(isEqualD(distance1,distance2));
+	EXPECT_TRUE(isEqualDL(distance1,distance2));
 }
 
 TEST(increment, increTest)
@@ -164,3 +165,62 @@ TEST(DCELConstructionSplit,DCELTest)
 	EXPECT_TRUE(true);
 }
 
+TEST(AngleTest, AngleLines2DTest1 )
+{
+	Vector2f l1Dir(2, 1);
+	Vector2f l2Dir(-2, 1);
+	Point2d l1P(0, 3);
+	Point2d l2P(0,5);
+
+	Line2d l1(l1P, l1Dir);
+	Line2d l2(l2P, l2Dir);
+
+	auto result = AngleLines2D(l1, l2);
+
+	EXPECT_TRUE(isEqualDLL(53.1301023, result));
+}
+
+TEST(AngleTest, AngleLines3DTest1)
+{
+	Point3d l1P1(1, 5, 5);
+	Point3d l1P2(1.5, -5, -2);
+	Point3d l2P1(-3, -3, 0);
+	Point3d l2P2(3, 5, 2);
+
+
+	Line l1(l1P1,l1P2);
+	Line l2(l2P1, l2P2);
+
+	auto result = AngleLines3D(l1, l2);
+
+	EXPECT_TRUE(isEqualDLL(43.08, result));
+}
+
+TEST(AngleTest, AngleLinePlaneTest1)
+{
+	Point3d l1P1(-3, -4, -5);
+	Point3d l1P2(4, 3, 5);
+	
+	Vector3f pNormal(-14.26,9.32,18.89);
+
+	Line l1(l1P1, l1P2);
+	Planef p(pNormal);
+
+	auto result = AngleLinePlane(l1, p);
+
+	EXPECT_TRUE(isEqualDLL(25.55, result));
+}
+
+TEST(AngleTest, AnglePlanesTest1)
+{
+	Vector3f pNormal1(1.68, 0.42, 2.35);
+	Vector3f pNormal2(10.47, -4.44, -4.96);
+
+	Planef p1(pNormal1);
+	Planef p2(pNormal2);
+
+
+	auto result = AnglePlanes(p1,p2);
+
+	EXPECT_TRUE(isEqualDLL(83.549, result));
+}

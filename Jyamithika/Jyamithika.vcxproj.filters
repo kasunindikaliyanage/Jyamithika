@@ -108,6 +108,9 @@
     <ClInclude Include="MonotonePartition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Angle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Primitives\Vector.cpp">
@@ -144,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Triangulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Angle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

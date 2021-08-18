@@ -12,7 +12,7 @@ using namespace jmk;
 
 // This can be only used in 2d XY plane. 
 // TODO  has to modify to consider the 3D plane as well
-int jmk::relation3d(const Point3d& a, const Point3d& b, const Point3d& c)
+int jmk::orientation3d(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	float area = areaTriangle2d(a, b, c);
 	
@@ -49,7 +49,7 @@ int jmk::relation3d(const Point3d& a, const Point3d& b, const Point3d& c)
 	return 0;
 }
 
-int jmk::relation2d(const Point2d& a, const Point2d& b, const Point2d& c)
+int jmk::orientation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 {
 	float area = areaTriangle2d(a, b, c);
 
@@ -59,21 +59,14 @@ int jmk::relation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 	if (area < 0 && area > TOLERANCE)
 		area = 0;
 
-	Point2d p1 = b - a;
-	Point2d p2 = c - a;
-
-	double p1x, p1y, p2x, p2y;
-
-	p1x = p1[X];
-	p1y = p1[Y];
-	p2x = p2[X];
-	p2y = p2[Y];
+	Vector2f p1 = b - a;
+	Vector2f p2 = c - a;
 
 	if (area > 0.0)
 		return LEFT;
 	if (area < 0.0)
 		return RIGHT;
-	if ((p1x * p2x < 0.0) || (p1y * p2y < 0.0))
+	if ((p1[X] * p2[X] < 0.0) || (p1[Y] * p2[Y] < 0.0))
 		return BEHIND;
 	if (p1.magnitude() < p2.magnitude())
 		return BEYOND;
@@ -88,35 +81,35 @@ int jmk::relation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 
 bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	return relation3d(a,b,c) == RELATIVE_POSITION::LEFT;
+	return orientation3d(a,b,c) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::left(const Point2d& a, const Point2d& b, const Point2d& c)
 {
-	return relation2d(a, b, c) == RELATIVE_POSITION::LEFT;
-	//return relation3d(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
+	return orientation2d(a, b, c) == RELATIVE_POSITION::LEFT;
+	//return orientation3d(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	return relation3d(a, b, c) == RELATIVE_POSITION::RIGHT;
+	return orientation3d(a, b, c) == RELATIVE_POSITION::RIGHT;
 }
 
 bool jmk::leftOrBeyond(const Point2d& a, const Point2d& b, const Point2d& c)
 {
-	int position = relation2d(a, b, c);
+	int position = orientation2d(a, b, c);
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
 bool jmk::leftOrBeyond(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	int position = relation3d(a, b, c);
+	int position = orientation3d(a, b, c);
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BEYOND);
 }
 
 bool jmk::leftOrBetween(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	int position = relation3d(a, b, c);
+	int position = orientation3d(a, b, c);
 	return (position == RELATIVE_POSITION::LEFT || position == RELATIVE_POSITION::BETWEEN);
 }
 
@@ -175,7 +168,8 @@ float jmk::polarAngle( const Point2d& _other, const Point2d& _ref)
 		return ((_y > 0.0) ? 90 : 270);
 
 	double theta = atan(_y / _x);
-	theta *= 360 / (2 * M_PI);
+	theta = RadianceToDegrees(theta);
+	//theta *= 360 / (2 * M_PI);
 
 	if (_x > 0.0)
 		return ((_y >= 0.0) ? theta : 360 + theta);
@@ -318,17 +312,19 @@ int jmk::getClosestPointIndex(Point3d& _point, std::vector<Point3d>& _points)
 
 bool jmk::collinear(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	// No need to calculat the area. Just compare each coeficient vector to zero vec;
-	float x_, y_, z_;
+	Vector3f P = b - a;
+	Vector3f Q = c - a;
 
-	Vector3f AB = b - a;
-	Vector3f AC = c - a;
+	return collinear(P, Q);
+}
 
-	x_ = AB[Y] * AC[Z] - AB[Z] * AC[Y];
-	y_ = AB[X] * AC[Z] - AB[Z] * AC[X];
-	z_ = AB[X] * AC[Y] - AB[Y] * AC[X];
-	
-	return isEqualD(x_, ZERO) && isEqualD(y_, ZERO) && isEqualD(z_, ZERO);
+bool jmk::collinear(const Vector3f& a, const Vector3f& b)
+{
+	auto v1 = a[X] * b[Y] - a[Y] * b[X];
+	auto v2 = a[Y] * b[Z] - a[Z] * b[Y];
+	auto v3 = a[X] * b[Z] - a[Z] * b[X];
+
+	return isEqualD(v1, ZERO) && isEqualD(v2, ZERO) && isEqualD(v3, ZERO);
 }
 
 bool jmk::coplaner(const Point3d& a, const Point3d& b, const Point3d& c, const Point3d& d)
