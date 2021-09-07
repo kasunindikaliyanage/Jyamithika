@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "../Base/Vector.h"
 #include "Point.h"
 
 namespace jmk {
@@ -17,8 +17,15 @@ namespace jmk {
 			normal.normalize();
 		}
 
+		// Make sure to calculate the _constant using normalized vector.
 		Plane(Vector3f& _normal, float _constant) : normal(_normal), d(_constant) {
 			normal.normalize();
+		}
+
+		Plane(Vector3f& _normal, Point3d& _point)
+		{
+			normal = _normal;
+			d = dotProduct(normal, _point);
 		}
 
 		Plane(Point3d& _p1, Point3d& _p2, Point3d& _p3)

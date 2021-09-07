@@ -3,16 +3,30 @@
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
 #include "Core\Primitives\PolygonDCEL.h"
-#include "Core\Primitives\Vector.h"
+#include "Core\Base\Vector.h"
 #include "Core\Primitives\Line.h"
 #include "Core\Distance.h"
 #include "Core\Intersection.h"
 #include "Core\Angle.h"
+#include "Core\Intersection.h"
 
 using namespace jmk;
 
 const Point3d origin3d(0.0, 0.0, 0.0);
 const Point2d origin2d(0.0, 0.0);
+
+TEST(CrossProduct, test1)
+{
+	Vector3f pNormal1(10, 2, 3);
+	Vector3f pNormal2(2, 15, 2);
+
+	pNormal1.normalize();
+	pNormal2.normalize();
+
+	auto result = crossProduct3d(pNormal1, pNormal2);
+	result.normalize();
+	EXPECT_TRUE(true);
+}
 
 TEST(PointIn_1st_QuadToOrigin2D, PolarAngle)
 {
@@ -224,3 +238,23 @@ TEST(AngleTest, AnglePlanesTest1)
 
 	EXPECT_TRUE(isEqualDLL(83.549, result));
 }
+
+TEST(IntersectionTest, TwoPlanes1)
+{
+	Vector3f pNormal1(1, 2, 3);
+	Vector3f pNormal2(2, 5, -2);
+
+	
+	auto c1 = 6 / pNormal1.magnitude();
+	auto c2 = -4 / pNormal2.magnitude();
+
+	Planef p1(pNormal1,  c1);
+	Planef p2(pNormal2, c2);
+
+	Line l1;
+
+	auto result = intersect(p1, p2, l1);
+
+	EXPECT_TRUE(isEqualDLL(83.549, result));
+}
+

@@ -3,7 +3,7 @@
 #include "Core\Primitives\Polygon.h"
 #include "Convexhull.h"
 #include "Core\GeoUtils.h"
-#include "Core\Primitives\Vector.h"
+#include "Core\Base\Vector.h"
 #include "Core\Primitives\Bounds.h"
 
 #include "Voronoi.h"

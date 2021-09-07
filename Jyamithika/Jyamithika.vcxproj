@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="Trees\BinarySearchTree.h" />
     <ClInclude Include="BinarySpacePartition.h" />
     <ClInclude Include="Convexhull.h" />
     <ClInclude Include="Core\Angle.h" />
@@ -157,18 +158,19 @@
     <ClInclude Include="Core\Primitives\PolygonDCEL.h" />
     <ClInclude Include="Core\Primitives\Polyhedron.h" />
     <ClInclude Include="Core\Primitives\Segment.h" />
-    <ClInclude Include="Core\Primitives\Vector.h" />
+    <ClInclude Include="Core\Base\Vector.h" />
     <ClInclude Include="MonotonePartition.h" />
-    <ClInclude Include="PartitionTree.h" />
-    <ClInclude Include="RedBlackTree.h" />
-    <ClInclude Include="IntervelTree.h" />
-    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="Trees\PartitionTree.h" />
+    <ClInclude Include="Trees\RedBlackTree.h" />
+    <ClInclude Include="Trees\IntervelTree.h" />
+    <ClInclude Include="Trees\KDTree.h" />
     <ClInclude Include="MotionPlaning.h" />
-    <ClInclude Include="Octree.h" />
-    <ClInclude Include="QuadTree.h" />
-    <ClInclude Include="RangeTree.h" />
-    <ClInclude Include="SegmentTree.h" />
+    <ClInclude Include="Trees\Octree.h" />
+    <ClInclude Include="Trees\QuadTree.h" />
+    <ClInclude Include="Trees\RangeTree.h" />
+    <ClInclude Include="Trees\SegmentTree.h" />
     <ClInclude Include="Trapezoidation.h" />
+    <ClInclude Include="Trees\TreeNodes.h" />
     <ClInclude Include="Triangulation.h" />
     <ClInclude Include="Voronoi.h" />
   </ItemGroup>
@@ -182,7 +184,7 @@
     <ClCompile Include="Core\Primitives\Line.cpp" />
     <ClCompile Include="Core\Primitives\Point.cpp" />
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
-    <ClCompile Include="Core\Primitives\Vector.cpp" />
+    <ClCompile Include="Core\Base\Vector.cpp" />
     <ClCompile Include="MonotonePartition.cpp" />
     <ClCompile Include="Triangulation.cpp" />
     <ClCompile Include="Voronoi.cpp" />

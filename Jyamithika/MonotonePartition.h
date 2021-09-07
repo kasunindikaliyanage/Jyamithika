@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Core\Primitives\Vector.h"
+#include "Core\Base\Vector.h"
 #include "Core\Primitives\PolygonDCEL.h"
 #include "Core\GeoUtils.h"
 

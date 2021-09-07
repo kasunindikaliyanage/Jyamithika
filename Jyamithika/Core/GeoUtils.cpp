@@ -12,9 +12,42 @@ using namespace jmk;
 
 // This can be only used in 2d XY plane. 
 // TODO  has to modify to consider the 3D plane as well
+
+//template<class T, size_t dim>
+//static int orientation( const jmk::Vector<T,dim >&a, const jmk::Vector<T, dim >& b, const jmk::Vector<T, dim >& c)
+//{
+//	float area = areaTriangle2d(a, b, c);
+//
+//	if (area > 0 && area < TOLERANCE)
+//		area = 0;
+//
+//	if (area < 0 && area > TOLERANCE)
+//		area = 0;
+//
+//	auto ab = b - a;
+//	auto ac = c - a;
+//
+//	if (area > 0.0)
+//		return LEFT;
+//	if (area < 0.0)
+//		return RIGHT;
+//	if ((ab[X] * ac[X] < 0.0) || (ab[Y] * ac[Y] < 0.0))
+//		return BEHIND;
+//	if (ab.magnitude() < ac.magnitude())
+//		return BEYOND;
+//	if (a == c)
+//		return ORIGIN;
+//	if (b == c)
+//		return DESTINATION;
+//	return BETWEEN;
+//
+//	return 0;
+//}
+
+
 int jmk::orientation3d(const Point3d& a, const Point3d& b, const Point3d& c)
 {
-	float area = areaTriangle2d(a, b, c);
+	float area = areaTriangle3d(a, b, c);
 	
 	if (area > 0 && area < TOLERANCE)
 		area = 0;
@@ -49,6 +82,11 @@ int jmk::orientation3d(const Point3d& a, const Point3d& b, const Point3d& c)
 	return 0;
 }
 
+//int jmk::orientation3d(const Point3d& a, const Point3d& b, const Point3d& c)
+//{
+//	return orientation(a,b,c);
+//}
+
 int jmk::orientation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 {
 	float area = areaTriangle2d(a, b, c);
@@ -59,16 +97,16 @@ int jmk::orientation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 	if (area < 0 && area > TOLERANCE)
 		area = 0;
 
-	Vector2f p1 = b - a;
-	Vector2f p2 = c - a;
+	Vector2f ab = b - a;
+	Vector2f ac = c - a;
 
 	if (area > 0.0)
 		return LEFT;
 	if (area < 0.0)
 		return RIGHT;
-	if ((p1[X] * p2[X] < 0.0) || (p1[Y] * p2[Y] < 0.0))
+	if ((ab[X] * ac[X] < 0.0) || (ab[Y] * ac[Y] < 0.0))
 		return BEHIND;
-	if (p1.magnitude() < p2.magnitude())
+	if (ab.magnitude() < ac.magnitude())
 		return BEYOND;
 	if (a == c)
 		return ORIGIN;
@@ -79,6 +117,11 @@ int jmk::orientation2d(const Point2d& a, const Point2d& b, const Point2d& c)
 	return 0;
 }
 
+//int jmk::orientation2d(const Point2d& a, const Point2d& b, const Point2d& c)
+//{
+//	return orientation(a, b, c);
+//}
+
 bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	return orientation3d(a,b,c) == RELATIVE_POSITION::LEFT;
@@ -87,7 +130,6 @@ bool jmk::left(const Point3d& a, const Point3d& b, const Point3d& c)
 bool jmk::left(const Point2d& a, const Point2d& b, const Point2d& c)
 {
 	return orientation2d(a, b, c) == RELATIVE_POSITION::LEFT;
-	//return orientation3d(Point3d(a[X], a[Y], 0.0), Point3d(b[X], b[Y], 0.0), Point3d(c[X], c[Y], 0.0)) == RELATIVE_POSITION::LEFT;
 }
 
 bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
@@ -122,8 +164,8 @@ static bool incone(const Vertex2dSimple* v1, const Vertex2dSimple* v2)
 	}
 
 	// v1 is relex vertex
-	return !(jmk::leftOrBeyond(v1->point, v2->next->point, v1->next->point)
-		&& jmk::leftOrBeyond(v2->point, v1->next->point, v1->prev->point));
+	return !(jmk::leftOrBeyond(v1->point, v2->point, v1->next->point)
+		&& jmk::leftOrBeyond(v2->point, v1->point, v1->prev->point));
 }
 
 bool jmk::isDiagonal( const Vertex2dSimple* v1, const Vertex2dSimple* v2, Polygon2dSimple* poly)
@@ -234,7 +276,7 @@ int jmk::orientation(const Face& _f, const Vector3f& _p)
 
 float jmk::volumeSigned(const Face& _f, const Point3d& _p)
 {
-	double ax, ay, az, bx, by, bz, cx, cy, cz;
+	float ax, ay, az, bx, by, bz, cx, cy, cz;
 
 	Point3d p1, p2, p3;
 	p1 = *_f.vertices[0]->point;

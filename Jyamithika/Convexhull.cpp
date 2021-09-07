@@ -92,7 +92,7 @@ void jmk::convexhull2DModifiedGrahams(std::vector<Point2d>& _points, std::vector
 	l_upper.push_back(*(std::next(_points.begin())));
 
 	int index = 0;
-	for (int i = 2; i < _points.size(); i++)
+	for (size_t i = 2; i < _points.size(); i++)
 	{
 		index = l_upper.size();
 		const auto& next_point = _points[i];
@@ -112,7 +112,7 @@ void jmk::convexhull2DModifiedGrahams(std::vector<Point2d>& _points, std::vector
 	l_lower.push_back(*_points.begin());
 	l_lower.push_back(*(std::next(_points.begin())));
 
-	for (int i = 2; i < _points.size(); i++)
+	for (size_t i = 2; i < _points.size(); i++)
 	{
 		index = l_lower.size();
 		const auto& next_point = _points[i];
@@ -521,7 +521,7 @@ void jmk::convexhull3D(std::vector<Point3d>& _points, std::vector<Face*>& faces)
 		std::vector<Face*> new_faces;
 		std::vector<Edge3d*> new_edges;
 
-		int new_size = border_edges.size();
+		const unsigned int new_size = border_edges.size();
 
 		// We need to find the unique points in border edges.
 		std::list<Vertex3d*> unque_vertices;

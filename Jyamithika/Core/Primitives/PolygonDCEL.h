@@ -163,6 +163,7 @@ namespace jmk {
 			edge_list.push_back(hfedge);
 			edge_list.push_back(edge_twin);
 		}
+		
 		auto hfedge = new EdgeDCEL<type, dim>(vertex_list.back());
 		auto edge_twin = new EdgeDCEL<type, dim>(vertex_list.front());
 		hfedge->twin = edge_twin;
@@ -324,6 +325,8 @@ namespace jmk {
 			face_list.erase(itr);
 			delete previous_face;
 		}
+
+		return true;
 	}
 
 	template<class type, size_t dim>

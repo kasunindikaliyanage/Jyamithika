@@ -2,7 +2,7 @@
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
 #include "Core\Primitives\PolygonDCEL.h"
-#include "Core\Primitives\Vector.h"
+#include "Core\Base\Vector.h"
 #include "Triangulation.h"
 
 using namespace jmk;

@@ -21,7 +21,7 @@ namespace jmk {
 		static_assert(std::is_arithmetic_v<coordinate_type>, "Vector class can only store integral or floating points values");
 		static_assert(dimensions >= DIM2, "Vector dimension atleast should be 2D");
 
-		std::array<coordinate_type, dimensions> coords;
+		std::array<coordinate_type, dimensions> coords = {};
 		bool is_normalized = false;
 
 		template<typename coordinate_type, size_t dimensions>
@@ -58,7 +58,7 @@ namespace jmk {
 		// Greater than operator for comparison
 		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&) const;
 
-		coordinate_type operator[](int) const;
+		coordinate_type operator[](const unsigned int) const;
 
 		// Dot product
 		float dot(Vector<coordinate_type, dimensions>& v1, Vector<coordinate_type, dimensions>& v2);
@@ -66,7 +66,7 @@ namespace jmk {
 		// Cross product
 		Vector<coordinate_type, dimensions> cross(const Vector<coordinate_type, dimensions>&);
 
-		void assign(int dim, coordinate_type value);
+		void assign(const unsigned int dim, coordinate_type value);
 
 		// Return the magnitude of the the vector (mod(A) / |A|)
 		float magnitude() const;
@@ -85,8 +85,6 @@ namespace jmk {
 	template<typename coordinate_type, size_t dimensions>
 	inline bool Vector<coordinate_type, dimensions>::operator==(const Vector<coordinate_type, dimensions>& _other) const
 	{
-		bool is_equal = false;
-
 		for (int i = 0; i < dimensions; i++)
 		{
 			if (!isEqualD(coords[i], _other.coords[i]))
@@ -123,7 +121,7 @@ namespace jmk {
 	{
 		if (*this == _other)
 			return false;
-		return !(*this < _other); ;
+		return !(*this < _other);
 	}
 
 	template<typename coordinate_type, size_t dimensions>
@@ -163,7 +161,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline coordinate_type Vector<coordinate_type, dimensions>::operator[](int _index) const
+	inline coordinate_type Vector<coordinate_type, dimensions>::operator[](const unsigned int _index) const
 	{
 		if (_index >= coords.size()) {
 			std::cout << "Index out of bounds";
@@ -175,7 +173,7 @@ namespace jmk {
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline void Vector<coordinate_type, dimensions>::assign(int _index, coordinate_type value)
+	inline void Vector<coordinate_type, dimensions>::assign(const unsigned int _index, coordinate_type value)
 	{
 		if (_index >= coords.size()) {
 			std::cout << "Index out of bounds";
@@ -218,7 +216,7 @@ namespace jmk {
 			return FLT_MIN;
 
 		float product = 0;
-		for (int i = 0; i < v1.coords.size(); i++)
+		for (size_t i = 0; i < v1.coords.size(); i++)
 			product = product + v1[i] * v2[i];
 		return product;
 	}

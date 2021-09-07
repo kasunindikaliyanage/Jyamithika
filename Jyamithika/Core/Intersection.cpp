@@ -65,7 +65,7 @@ bool jmk::intersect(const jmk::Point2d& a, const jmk::Point2d& b, const jmk::Poi
 	return jmk::_xor(jmk::left(a,b,c), jmk::left(a,b,d)) && jmk::_xor(jmk::left(c, d, a), jmk::left(c, d, b));
 }
 
-bool intersect(jmk::Point2d& a, jmk::Point2d& b , jmk::Point2d& c , jmk::Point2d& d , jmk::Point2d& interseciton)
+bool jmk::intersect(jmk::Point2d& a, jmk::Point2d& b , jmk::Point2d& c , jmk::Point2d& d , jmk::Point2d& interseciton)
 {
 	Vector2f AB = b - a;
 	Vector2f CD = d - c;
@@ -78,8 +78,8 @@ bool intersect(jmk::Point2d& a, jmk::Point2d& b , jmk::Point2d& c , jmk::Point2d
 
 	if (!isEqualD(deno, ZERO))
 	{
-		auto CA = a - c;
-		auto nume = dotProduct(n, CA);
+		auto AC = c-a;
+		auto nume = dotProduct(n, AC);
 		auto t = nume / deno;
 
 		auto x = a[X] + t * AB[X];
@@ -94,4 +94,53 @@ bool intersect(jmk::Point2d& a, jmk::Point2d& b , jmk::Point2d& c , jmk::Point2d
 		// Lines are parallel or colinear
 		return false;
 	}
+}
+
+bool jmk::intersect(jmk::Planef& plane, jmk::Line& line, jmk::Point3d& point){
+	
+	auto n = plane.getNormal();
+	auto D = plane.getD();
+	auto d = line.direction();
+	auto p = line.point();
+
+	auto denominator = dotProduct(n, d);
+
+	if (!isEqualD(denominator, ZERO)){
+		auto t = (-1 * dotProduct(n, p) + D) / denominator;
+		point.assign(X, p[X] + t * d[X]);
+		point.assign(Y, p[Y] + t * d[Y]);
+		point.assign(Z, p[Z] + t * d[Z]);
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+bool jmk::intersect(jmk::Planef& p1, jmk::Planef& p2, jmk::Line& l) {
+	
+	auto n1 = p1.getNormal();
+	auto n2 = p2.getNormal();
+	auto d1 = p1.getD();
+	auto d2 = p2.getD();
+
+	auto direction = crossProduct3d(n1,n2);
+	direction.normalize();
+
+	// Check if the planes are parallel.
+	if (isEqualD(direction.magnitude(), ZERO))
+		return false;
+
+	auto n1n2 = dotProduct(n1, n2);
+	auto n1n2_2 = n1n2 * n1n2;
+
+	auto a = (d2 * n1n2 - d1) / (n1n2_2 - 1);
+	auto b = (d1 * n1n2 - d2) / (n1n2_2 - 1);
+
+	auto point = n1*a + n2*b;
+	
+	l.setPoint(point);
+	l.setDirection(direction);
+
+	return true;
 }

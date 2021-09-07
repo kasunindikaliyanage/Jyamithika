@@ -18,7 +18,7 @@ Polygon::Polygon(std::vector<Point3d> _point_list)
 		vertex_list.push_back(Vertex(_point));
 	}
 
-	const int size = vertex_list.size();
+	const unsigned int size = vertex_list.size();
 
 	for (size_t i = 0; i < size ; i++)
 	{
@@ -67,7 +67,7 @@ jmk::Polygon2dSimple::Polygon2dSimple(std::vector<Point2d> _point_list)
 		vertex_list.push_back(new Vertex2dSimple(_point));
 	}
 
-	const int size = vertex_list.size();
+	const unsigned int size = vertex_list.size();
 
 	for (size_t i = 0; i < size; i++)
 	{

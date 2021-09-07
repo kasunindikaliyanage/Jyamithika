@@ -53,7 +53,7 @@ static void triangulate(Polygon2d* poly, std::vector<Vertex2dDCEL*>& vertices)
 	vertex_stack.push(vertices[0]);
 	vertex_stack.push(vertices[1]);
 
-	for (int i = 2; i < vertices.size() -1; i++) {
+	for (size_t i = 2; i < vertices.size() -1; i++) {
 		if (!is_in_same_chain(vertices[i], vertex_stack.top())){
 			bool popped = false;
 			Vertex2dDCEL* top = vertex_stack.top();
@@ -143,9 +143,10 @@ void jmk::triangulate_earclipping(Polygon2dSimple* poly, std::vector<Edge2dSimpl
 	Vertex2dSimple* v0, * v1, * v2, * v3, * v4;
 	int index = 0;
 
-	while (no_vertex_to_process > 3){
-		v2 = vertex_list[index];
-		do {
+	while (no_vertex_to_process > 3){	
+		for (size_t i = 0; i < vertex_list.size(); i++)
+		{
+			v2 = vertex_list[i];
 			if (v2->is_ear && !v2->is_processed) {
 				v3 = v2->next;
 				v4 = v3->next;
@@ -155,17 +156,16 @@ void jmk::triangulate_earclipping(Polygon2dSimple* poly, std::vector<Edge2dSimpl
 				edge_list.push_back(Edge2dSimple(v1->point, v3->point));
 				v2->is_processed = true;
 
-				v1->is_ear = isDiagonal(v0, v3, nullptr);
-				v3->is_ear = isDiagonal(v1, v4, nullptr);
-
 				v1->next = v3;
 				v3->prev = v1;
+
+				v1->is_ear = isDiagonal(v0, v3, nullptr);
+				v3->is_ear = isDiagonal(v1, v4, nullptr);
 
 				no_vertex_to_process--;
 				index++;
 				break;
 			}
-			v2 = v2->next;
-		} while (v2 != vertex_list[0]);
+		}
 	}
 }

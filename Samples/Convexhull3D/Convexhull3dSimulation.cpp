@@ -19,7 +19,7 @@
 #include "GraphicUtils\Geometry\GPoint.h"
 #include "GraphicUtils\Geometry\GLine.h"
 
-#include "Jyamithika\Core\Primitives\Vector.h"
+#include "Jyamithika\Core\Base\Vector.h"
 #include "Jyamithika\Core\Primitives\Point.h"
 #include "Jyamithika\Convexhull.h"
 #include "Jyamithika\Core\Primitives\Polyhedron.h"

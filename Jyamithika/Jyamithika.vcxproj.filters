@@ -27,40 +27,40 @@
     <ClInclude Include="Triangulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BinarySearchTree.h">
+    <ClInclude Include="Trees\BinarySearchTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KDTree.h">
+    <ClInclude Include="Trees\KDTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RangeTree.h">
+    <ClInclude Include="Trees\RangeTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntervelTree.h">
+    <ClInclude Include="Trees\IntervelTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SegmentTree.h">
+    <ClInclude Include="Trees\SegmentTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="QuadTree.h">
+    <ClInclude Include="Trees\QuadTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Octree.h">
+    <ClInclude Include="Trees\Octree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GeoUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PartitionTree.h">
+    <ClInclude Include="Trees\PartitionTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RedBlackTree.h">
+    <ClInclude Include="Trees\RedBlackTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Trapezoidation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Primitives\Vector.h">
+    <ClInclude Include="Core\Base\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Primitives\Point.h">
@@ -111,9 +111,12 @@
     <ClInclude Include="Core\Angle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Trees\TreeNodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Primitives\Vector.cpp">
+    <ClCompile Include="Core\Base\Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Primitives\Polygon.cpp">

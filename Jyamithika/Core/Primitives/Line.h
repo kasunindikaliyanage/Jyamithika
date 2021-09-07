@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector.h"
+#include "../Base/Vector.h"
 #include "Point.h"
 
 namespace jmk {
@@ -8,12 +8,19 @@ namespace jmk {
 		Point3d point_in_line;
 
 	public:
+
+		Line() {}
+
 		Line(Point3d& p1, Point3d& p2)
 		{
 			point_in_line = p1;
 			dir = p2 - p1;
 			dir.normalize();
 		}
+
+		void setDirection(Vector3f&);
+
+		void setPoint(Point3d&);
 
 		Vector3f direction() const;
 
@@ -39,4 +46,22 @@ namespace jmk {
 
 		Point2d point() const;
 	};
+
+
+	//template<class coord_types, size_t dimension = DIM3>
+	//class Line {
+	//	Vector<coord_types, dimension> point;
+	//	Vector<coord_types, dimension> dir;
+
+	//public:
+	//	Line() {}
+
+	//	Line(Vector<coord_types, dimension>& p1, Vector<coord_types, dimension>& p2)
+	//	{
+	//		dir = p2 - p1;
+	//		point = p1;
+	//	}
+
+
+	//};
 }
