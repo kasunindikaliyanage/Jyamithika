@@ -7,6 +7,8 @@
 #include "Jyamithika\Core\Primitives\Polygon.h"
 #include "Jyamithika\Core\Primitives\PolygonDCEL.h"
 
+#include "Jyamithika\Trees\KDTree.h"
+
 //float Rect2dPoints[] = {
 //	-0.008f, -0.008f,  // left  
 //	 0.008f, -0.008f,  // right 
@@ -19,6 +21,10 @@
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d&);
 
 void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<float>& data);
+
+void getReactanglePointClouds(std::list<jmk::Point2d>& positions, std::vector<float>& data);
+
+void getLineDataFromPoints2D(std::list<jmk::Point2d>& positions, std::vector<float>& data);
 
 void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>&data);
 

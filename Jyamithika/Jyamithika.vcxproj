@@ -186,6 +186,7 @@
     <ClCompile Include="Core\Primitives\Polygon.cpp" />
     <ClCompile Include="Core\Base\Vector.cpp" />
     <ClCompile Include="MonotonePartition.cpp" />
+    <ClCompile Include="Trees\KDTree.cpp" />
     <ClCompile Include="Triangulation.cpp" />
     <ClCompile Include="Voronoi.cpp" />
   </ItemGroup>

@@ -45,10 +45,10 @@ namespace jmk {
 		bool operator!=(const Vector<coordinate_type, dimensions>&) const;
 
 		// Less than operator for comparison
-		bool operator<(Vector<coordinate_type, dimensions>&);
+		bool operator<(const Vector<coordinate_type, dimensions>&) const;
 
 		// Greater than operator for comparison
-		bool operator>(const Vector<coordinate_type, dimensions>&);
+		bool operator>(const Vector<coordinate_type, dimensions>&) const;
 
 		Vector<coordinate_type, dimensions> operator*(coordinate_type value);
 
@@ -58,6 +58,7 @@ namespace jmk {
 		// Greater than operator for comparison
 		Vector<coordinate_type, dimensions> operator+(const Vector<coordinate_type, dimensions>&) const;
 
+		//TODO make this to modifiable
 		coordinate_type operator[](const unsigned int) const;
 
 		// Dot product
@@ -102,7 +103,7 @@ namespace jmk {
 	
 
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator<(Vector<coordinate_type, dimensions>& _other)
+	inline bool Vector<coordinate_type, dimensions>::operator<(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		for (size_t i = 0; i < dimensions; i++)
 		{
@@ -117,7 +118,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline bool Vector<coordinate_type, dimensions>::operator>(const Vector<coordinate_type, dimensions>& _other)
+	inline bool Vector<coordinate_type, dimensions>::operator>(const Vector<coordinate_type, dimensions>& _other) const
 	{
 		if (*this == _other)
 			return false;
@@ -137,7 +138,7 @@ namespace jmk {
 
 	
 	template<typename coordinate_type, size_t dimensions>
-	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-(const Vector<coordinate_type, dimensions>& _other) const
+	inline Vector<coordinate_type, dimensions> Vector<coordinate_type, dimensions>::operator-( const Vector<coordinate_type, dimensions>& _other) const
 	{
 		std::array<coordinate_type, dimensions> temp_array;
 

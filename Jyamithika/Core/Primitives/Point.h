@@ -16,4 +16,8 @@ namespace jmk {
 
 	bool sort2DTBLR(const Point2d& a, const Point2d& b);
 
+	bool sort2DbyX(const Point2d& a, const Point2d& b);
+
+	bool sort2DbyY(const Point2d& a, const Point2d& b);
+
 }

@@ -155,5 +155,8 @@
     <ClCompile Include="Core\Angle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Trees\KDTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

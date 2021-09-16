@@ -30,3 +30,17 @@ bool jmk::sort2DTBLR(const Point2d& a, const Point2d& b)
 	}
 	return false;
 }
+
+bool jmk::sort2DbyX(const Point2d& a, const Point2d& b)
+{
+	if (a[X] < b[X])
+		return true;
+	return false;
+}
+
+bool jmk::sort2DbyY(const Point2d& a, const Point2d& b)
+{
+	if (a[Y] < b[Y])
+		return true;
+	return false;
+}

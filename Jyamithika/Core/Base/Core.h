@@ -14,6 +14,9 @@ namespace jmk {
 #define CW  1
 #define CCW 2
 
+	typedef unsigned int uint;
+	typedef const unsigned int cuint;
+
 
 	enum RELATIVE_POSITION {
 		LEFT, RIGHT, BEYOND, BEHIND, BETWEEN, ORIGIN, DESTINATION

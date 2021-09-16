@@ -41,12 +41,25 @@ std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)
 	return data;
 }
 
-void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<float>& data)
-{
-	for (auto point : positions)
-	{
+void getReactanglePointClouds(std::vector<jmk::Point2d>& positions, std::vector<float>& data){
+	for (auto point : positions){
 		std::vector<float> point_data = getTranslated2DRectanglePointVertices(point);
 		data.insert(data.end(), point_data.begin(), point_data.end());
+	}
+}
+
+void getReactanglePointClouds(std::list<jmk::Point2d>& positions, std::vector<float>& data){
+	for (auto point : positions){
+		std::vector<float> point_data = getTranslated2DRectanglePointVertices(point);
+		data.insert(data.end(), point_data.begin(), point_data.end());
+	}
+}
+
+void getLineDataFromPoints2D(std::list<jmk::Point2d>& positions, std::vector<float>& data)
+{
+	for (const auto& point : positions){
+		data.push_back(point[X]);
+		data.push_back(point[Y]);
 	}
 }
 

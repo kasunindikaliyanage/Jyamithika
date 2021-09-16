@@ -7,17 +7,16 @@
 
 #include <functional>
 
-using namespace jmk;
-
-TEST(BST_Construction_with_list1, BST)
+TEST(BST_Construction_with_list1, BSTTest)
 {
 	float value = 9.0f;
-	jmk::BST<float> bst_test(value);
+	float value_2 = 10.f;
+	jmk::BST<float,float> bst_test(value, value_2);
 	EXPECT_TRUE(true);
 }
 
 
-TEST(BST_Construction_with_list2, BST)
+TEST(BST_Construction_with_list2, BSTTest)
 {
 	EXPECT_TRUE(true);
 }
