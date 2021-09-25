@@ -119,3 +119,27 @@ void getGraphicDataFromPointsList(std::vector<jmk::Point2d>& points, std::vector
 
 
 
+void get2DLineData(jmk::Line2dStd line, std::vector<float>& data)
+{
+	auto p1 = line.getPoint();
+	auto dir = line.getDir();
+	auto p2 = line.getSecondPoint();
+
+	auto x1 = (dir[X] / dir[Y]) * (10 - p1[Y]) + p1[X];
+	auto x2 = (dir[X] / dir[Y]) * (-10 - p1[Y]) + p1[X];
+
+	data.push_back(x1);
+	data.push_back(10);	
+	data.push_back(x2);
+	data.push_back(-10);
+}
+
+void get2DDataFromLinesList(std::vector<jmk::Line2dStd>& lines, std::vector<float>& data)
+{
+	for (const auto& line : lines) {
+		get2DLineData(line, data);
+	}
+}
+
+
+

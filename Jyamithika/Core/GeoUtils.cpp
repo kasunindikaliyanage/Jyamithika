@@ -132,6 +132,14 @@ bool jmk::left(const Point2d& a, const Point2d& b, const Point2d& c)
 	return orientation2d(a, b, c) == RELATIVE_POSITION::LEFT;
 }
 
+bool jmk::left(const Line2dStd& l, const Point2d& p)
+{
+	auto line_dir = l.getDir();
+	Vector2f line_normal(-line_dir[Y], line_dir[X]);
+	auto value = dotProduct(line_normal, p);
+	return (dotProduct(line_normal, p) - l.getD()) < 0 ? false : true;
+}
+
 bool jmk::right(const Point3d& a, const Point3d& b, const Point3d& c)
 {
 	return orientation3d(a, b, c) == RELATIVE_POSITION::RIGHT;

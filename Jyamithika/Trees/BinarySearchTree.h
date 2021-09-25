@@ -224,6 +224,8 @@ namespace jmk {
 	{
 		auto v_split = findSplitNode(_min, _max);
 		if (isLeaf(v_split)) {
+			if (v->key >= _min && v->key < _max)
+				_list.insert(_list.push_front(v->key));
 		}
 		else {
 			//Follow the path to left boundary
