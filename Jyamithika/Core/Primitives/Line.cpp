@@ -33,3 +33,8 @@ jmk::Point2d jmk::Line2d::point() const
 {
 	return point_in_line;
 }
+
+jmk::Vector2f jmk::Line2d::normal() const
+{
+	return normal_vec;
+}

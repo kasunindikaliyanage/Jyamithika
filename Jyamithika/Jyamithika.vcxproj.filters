@@ -158,5 +158,8 @@
     <ClCompile Include="Trees\KDTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BinarySpacePartition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

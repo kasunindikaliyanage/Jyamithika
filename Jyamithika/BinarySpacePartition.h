@@ -6,6 +6,7 @@
 #include "Core\Primitives\Line.h"
 #include "Core\Primitives\Point.h"
 #include "Core\GeoUtils.h"
+#include "Core\Intersection.h"
 
 #include <vector>
 #include <algorithm>
@@ -13,6 +14,13 @@
 namespace jmk {
 #define MIN_ELEMENTS_PER_PARTITION  4
 
+	enum class SEG_TYPES {
+		POSITIVE,
+		NEGATIVE,
+		INTERSECT
+	};
+
+	//TODO : Remove this class asap
 	class BSP2D {
 		struct BSP2DNode {
 			BSP2DNode* neg = nullptr;
@@ -167,31 +175,120 @@ namespace jmk {
 		getSplitLineList(root, _lines_list);
 	}
 
-	class BSP2DLines {
-		struct BSP2DLinesNode {
-			BSP2DLinesNode* neg = nullptr;
-			BSP2DLinesNode* pos = nullptr;
-			jmk::Line2dStd split_line;
-			std::vector<jmk::Segment2d> segment_list;
+	class BSP2DSegments {
+		struct BSP2DSegNode {
+			BSP2DSegNode* neg = nullptr;
+			BSP2DSegNode* pos = nullptr;
+			jmk::Line2d split_line;
+			jmk::Segment2d segment;
 
-			BSP2DLinesNode(std::vector<jmk::Segment2d> _points) : segment_list(_points) {
+			BSP2DSegNode(jmk::Segment2d _segment) : segment(_segment) {
 			}
 
-			BSP2DLinesNode(jmk::Line2dStd _line,
-				BSP2DLinesNode* _neg = nullptr, BSP2DLinesNode* _pos = nullptr)
+			BSP2DSegNode(jmk::Line2d _line,
+				BSP2DSegNode* _neg = nullptr, BSP2DSegNode* _pos = nullptr)
 				: split_line(_line), neg(_neg), pos(_pos) {
 			}
 
-			BSP2DLinesNode(std::vector<jmk::Segment2d> _points, jmk::Line2dStd _line,
-				BSP2DLinesNode* _neg = nullptr, BSP2DLinesNode* _pos = nullptr)
-				: segment_list(_points), split_line(_line), neg(_neg), pos(_pos)
+			BSP2DSegNode(jmk::Segment2d _segment, jmk::Line2d _line,
+				BSP2DSegNode* _neg = nullptr, BSP2DSegNode* _pos = nullptr)
+				: segment(_segment), split_line(_line), neg(_neg), pos(_pos)
 			{}
 		};
 
+		BSP2DSegNode* constructBSP2D(std::vector<jmk::Segment2d>& _seg_list);
+		jmk::Line2d getSplitLine(std::vector<jmk::Segment2d>& _seg_list, int& _index);
+		SEG_TYPES classifySegmenetToLine(jmk::Segment2d& _seg, jmk::Line2d& _line, jmk::Segment2d& _pos_seg, 
+			jmk::Segment2d& _neg_seg);
 
+		BSP2DSegNode* root;
 	public:
-		BSP2DLines(std::vector<jmk::Segment2d>& _segment_list) {
-
+		BSP2DSegments(std::vector<jmk::Segment2d>& _segment_list) {
+			root = constructBSP2D(_segment_list);
 		}
 	};
+
+	BSP2DSegments::BSP2DSegNode* jmk::BSP2DSegments::constructBSP2D(std::vector<jmk::Segment2d>& _seg_list)
+	{
+		int size = _seg_list.size();
+		if (size > 1) {
+			int split_seg_index = -1;
+			std::vector<jmk::Segment2d> pos_list, neg_list;
+			jmk::Segment2d pos_seg, neg_seg;
+			jmk::Line2d split_line = getSplitLine(_seg_list, split_seg_index);
+
+			for (size_t i = 0; i < size; i++){
+				if (i != split_seg_index){
+					switch (classifySegmenetToLine(_seg_list[i], split_line, pos_seg, neg_seg))
+					{
+					case SEG_TYPES::INTERSECT :
+						pos_list.push_back(pos_seg);
+						neg_list.push_back(neg_seg);
+						break;
+					case SEG_TYPES::POSITIVE:
+						pos_list.push_back(pos_seg);
+						break;
+					default:
+						neg_list.push_back(pos_seg);
+						break;
+					}
+				}
+			}
+
+			BSP2DSegNode* left = constructBSP2D(pos_list);
+			BSP2DSegNode* right = constructBSP2D(neg_list);
+			return new BSP2DSegNode(_seg_list[split_seg_index],split_line, left, right);
+		}
+	}
+	
+	inline jmk::Line2d BSP2DSegments::getSplitLine(std::vector<jmk::Segment2d>& _seg_list, int& _index)
+	{
+		int min_intersections = INT_MAX;
+		Line2d min_intersect_line;
+
+		for (size_t i = 0; i < _seg_list.size(); i++){
+			auto seg = _seg_list[i];
+			Line2d line(seg.p1, seg.p2);
+			int this_intersections = 0;
+			
+			for (size_t j = 0; j < _seg_list.size(); j++){
+				if(i != j)
+					if(jmk::intersect(line, _seg_list[j]))
+						this_intersections++;
+			}
+
+			if (this_intersections < min_intersections) {
+				min_intersect_line = line;
+				_index = i;
+			}
+		}
+		return min_intersect_line;
+	}
+
+	inline SEG_TYPES BSP2DSegments::classifySegmenetToLine(jmk::Segment2d& _seg, jmk::Line2d& _line,
+		jmk::Segment2d& _pos_seg, jmk::Segment2d& _neg_seg)
+	{
+		jmk::Point2d intersect_point;
+		bool is_intersect = jmk::intersect(_line, _seg, intersect_point);
+		if (is_intersect) {
+			if (left(_line, _seg.p1)) {
+				_pos_seg.p1 = _seg.p1;
+				_pos_seg.p2 = intersect_point;
+				_neg_seg.p1 = intersect_point;
+				_neg_seg.p2 = _seg.p2;
+			}
+			else {
+				_pos_seg.p1 = _seg.p2;
+				_pos_seg.p2 = intersect_point;
+				_neg_seg.p1 = intersect_point;
+				_neg_seg.p2 = _seg.p1;
+			}
+			return SEG_TYPES::INTERSECT;
+		}
+		else if(left(_line, _seg.p1)) {
+			return SEG_TYPES::POSITIVE;
+		}
+
+		return SEG_TYPES::NEGATIVE;
+	}
 }

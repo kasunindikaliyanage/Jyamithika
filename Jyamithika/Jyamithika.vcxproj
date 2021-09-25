@@ -175,6 +175,7 @@
     <ClInclude Include="Voronoi.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BinarySpacePartition.cpp" />
     <ClCompile Include="Convexhull.cpp" />
     <ClCompile Include="Core\Angle.cpp" />
     <ClCompile Include="Core\Distance.cpp" />

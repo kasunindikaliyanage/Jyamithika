@@ -30,6 +30,7 @@ namespace jmk {
 	class Line2d {
 		Vector2f dir;
 		Point2d point_in_line;
+		Vector2f normal_vec;
 
 	public:
 
@@ -40,11 +41,15 @@ namespace jmk {
 			point_in_line = p1;
 			dir = _dir;
 			dir.normalize();
+			normal_vec.assign(X, -dir[Y]);
+			normal_vec.assign(Y, dir[X]);
 		}
 
 		Vector2f direction() const;
 
 		Point2d point() const;
+
+		Vector2f normal() const;
 	};
 
 	template<class coord_type, size_t dim = DIM3>
@@ -52,7 +57,6 @@ namespace jmk {
 		Vector<coord_type, dim> point;
 		Vector<coord_type, dim> dir;
 		Vector<coord_type, dim> second;
-		
 		float d;
 
 	public:

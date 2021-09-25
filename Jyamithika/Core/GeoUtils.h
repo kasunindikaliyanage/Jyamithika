@@ -26,6 +26,8 @@ namespace jmk
 
 	bool left(const Line2dStd& l, const Point2d& p);
 
+	bool left(const Line2d& l, const Point2d& p);
+
 	// Predicate to determine whether the [Point c] is right to the segment [a b]
 	bool right(const Point3d& a, const Point3d& b, const Point3d& c);
 

@@ -144,3 +144,20 @@ bool jmk::intersect(jmk::Planef& p1, jmk::Planef& p2, jmk::Line& l) {
 
 	return true;
 }
+
+bool jmk::intersect(jmk::Line2d& line, jmk::Segment2d& seg) {
+	
+	// TODO : This can be done efficiently by checking the end points orientation
+	// compared to the line.
+	Vector2f dir = seg.p2 - seg.p1;
+	Point2d point = seg.p1;
+	jmk::Line2d seg_line( point, dir );
+	return intersect(line, seg_line, point);
+}
+
+bool jmk::intersect(jmk::Line2d& line, jmk::Segment2d& seg, jmk::Point2d& pi) {
+	Vector2f dir = seg.p2 - seg.p1;
+	Point2d point = seg.p1;
+	jmk::Line2d seg_line(point, dir);
+	return intersect(line, seg_line, pi);
+}

@@ -16,7 +16,9 @@ namespace jmk {
 	// 2 - Second line
 	bool intersect(jmk::Line2d&,jmk::Line2d&, jmk::Point2d&);
 
-	//bool intersect(jmk::Segment2d&, jmk::Segment2d&);
+	bool intersect(jmk::Line2d&, jmk::Segment2d&);
+
+	bool intersect(jmk::Line2d&, jmk::Segment2d&, jmk::Point2d&);
 
 	//bool intersect(jmk::Segment2d&, jmk::Segment2d&, jmk::Point2d&);
 
