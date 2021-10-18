@@ -13,6 +13,7 @@ namespace jmk {
 		Point2d p2  = DEFAULT_POINT_2D;
 		Segment2d() {}
 
+		//Segment2d(Point2d _p1, Point2d _p2) : p1(_p1), p2(_p2) {}
 		Segment2d(Point2d& _p1, Point2d& _p2): p1(_p1),p2(_p2) {}
 
 		double get_x(double y) const

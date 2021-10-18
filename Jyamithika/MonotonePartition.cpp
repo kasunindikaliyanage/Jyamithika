@@ -188,7 +188,6 @@ static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
 	, std::map<Edge2dDCEL*, Edge2dDCELWrapper*>& edge_mapper, Polygon2d* poly)
 {
 	// Check whether the interior of the polygon lies right to vertex point
-	// if the orgin(prev).y > origin(current).y && orgin(current).y > origin(next).y
 	auto prev_y = vertex.vert->incident_edge->prev->origin->point[Y];
 	auto current_y = vertex.vert->point[Y];
 	auto next_y = vertex.vert->incident_edge->next->origin->point[Y];
@@ -206,7 +205,8 @@ static void handle_regular_vertices(Vertex2dDCELWrapper& vertex
 			sweep_line.erase(found);
 
 		sweep_line.insert(edge);
-		edge_mapper.insert(std::pair<Edge2dDCEL*, Edge2dDCELWrapper*>(vertex.vert->incident_edge, edge));
+		edge_mapper.insert(std::pair<Edge2dDCEL*, Edge2dDCELWrapper*>(vertex.vert->incident_edge,
+			edge));
 	}
 	else {
 		auto found = sweep_line.lower_bound(edge);

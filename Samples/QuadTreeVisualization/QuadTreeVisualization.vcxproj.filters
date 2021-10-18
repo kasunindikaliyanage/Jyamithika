@@ -15,8 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BSPSample.cpp">
+    <ClCompile Include="QuadTreeVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Images\QuadTree visualization.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Images\QuadTree visualization_with_balancing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

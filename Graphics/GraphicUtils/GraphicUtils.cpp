@@ -74,6 +74,17 @@ void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vec
 	}
 }
 
+void get2DLinePointsFromSegmentList(std::vector<jmk::Segment2d>& edges, std::vector<float>& data){
+	for (const auto& edge : edges){
+		if (edge.p1 != jmk::DEFAULT_POINT_2D && edge.p2 != jmk::DEFAULT_POINT_2D){
+			data.push_back(edge.p1[X]);
+			data.push_back(edge.p1[Y]);
+			data.push_back(edge.p2[X]);
+			data.push_back(edge.p2[Y]);
+		}
+	}
+}
+
 void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>& data)
 {
 	for (const auto& edge : edges)

@@ -154,18 +154,22 @@ namespace jmk {
 			vertex_list.push_back(new VertexDCEL<type, dim>(_points[i]));
 		}
 
-		for (size_t i = 0; i < vertex_list.size() - 1; i++) {
+		for (size_t i = 0; i <= vertex_list.size() - 2; i++) {
 			auto hfedge = new EdgeDCEL<type, dim>(vertex_list[i]);
 			auto edge_twin = new EdgeDCEL<type, dim>(vertex_list[i + 1]);
+			
 			vertex_list[i]->incident_edge = hfedge;
+			
 			hfedge->twin = edge_twin;
 			edge_twin->twin = hfedge;
+			
 			edge_list.push_back(hfedge);
 			edge_list.push_back(edge_twin);
 		}
 		
 		auto hfedge = new EdgeDCEL<type, dim>(vertex_list.back());
 		auto edge_twin = new EdgeDCEL<type, dim>(vertex_list.front());
+		
 		hfedge->twin = edge_twin;
 		edge_twin->twin = hfedge;
 		edge_list.push_back(hfedge);
@@ -174,14 +178,14 @@ namespace jmk {
 		vertex_list[vertex_list.size() - 1]->incident_edge = hfedge;
 
 		// Set the prev and next for the element middle of the list ( 2 : size- 2)
-		for (size_t i = 2; i < edge_list.size()-2; i++) {
+		for (size_t i = 2; i <= edge_list.size()-3; i++) {
 			
-			if (i % 2 == 0)
+			if (i % 2 == 0) // Even case. Counter clockwise edges
 			{
 				edge_list[i]->next = edge_list[i + 2];	
 				edge_list[i]->prev = edge_list[i - 2];
 			}
-			else
+			else           // Odd case. Clockwise edges
 			{
 				edge_list[i]->next = edge_list[i - 2];
 				edge_list[i]->prev = edge_list[i + 2];
@@ -206,6 +210,9 @@ namespace jmk {
 		// f2 is unbounded face which wrap the f1. So f1 is a hole in f2. So have clockwise edges in innder edge list
 		f2->inner.push_back(edge_list[1]);
 
+		face_list.push_back(f1);
+		face_list.push_back(f2);
+
 		f1->outer->incident_face = f1;
 		EdgeDCEL<type, dim>* edge = f1->outer->next;
 		while (edge != f1->outer)
@@ -223,12 +230,11 @@ namespace jmk {
 			edge = edge->next;
 		}
 
-		face_list.push_back(f1);
-		face_list.push_back(f2);
 	}
 
 	template<class type, size_t dim>
-	inline void PolygonDCEL<type, dim>::getEdgesWithSamefaceAndGivenOrigins(VertexDCEL<type, dim>* _v1, VertexDCEL<type, dim>* _v2,
+	inline void PolygonDCEL<type, dim>::getEdgesWithSamefaceAndGivenOrigins(
+		VertexDCEL<type, dim>* _v1,VertexDCEL<type, dim>* _v2,
 		EdgeDCEL<type, dim>** edge_leaving_v1, EdgeDCEL<type, dim>** edge_leaving_v2)
 	{
 		std::vector<EdgeDCEL<type, dim>*> edges_with_v1_ori, edges_with_v2_ori;
@@ -236,6 +242,7 @@ namespace jmk {
 		// Get all the edges with orgin _v1
 		auto v1_inci_edge = _v1->incident_edge;
 		edges_with_v1_ori.push_back(v1_inci_edge);
+		
 		auto next_edge = v1_inci_edge->twin->next;
 		while (next_edge != v1_inci_edge) {
 			edges_with_v1_ori.push_back(next_edge);
@@ -245,6 +252,7 @@ namespace jmk {
 		// Get all the edges with orgin _v2
 		auto v2_inci_edge = _v2->incident_edge;
 		edges_with_v2_ori.push_back(v2_inci_edge);
+
 		next_edge = v2_inci_edge->twin->next;
 		while (next_edge != v2_inci_edge)
 		{
@@ -266,7 +274,6 @@ namespace jmk {
 		}
 	}
 
-
 	template<class type, size_t dim>
 	inline bool PolygonDCEL<type, dim>::split(VertexDCEL<type, dim>* _v1, VertexDCEL<type, dim>* _v2)
 	{
@@ -274,6 +281,7 @@ namespace jmk {
 		EdgeDCEL<type, dim>* edge_oriV1;
 		EdgeDCEL<type, dim>* edge_oriV2;
 		getEdgesWithSamefaceAndGivenOrigins(_v1, _v2, &edge_oriV1, &edge_oriV2);
+		
 		if (edge_oriV1->id == -1 || edge_oriV2->id == -1)
 			return false;						// Cannot find a edges with same face with ori _v1, _v2
 
@@ -291,8 +299,10 @@ namespace jmk {
 		half_edge2->twin = half_edge1;
 		half_edge1->next = edge_oriV2;
 		half_edge2->next = edge_oriV1;
+
 		half_edge1->prev = edge_oriV1->prev;
 		half_edge2->prev = edge_oriV2->prev;
+
 		half_edge1->next->prev = half_edge1;
 		half_edge2->next->prev = half_edge2;
 		half_edge1->prev->next = half_edge1;

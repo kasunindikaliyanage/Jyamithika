@@ -290,51 +290,19 @@ int jmk::orientation(const Face& _f, const Vector3f& _p)
 	return CW;
 }
 
-float jmk::volumeSigned(const Face& _f, const Point3d& _p)
+float jmk::FaceVisibility(const Face& _f, const Point3d& _p)
 {
-	float ax, ay, az, bx, by, bz, cx, cy, cz;
-
 	Point3d p1, p2, p3;
 	p1 = *_f.vertices[0]->point;
 	p2 = *_f.vertices[1]->point;
 	p3 = *_f.vertices[2]->point;
 
-	ax = p1[X] - _p[X];
-	ay = p1[Y] - _p[Y];
-	az = p1[Z] - _p[Z];
-	bx = p2[X] - _p[X];
-	by = p2[Y] - _p[Y];
-	bz = p2[Z] - _p[Z];
-	cx = p3[X] - _p[X];
-	cy = p3[Y] - _p[Y];
-	cz = p3[Z] - _p[Z];
+	auto a1 = p2 - p1;
+	auto b1 = p3 - p1;
+	auto c1 = _p - p1;
 
-	double vol = ax * (by * cz - cy * bz) + ay * (bz * cx - cz * bx) + az * (bx * cy - by * cx);
-	return vol;
-
-	//	// If the plane of the face is prependicular to XY plane
-	//// In such case We cannot simply consider as z=0; But we can set either x= 0 or y = 0.
-	//std::vector<Point3d> point_vec;
-
-	//for (size_t i = 0; i < _f.vertices.size(); i++)
-	//{
-	//	point_vec.push_back(*_f.vertices[i]->point);
-	//}
-
-	//Vector3f ref_vec1(1.0, 1.0, 0.0); // This point is in xy plane Directional vector AO
-	//Vector3f ref_vec2(-1.0, 1.0, 0.0); // This point is in xy plane Directional vector BO
-
-	//Planef plane(point_vec[0], point_vec[1], point_vec[2]);
-
-	///*
-	//	Taking the dot product of the normal with a vector from the given view point, V,
-	//	to one of the vertices will give you a value whose sign indicates which way the vertices
-	//	appear to wind when viewed from V:
-	//*/
-
-	//Vector3f PA = point_vec[0] - _p;
-	//float winding_constant = dotProduct(plane.getNormal(), PA);
-	//return winding_constant;
+	double vol1 = jmk::scalerTripleProduct(a1,b1,c1);
+	return vol1;
 }
 
 float jmk::angle(const Vector2f& _v1, const Vector2f& _v2)

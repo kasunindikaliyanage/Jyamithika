@@ -66,15 +66,7 @@ void setup_pointcloud(std::vector<jmk::Point3d>& vertices)
 	jmk::Point3d p14(-2, 4, -0.1);
 	jmk::Point3d p15(0.5, 0.5, 0.5);
 	jmk::Point3d p16(-1, -2, 4);
-
-	vertices.push_back(p1);
-	vertices.push_back(p2);
-	vertices.push_back(p3);
-	vertices.push_back(p4);
-	vertices.push_back(p5);
-	vertices.push_back(p6);
-	vertices.push_back(p7);
-	vertices.push_back(p8);
+	//jmk::Point3d p17(-3, -5, 7);
 
 	vertices.push_back(p9);
 	vertices.push_back(p10);
@@ -84,6 +76,18 @@ void setup_pointcloud(std::vector<jmk::Point3d>& vertices)
 	vertices.push_back(p14);
 	vertices.push_back(p15);
 	vertices.push_back(p16);
+	
+	vertices.push_back(p1);
+	vertices.push_back(p2);
+	vertices.push_back(p3);
+	vertices.push_back(p4);
+	vertices.push_back(p5);
+	vertices.push_back(p6);
+	vertices.push_back(p7);
+	vertices.push_back(p8);
+
+
+	//vertices.push_back(p17);
 }
 
 int main(void)

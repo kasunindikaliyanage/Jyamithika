@@ -7,6 +7,7 @@
 #include "Jyamithika\Core\Primitives\Line.h"
 #include "Jyamithika\Core\Primitives\Polygon.h"
 #include "Jyamithika\Core\Primitives\PolygonDCEL.h"
+#include "Jyamithika\Core\Primitives\Segment.h"
 
 #include "Jyamithika\Trees\KDTree.h"
 
@@ -28,6 +29,8 @@ void getReactanglePointClouds(std::list<jmk::Point2d>& positions, std::vector<fl
 void getLineDataFromPoints2D(std::list<jmk::Point2d>& positions, std::vector<float>& data);
 
 void get2DLinePointsFromEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>&data);
+
+void get2DLinePointsFromSegmentList(std::vector<jmk::Segment2d>& edges, std::vector<float>& data);
 
 void get2DLinePointsFromFaceEdgeList(std::vector<jmk::Edge2dSimple>& edges, std::vector<float>& data);
 

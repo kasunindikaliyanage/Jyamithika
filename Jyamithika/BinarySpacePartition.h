@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace jmk {
 #define MIN_ELEMENTS_PER_PARTITION  4
@@ -202,10 +203,15 @@ namespace jmk {
 			jmk::Segment2d& _neg_seg);
 
 		BSP2DSegNode* root;
+
+		void printNode(BSP2DSegNode*, int depth);
+
 	public:
 		BSP2DSegments(std::vector<jmk::Segment2d>& _segment_list) {
 			root = constructBSP2D(_segment_list);
 		}
+
+		void print();
 	};
 
 	BSP2DSegments::BSP2DSegNode* jmk::BSP2DSegments::constructBSP2D(std::vector<jmk::Segment2d>& _seg_list)
@@ -248,7 +254,8 @@ namespace jmk {
 
 		for (size_t i = 0; i < _seg_list.size(); i++){
 			auto seg = _seg_list[i];
-			Line2d line(seg.p1, seg.p2);
+			Vector2f dir = seg.p2 - seg.p1;
+			Line2d line(seg.p1, dir);
 			int this_intersections = 0;
 			
 			for (size_t j = 0; j < _seg_list.size(); j++){
@@ -290,5 +297,24 @@ namespace jmk {
 		}
 
 		return SEG_TYPES::NEGATIVE;
+	}
+
+	void BSP2DSegments::printNode(BSP2DSegNode* _node, int depth) {
+		if (!_node)
+			return;
+
+		printNode(_node->pos, depth+1);
+		
+		int space = 0;
+		while (space < depth)
+			std::cout << " ";
+		std::cout << "< (" << _node->segment.p1[X] << "," << _node->segment.p1[Y] << ") - ("
+			<< _node->segment.p2[X] << "," << _node->segment.p2[Y] << ")\n";
+		
+		printNode(_node->neg, depth + 1);
+	}
+
+	void BSP2DSegments::print() {
+		printNode(root, 0);
 	}
 }

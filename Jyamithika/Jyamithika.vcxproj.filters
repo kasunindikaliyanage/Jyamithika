@@ -114,6 +114,9 @@
     <ClInclude Include="Trees\TreeNodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Primitives\Boundaries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Base\Vector.cpp">
@@ -159,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BinarySpacePartition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Trees\QuadTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
