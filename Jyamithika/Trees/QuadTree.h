@@ -21,7 +21,7 @@ namespace jmk{
 		AABB box;
 		Point2d point = DEFAULT_POINT_2D;
 		bool isALeaf = false;
-		bool isAEmptyNode = false;
+		//bool isAEmptyNode = false;
 	};
 
 	class QuadTree {

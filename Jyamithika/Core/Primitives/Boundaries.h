@@ -10,13 +10,11 @@ namespace jmk {
 		float y_min;
 		float y_max;
 
-		bool isInside(Point2d point) {
+		bool isInside(Point2d& point) {
 			if (x_min <= point[X] && point[X] <= x_max
 				&& y_min <= point[Y] && point[Y] <= y_max)
 				return true;
 			return false;
 		}
 	};
-
-
 }

@@ -7,70 +7,70 @@ jmk::QuadTree::QuadTree(std::vector<Point2d> _points)
 
 static void partition(jmk::QDTNode* _parent, std::vector<jmk::Point2d> _points) {
 	if (_points.size() == 0) {
-		_parent->isAEmptyNode = true;
+		//_parent->isAEmptyNode = true;
+		_parent->isALeaf = true;
+		return;
+	}
+	else if (_points.size() == 1) {
+		_parent->point = _points[0];
+		_parent->isALeaf = true;
 		return;
 	}
 	else {
-		if (_points.size() == 1) {
-			_parent->point = _points[0];
-			_parent->isALeaf = true;
-			return;
+		// Calcualte the boundaries of each child using the bounds of the parent
+		auto box = _parent->box;
+		float x_mid = (box.x_min + box.x_max) / 2;
+		float y_mid = (box.y_min + box.y_max) / 2;
+
+		jmk::AABB boxNW{ box.x_min, x_mid, y_mid, box.y_max };
+		jmk::AABB boxNE{ x_mid, box.x_max, y_mid, box.y_max };
+		jmk::AABB boxSW{ box.x_min, x_mid, box.y_min, y_mid };
+		jmk::AABB boxSE{ x_mid, box.x_max, box.y_min, y_mid };
+
+		// Paritition the _points to four list.
+		std::vector<jmk::Point2d> pointsNW, pointsNE, pointsSW, pointsSE;
+		for (auto& point : _points) {
+			if (boxNW.isInside(point))
+				pointsNW.push_back(point);
+			else if (boxNE.isInside(point))
+				pointsNE.push_back(point);
+			else if (boxSW.isInside(point))
+				pointsSW.push_back(point);
+			else
+				pointsSE.push_back(point);
 		}
-		else {
-			// Calcualte the boundaries of each child using the bounds of the parent
-			auto box = _parent->box;
-			float x_mid = (box.x_min + box.x_max) / 2;
-			float y_mid = (box.y_min + box.y_max) / 2;
 
-			jmk::AABB boxNW{ box.x_min, x_mid, y_mid, box.y_max};
-			jmk::AABB boxNE{ x_mid, box.x_max, y_mid, box.y_max };
-			jmk::AABB boxSW{ box.x_min, x_mid, box.y_min, y_mid };
-			jmk::AABB boxSE{ x_mid, box.x_max, box.y_min, y_mid };
+		// Create 4 childs and set the bounds
+		auto nodeNW = new jmk::QDTNode();
+		auto nodeNE = new jmk::QDTNode();
+		auto nodeSW = new jmk::QDTNode();
+		auto nodeSE = new jmk::QDTNode();
 
-			// Paritition the _points to four list.
-			std::vector<jmk::Point2d> pointsNW, pointsNE, pointsSW, pointsSE;
-			for ( auto& point : _points){
-				if (boxNW.isInside(point))
-					pointsNW.push_back(point);
-				else if (boxNE.isInside(point))
-					pointsNE.push_back(point);
-				else if (boxSW.isInside(point))
-					pointsSW.push_back(point);
-				else
-					pointsSE.push_back(point);
-			}
+		nodeNW->box = boxNW;
+		nodeNE->box = boxNE;
+		nodeSW->box = boxSW;
+		nodeSE->box = boxSE;
 
-			// Create 4 childs and set the bounds
-			auto nodeNW = new jmk::QDTNode();
-			auto nodeNE = new jmk::QDTNode();
-			auto nodeSW = new jmk::QDTNode();
-			auto nodeSE = new jmk::QDTNode();
+		// Do the recursive call.
+		partition(nodeNW, pointsNW);
+		partition(nodeNE, pointsNE);
+		partition(nodeSW, pointsSW);
+		partition(nodeSE, pointsSE);
 
-			nodeNW->box = boxNW;
-			nodeNE->box = boxNE;
-			nodeSW->box = boxSW;
-			nodeSE->box = boxSE;
-
-			// Do the recursive call.
-			partition(nodeNW, pointsNW);
-			partition(nodeNE, pointsNE);
-			partition(nodeSW, pointsSW);
-			partition(nodeSE, pointsSE);
-
-			_parent->NW = nodeNW;
-			_parent->NE = nodeNE;
-			_parent->SW = nodeSW;
-			_parent->SE = nodeSE;
-			nodeNW->parent = _parent;
-			nodeNE->parent = _parent;
-			nodeSW->parent = _parent;
-			nodeSE->parent = _parent;
-		}
+		_parent->NW = nodeNW;
+		_parent->NE = nodeNE;
+		_parent->SW = nodeSW;
+		_parent->SE = nodeSE;
+		nodeNW->parent = _parent;
+		nodeNE->parent = _parent;
+		nodeSW->parent = _parent;
+		nodeSE->parent = _parent;
 	}
 }
 
 static void addBoundariesToTheList(jmk::QDTNode* _node, std::vector<jmk::Segment2d>& _segList) {
-	if (!_node->isALeaf && !_node->isAEmptyNode) {
+	//if (!_node->isALeaf && !_node->isAEmptyNode) {
+	if (!_node->isALeaf) {
 		auto box = _node->box;
 		float x_mid = (box.x_min + box.x_max) / 2;
 		float y_mid = (box.y_min + box.y_max) / 2;
@@ -101,7 +101,8 @@ static jmk::QDTNode* northNeighbor(jmk::QDTNode* _node, jmk::QDTNode* _root) {
 		return _node->parent->NE;
 
 	auto u = northNeighbor(_node->parent, _root);
-	if (!u || u->isALeaf || u->isAEmptyNode)
+	//if (!u || u->isALeaf || u->isAEmptyNode)
+	if (!u || u->isALeaf)
 		return u;
 	else if (_node == _node->parent->NW)
 		return u->SW;
@@ -120,7 +121,8 @@ static jmk::QDTNode* southNeighbor(jmk::QDTNode* _node, jmk::QDTNode* _root) {
 		return _node->parent->SE;
 
 	auto u = southNeighbor(_node->parent, _root);
-	if (!u || u->isALeaf || u->isAEmptyNode)
+	//if (!u || u->isALeaf || u->isAEmptyNode)
+	if (!u || u->isALeaf)
 		return u;
 	else if (_node == _node->parent->SW)
 		return u->NW;
@@ -139,7 +141,8 @@ static jmk::QDTNode* eastNeighbor(jmk::QDTNode* _node, jmk::QDTNode* _root) {
 		return _node->parent->SE;
 
 	auto u = eastNeighbor(_node->parent, _root);
-	if (!u || u->isALeaf || u->isAEmptyNode)
+	//if (!u || u->isALeaf || u->isAEmptyNode)
+	if (!u || u->isALeaf)
 		return u;
 	else if (_node == _node->parent->NE)
 		return u->NW;
@@ -158,7 +161,8 @@ static jmk::QDTNode* westNeighbor(jmk::QDTNode* _node, jmk::QDTNode* _root) {
 		return _node->parent->SW;
 
 	auto u = westNeighbor(_node->parent, _root);
-	if (!u || u->isALeaf || u->isAEmptyNode)
+	//if (!u || u->isALeaf || u->isAEmptyNode)
+	if (!u || u->isALeaf)
 		return u;
 	else if (_node == _node->parent->NW)
 		return u->NE;
@@ -177,26 +181,27 @@ jmk::QuadTree::QuadTree(std::vector<Point2d> _points, AABB& bounds)
 	}
 }
 
-
 void balancing(jmk::QDTNode* _node) {
 
 }
 
-static void getEndNodes(jmk::QDTNode* _node, std::vector<jmk::QDTNode*>& _leafs) {
+static void getLeafNodes(jmk::QDTNode* _node, std::vector<jmk::QDTNode*>& _leafs) {
 	if (!_node)
 		return;
-	if (_node->isALeaf || _node->isAEmptyNode)
+	//if (_node->isALeaf || _node->isAEmptyNode)
+	if (_node->isALeaf)
 		_leafs.push_back(_node);
 	else {
-		getEndNodes(_node->NW, _leafs);
-		getEndNodes(_node->NE, _leafs);
-		getEndNodes(_node->SW, _leafs);
-		getEndNodes(_node->SE, _leafs);
+		getLeafNodes(_node->NW, _leafs);
+		getLeafNodes(_node->NE, _leafs);
+		getLeafNodes(_node->SW, _leafs);
+		getLeafNodes(_node->SE, _leafs);
 	}
 }
 
 static bool isEndNode(jmk::QDTNode* _node) {
-	if (_node && (_node->isALeaf || _node->isAEmptyNode))
+	//if (_node && (_node->isALeaf || _node->isAEmptyNode))
+	if (_node && (_node->isALeaf))
 		return true;
 	return false;
 }
@@ -212,41 +217,52 @@ static bool needToSplit(jmk::QDTNode* _node, jmk::QDTNode* root) {
 
 	// Check if this leaf has to split
 	bool hasToSplit = false;
-	if (nNbor && !(nNbor->isALeaf || nNbor->isAEmptyNode)
-		&& (!(nNbor->SW->isALeaf || nNbor->SW->isAEmptyNode) || !( nNbor->SE->isALeaf || nNbor->SE->isAEmptyNode))) {
+	if (nNbor && !(nNbor->isALeaf)
+		&& (!(nNbor->SW->isALeaf) || !( nNbor->SE->isALeaf))) {
 		hasToSplit = true;
 	}
-	else if (sNbor && !(sNbor->isALeaf || sNbor->isAEmptyNode)
-		&& (!(sNbor->NW->isALeaf|| sNbor->NW->isAEmptyNode) || !(sNbor->NE->isALeaf || sNbor->NE->isAEmptyNode))) {
+	else if (sNbor && !(sNbor->isALeaf)
+		&& (!(sNbor->NW->isALeaf) || !(sNbor->NE->isALeaf))) {
 		hasToSplit = true;
 	}
-	else if (wNbor && !(wNbor->isALeaf || wNbor->isAEmptyNode)
-		&& (!(wNbor->NE->isALeaf || wNbor->NE->isAEmptyNode) || !(wNbor->SE->isALeaf || wNbor->SE->isAEmptyNode))) {
+	else if (wNbor && !(wNbor->isALeaf )
+		&& (!(wNbor->NE->isALeaf) || !(wNbor->SE->isALeaf))) {
 		hasToSplit = true;
 	}
-	else if (eNbor && !(eNbor->isALeaf || eNbor->isAEmptyNode)
-		&& (!(eNbor->NW->isALeaf || eNbor->NW->isAEmptyNode) || !(eNbor->SW->isALeaf || eNbor->SW->isAEmptyNode))) {
+	else if (eNbor && !(eNbor->isALeaf)
+		&& (!(eNbor->NW->isALeaf ) || !(eNbor->SW->isALeaf))) {
 		hasToSplit = true;
 	}
+
+	//if (nNbor && !(nNbor->isALeaf || nNbor->isAEmptyNode)
+	//	&& (!(nNbor->SW->isALeaf || nNbor->SW->isAEmptyNode) || !( nNbor->SE->isALeaf || nNbor->SE->isAEmptyNode))) {
+	//	hasToSplit = true;
+	//}
+	//else if (sNbor && !(sNbor->isALeaf || sNbor->isAEmptyNode)
+	//	&& (!(sNbor->NW->isALeaf|| sNbor->NW->isAEmptyNode) || !(sNbor->NE->isALeaf || sNbor->NE->isAEmptyNode))) {
+	//	hasToSplit = true;
+	//}
+	//else if (wNbor && !(wNbor->isALeaf || wNbor->isAEmptyNode)
+	//	&& (!(wNbor->NE->isALeaf || wNbor->NE->isAEmptyNode) || !(wNbor->SE->isALeaf || wNbor->SE->isAEmptyNode))) {
+	//	hasToSplit = true;
+	//}
+	//else if (eNbor && !(eNbor->isALeaf || eNbor->isAEmptyNode)
+	//	&& (!(eNbor->NW->isALeaf || eNbor->NW->isAEmptyNode) || !(eNbor->SW->isALeaf || eNbor->SW->isAEmptyNode))) {
+	//	hasToSplit = true;
+	//}
 
 	return hasToSplit;
 }
 
 void jmk::QuadTree::BalanceTheTree(){
-	std::vector<jmk::QDTNode*> endNodes;
-	getEndNodes(root, endNodes);
+	std::vector<jmk::QDTNode*> leafNodes;
+	getLeafNodes(root, leafNodes);
 
-	while (!endNodes.empty()) {
-		auto leaf = endNodes.back();
-		endNodes.pop_back();
-
-		auto nNbor = northNeighbor(leaf, root);
-		auto sNbor = southNeighbor(leaf, root);
-		auto wNbor = westNeighbor(leaf, root);
-		auto eNbor = eastNeighbor(leaf, root);
+	while (!leafNodes.empty()) {
+		auto leaf = leafNodes.back();
+		leafNodes.pop_back();
 
 		bool hasToSplit = needToSplit(leaf, root);
-
 		if (hasToSplit) {
 			// Split the this node in to four childs.
 			auto box = leaf->box;
@@ -269,33 +285,19 @@ void jmk::QuadTree::BalanceTheTree(){
 			nodeSW->box = boxSW;
 			nodeSE->box = boxSE;
 
-			nodeNW->isAEmptyNode = true;
-			nodeNE->isAEmptyNode = true;
-			nodeSW->isAEmptyNode = true;
-			nodeSE->isAEmptyNode = true;
-
-			if (leaf->isALeaf) {
-				if (boxNW.isInside(leaf->point)) {
-					nodeNW->point = leaf->point;
-					nodeNW->isAEmptyNode = false;
-					nodeNW->isALeaf = true;
-				}
-				else if (boxNE.isInside(leaf->point)) {
-					nodeNE->point = leaf->point;
-					nodeNE->isAEmptyNode = false;
-					nodeNE->isALeaf = true;
-				}
-				else if (boxSW.isInside(leaf->point)) {
-					nodeSW->point = leaf->point;
-					nodeSW->isAEmptyNode = false;
-					nodeSW->isALeaf = true;
-				}
-				else {
-					nodeSE->point = leaf->point;
-					nodeSE->isAEmptyNode = false;
-					nodeSE->isALeaf = true;
-				}
-			}
+			nodeNW->isALeaf = true;
+			nodeNE->isALeaf = true;
+			nodeSW->isALeaf = true;
+			nodeSE->isALeaf = true;
+			
+			if (boxNW.isInside(leaf->point))
+				nodeNW->point = leaf->point;
+			else if (boxNE.isInside(leaf->point))
+				nodeNE->point = leaf->point;
+			else if (boxSW.isInside(leaf->point))
+				nodeSW->point = leaf->point;
+			else
+				nodeSE->point = leaf->point;
 
 			leaf->NW = nodeNW;
 			leaf->NE = nodeNE;
@@ -307,25 +309,30 @@ void jmk::QuadTree::BalanceTheTree(){
 			nodeSE->parent = leaf;
 
 			//Leaf is no longer a empty node or a leaf node
-			leaf->isAEmptyNode = false;
 			leaf->isALeaf = false;
 
-			endNodes.push_back(nodeNW);
-			endNodes.push_back(nodeNE);
-			endNodes.push_back(nodeSW);
-			endNodes.push_back(nodeSE);
+			leafNodes.push_back(nodeNW);
+			leafNodes.push_back(nodeNE);
+			leafNodes.push_back(nodeSW);
+			leafNodes.push_back(nodeSE);
+
+			// Check if neighbours have to split or not
+			auto nNbor = northNeighbor(leaf, root);
+			auto sNbor = southNeighbor(leaf, root);
+			auto wNbor = westNeighbor(leaf, root);
+			auto eNbor = eastNeighbor(leaf, root);
 
 			if( isEndNode(nNbor) && needToSplit(nNbor,root))
-				endNodes.push_back(nNbor);
+				leafNodes.push_back(nNbor);
 
 			if (isEndNode(sNbor) && needToSplit(sNbor, root))
-				endNodes.push_back(sNbor);
+				leafNodes.push_back(sNbor);
 
 			if (isEndNode(eNbor) && needToSplit(eNbor, root))
-				endNodes.push_back(eNbor);
+				leafNodes.push_back(eNbor);
 
 			if (isEndNode(wNbor) && needToSplit(wNbor, root))
-				endNodes.push_back(wNbor);
+				leafNodes.push_back(wNbor);
 		}
 	}
 }

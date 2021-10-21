@@ -59,14 +59,46 @@ void setup_pointcloud(std::vector<jmk::Point2d>& points)
 {
 	srand((unsigned)time(0));
 	float rN1, rN2;
-	for (int index = 0; index < 32; index++) {
+	for (int index = 0; index < 64; index++) {
 		rN1 = (rand() % 198) - 99;
 		rN2 = (rand() % 198) - 99;
 		points.push_back(jmk::Point2d(rN1 / 100, rN2 / 100));
 	}
 
-	//points.push_back(jmk::Point2d(-0.10, 0.125));
-	//points.push_back(jmk::Point2d(-0.20, 0.15));
+	//points.push_back(jmk::Point2d(-0.11, 0.45));
+	//points.push_back(jmk::Point2d(-0.13, 0.43));
+}
+
+void setup_circular_mesh_points(std::vector<jmk::Point2d>& points)
+{
+	points.push_back(jmk::Point2d(-0.6805,0.7918));
+	points.push_back(jmk::Point2d(-0.4660,0.8257));
+	points.push_back(jmk::Point2d(-0.7200,0.5999));
+	points.push_back(jmk::Point2d(-0.29100,0.7636));
+
+	points.push_back(jmk::Point2d(-0.1216,0.6563));
+	points.push_back(jmk::Point2d(0.1041,0.4023));
+	points.push_back(jmk::Point2d(0.1437,0.1877));
+	points.push_back(jmk::Point2d(0.1380,0.0692));
+
+	points.push_back(jmk::Point2d(0.0759, - 0.0323));
+	points.push_back(jmk::Point2d(-0.0990, - 0.0210));
+	points.push_back(jmk::Point2d(-0.2740, 0.0522));
+	points.push_back(jmk::Point2d(-0.3700,0.1087));
+
+	points.push_back(jmk::Point2d(-0.5111,0.2499));
+	points.push_back(jmk::Point2d(-0.5902,0.3289));
+	points.push_back(jmk::Point2d(-0.6974,0.4813));
+	points.push_back(jmk::Point2d(-0.7144,0.7128));
+
+	points.push_back(jmk::Point2d(-0.5619,0.8314));
+	points.push_back(jmk::Point2d(-0.3700,0.8031));
+	points.push_back(jmk::Point2d(-0.2176,0.7184));
+	points.push_back(jmk::Point2d(0.0646, 0.4870));
+
+	points.push_back(jmk::Point2d(0.1324, 0.3007));
+	points.push_back(jmk::Point2d(-0.4603, 0.1990));
+	points.push_back(jmk::Point2d(-0.6466, 0.3910));
 }
 
 int main(void)
@@ -129,6 +161,7 @@ int main(void)
 	std::vector<float> balanced_line_data;
 
 	setup_pointcloud(points);
+	//setup_circular_mesh_points(points);
 	getReactanglePointClouds(points, point_data);
 
 	jmk::AABB bounds{-0.98, 0.98, -0.98, 0.98};
@@ -138,7 +171,6 @@ int main(void)
 	get2DLinePointsFromSegmentList(line_vecs, line_data);
 
 	tree.BalanceTheTree();
-
 	tree.GetUniqueSegmentList(balanced_line_vecs);
 	get2DLinePointsFromSegmentList(balanced_line_vecs, balanced_line_data);
 
@@ -195,7 +227,7 @@ int main(void)
 		if (show_balanced_lines)
 		{
 			line_shader.activeAsCurrentShader();
-			glLineWidth(3);
+			glLineWidth(1);
 			glUniform3fv(line_color_loc, 1, glm::value_ptr(red));
 			VAO__balanced_lines.bindVertexArray();
 			glDrawArrays(GL_LINES, 0, balanced_line_data.size() / 2);
@@ -204,7 +236,7 @@ int main(void)
 		if (show_split_lines)
 		{
 			line_shader.activeAsCurrentShader();
-			glLineWidth(3);
+			glLineWidth(1);
 			glUniform3fv(line_color_loc, 1, glm::value_ptr(green));
 			VAO_lines.bindVertexArray();
 			glDrawArrays(GL_LINES, 0, line_data.size() / 2);

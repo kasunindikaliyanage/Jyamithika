@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLAD", "Graphics\Externals\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadTreeVisualization", "Samples\QuadTreeVisualization\QuadTreeVisualization.vcxproj", "{07B0132E-1E12-419E-9CE9-203F6379300C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameOfLife", "Samples\GameOfLife\GameOfLife.vcxproj", "{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -172,6 +174,14 @@ Global
 		{07B0132E-1E12-419E-9CE9-203F6379300C}.Release|x64.Build.0 = Release|x64
 		{07B0132E-1E12-419E-9CE9-203F6379300C}.Release|x86.ActiveCfg = Release|Win32
 		{07B0132E-1E12-419E-9CE9-203F6379300C}.Release|x86.Build.0 = Release|Win32
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Debug|x64.ActiveCfg = Debug|x64
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Debug|x64.Build.0 = Debug|x64
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Debug|x86.ActiveCfg = Debug|Win32
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Debug|x86.Build.0 = Debug|Win32
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Release|x64.ActiveCfg = Release|x64
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Release|x64.Build.0 = Release|x64
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Release|x86.ActiveCfg = Release|Win32
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,6 +202,7 @@ Global
 		{B16066AF-F4F0-476A-8DC3-4FCB8B265D2D} = {86C755D6-48D7-439D-AD96-9447EB3FCADD}
 		{AD33D590-AB92-4D0D-B38C-EC1647E3FD18} = {A481C6F0-31A2-4F6E-BFC9-6B851BC304D9}
 		{07B0132E-1E12-419E-9CE9-203F6379300C} = {A481C6F0-31A2-4F6E-BFC9-6B851BC304D9}
+		{BCD074AD-5EAF-47CB-AD3F-4F548D7F3D0A} = {A481C6F0-31A2-4F6E-BFC9-6B851BC304D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5EA4DE4-4BB9-4B31-B5A4-8C233EB0C41F}

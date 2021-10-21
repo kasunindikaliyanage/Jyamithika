@@ -28,13 +28,14 @@ float colorsnew[36] = {
 
 static int current_color_index = 0;
 
+
 std::vector<float> getTranslated2DRectanglePointVertices(jmk::Point2d& _point)
 {
 	std::vector<float> data;
 	for (size_t i = 0; i < NUM_POINT_2D_REACT; i++)
 	{
 		if(i%2 == 0)
-			data.push_back(Rect2dPoints[i]+_point[X]);
+			data.push_back(Rect2dPoints[i] +_point[X]);
 		else
 			data.push_back(Rect2dPoints[i] + _point[Y]);
 	}
