@@ -55,6 +55,18 @@ I have added set of simulations for demonstration purposes. These simulations us
 <img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/voronoi_sim_delanuay.png" width="600" height="600">
 </p>
 
+### Quad Tree
+
+<p align="center">
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/QuadTree visualization.png" width="600" height="600">
+</p>
+
+### Quad Tree Balancing
+
+<p align="center">
+<img src="https://github.com/kasunindikaliyanage/Jyamithika/blob/master/Samples/Images/QuadTree visualization_with_balancing.png" width="600" height="600">
+</p>
+
 ## License
 MIT
 This is a free software. 
